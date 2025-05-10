@@ -1,6 +1,19 @@
-# My Awesome Lib
+# Fuzzy-Rough utilities (Under development)
 
-A Python library with structured modules, assets, and a CLI.
+A basic Python library needed for fuzzy rough set calculations e.g.:
+
+-- lower approximation
+-- upper approximation
+-- positive region
+
+## Algorithgms and containings
+
+-- Implicators
+-- T-norms
+-- OWAFRS (Ordered Weighted Average Fuzzy-Rough Sets) 
+-- VQRS (Vaguely Quantified Rough Sets)
+-- ITFRS (Implicator/T-norm Fuzzy-Rough Sets)
+
 
 ## Installation
 
