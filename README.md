@@ -2,17 +2,17 @@
 
 A basic Python library needed for fuzzy rough set calculations e.g.:
 
--- lower approximation
--- upper approximation
--- positive region
+- lower approximation
+- upper approximation
+- positive region
 
 ## Algorithgms and containings
 
--- Implicators
--- T-norms
--- OWAFRS (Ordered Weighted Average Fuzzy-Rough Sets) 
--- VQRS (Vaguely Quantified Rough Sets)
--- ITFRS (Implicator/T-norm Fuzzy-Rough Sets)
+- Implicators
+- T-norms
+- OWAFRS (Ordered Weighted Average Fuzzy-Rough Sets) 
+- VQRS (Vaguely Quantified Rough Sets)
+- ITFRS (Implicator/T-norm Fuzzy-Rough Sets)
 
 
 ## Installation
