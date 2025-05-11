@@ -1,6 +1,7 @@
 import numpy as np
 import sys
 import os
+import syntetic_data_for_tests as sds
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -11,8 +12,9 @@ def test_linear_similarity():
     assert similarities.linear_similarity(1.0, 1.0) == 1.0
     assert similarities.linear_similarity(0.0, 1.0) == 0.0
     assert similarities.linear_similarity(0.3, 0.5) == 0.8
+    assert similarities.linear_similarity(0.73, 0.91) == 0.82
 
-def test_compute_feature_similarities():
+def test_compute_feature_similarities_linear():
     x1 = np.array([0.1, 0.2])
     x2 = np.array([0.3, 0.8])
     sim = similarities.compute_feature_similarities(x1, x2, sim_func=similarities.linear_similarity)
@@ -32,6 +34,8 @@ def test_aggregate_similarities():
 
 def test_compute_similarity_matrix():
     X = np.array([[0.1, 0.5], [0.5, 1.0],[0.7, 0.2],[0.1, 0.9]])
+    dsm = sds.syntetic_dataset_factory()
+    X, _ = dsm.get_ds1()
     sim_matrix = similarities.compute_similarity_matrix(X, sim_func=similarities.linear_similarity, agg_func=tn.tn_product)
     assert sim_matrix.shape == (4, 4)
     assert (0.0 <= sim_matrix).all() and (sim_matrix <= 1.0).all()

@@ -6,13 +6,19 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../models')))
 
 import similarities
+import tnorms
 # import itfrs
 
 import test_similarities as ts
 import test_itfrs as ti
+import test_tnorms as tt
 
-ts.test_compute_feature_similarities()
-ts.test_aggregate_similarities()
+tt.test_tn_minimum()
+
+# similarities
+# ts. test_linear_similarity()
+# ts.test_compute_feature_similarities_linear()
+# ts.test_aggregate_similarities()
 
 ts.test_compute_similarity_matrix()
 
