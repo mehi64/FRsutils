@@ -2,7 +2,15 @@
 """
 VQRS implementation.
 """
-from ..approximations import FuzzyRoughModel
+import numpy as np
+
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../models')))
+
+from approximations import FuzzyRoughModel
 import numpy as np
 
 class VQRS(FuzzyRoughModel):
@@ -14,7 +22,9 @@ class VQRS(FuzzyRoughModel):
         self.beta = beta
 
     def lower_approximation(self):
+        raise NotImplementedError
         return (self.similarity_matrix >= self.alpha).astype(float).min(axis=1)
 
     def upper_approximation(self):
+        raise NotImplementedError
         return (self.similarity_matrix >= self.beta).astype(float).max(axis=1)

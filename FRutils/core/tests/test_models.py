@@ -1,6 +1,11 @@
 import numpy as np
-from frutil.models import OWAFRS, VQRS, ITFRS
-from frutil.similarities import compute_similarity_matrix
+import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from models import OWAFRS, VQRS, ITFRS
+from similarities import compute_similarity_matrix
 
 def get_sample_data():
     X = np.array([[0.0], [1.0]])
