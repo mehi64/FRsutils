@@ -5,6 +5,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import tnorms
+import syntetic_data_for_tests as sds
 # Data used for running tests
 
 data = np.array([0.5, 0.7, 0.34, 0.98, 1.2])
@@ -19,9 +20,28 @@ def test_tn_product():
 # def test_tn_lukasiewicz():
 #     assert np.isclose(tnorms.tn_lukasiewicz(np.array([0.9, 0.3])), 0.2)
 
-# def test_tn_drastic():
-#     assert tnorms.tn_drastic(np.array([1.0, 0.7])) == 0.7
-#     assert tnorms.tn_drastic(np.array([1.0, 1.0])) == 1.0
-#     assert tnorms.tn_drastic(np.array([1.0, 0.0])) == 0.0
+def test_tn_minimum_scalar_values():
+    data_dict = sds.syntetic_dataset_factory().tnorm_scalar_testing_data()
+    a_b = data_dict["a_b"]
+    expected = data_dict["minimum_outputs"]
+    temp_tnorm = tnorms.tn_minimum
+
+    result = []
+
+    l = len(a_b)
+    for i in range(l):
+        result.append(temp_tnorm(a_b[i]))
     
-#     assert tnorms.tn_drastic(np.array([0.9, 0.7])) == 0.0
+    closeness = np.isclose(result, expected)
+    assert np.all(closeness), "outputs are not the expected values"
+
+def test_tn_minimum_nxnx2_map_values():
+    data_dict = sds.syntetic_dataset_factory().tnorm_nxnx2_testing_data()
+    nxnx2_map = data_dict["nxnx2_map"]
+    expected = data_dict["minimum_outputs"]
+    temp_tnorm = tnorms.tn_minimum
+
+    result = temp_tnorm(nxnx2_map)
+    
+    closeness = np.isclose(result, expected)
+    assert np.all(closeness), "outputs are not the expected values"

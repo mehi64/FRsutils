@@ -34,8 +34,8 @@ def test_aggregate_similarities():
 
 def test_compute_similarity_matrix():
     X = np.array([[0.1, 0.5], [0.5, 1.0],[0.7, 0.2],[0.1, 0.9]])
-    dsm = sds.syntetic_dataset_factory()
-    X, _ = dsm.get_ds1()
+    # dsm = sds.syntetic_dataset_factory()
+    # X, _ = dsm.get_ds1()
     sim_matrix = similarities.compute_similarity_matrix(X, sim_func=similarities.linear_similarity, agg_func=tn.tn_product)
     assert sim_matrix.shape == (4, 4)
     assert (0.0 <= sim_matrix).all() and (sim_matrix <= 1.0).all()

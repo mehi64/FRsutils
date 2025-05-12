@@ -21,11 +21,15 @@ class ITFRS(FuzzyRoughModel):
 
     def lower_approximation(self):
         label_mask = (self.labels[:, None] == self.labels[None, :]).astype(float)
+        if (__debug__):
+            print(label_mask)
         implication_vals = self.implicator(self.similarity_matrix, label_mask)
         return np.min(implication_vals, axis=1)
 
     def upper_approximation(self):
         label_mask = (self.labels[:, None] == self.labels[None, :]).astype(float)
         aa = np.stack([self.similarity_matrix, label_mask], axis=-1)
+        
         tnorm_vals = self.tnorm(aa)
+        np.fill_diagonal(tnorm_vals, 0.0)
         return np.max(tnorm_vals, axis=1)
