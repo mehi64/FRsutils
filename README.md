@@ -1,4 +1,4 @@
-![FRutils Logo](logo.jpg)
+![FRutils Logo](logo.JPG)
 
 # Fuzzy-Rough utilities (Under development)
 
