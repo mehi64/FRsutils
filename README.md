@@ -35,7 +35,7 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 - implicators work on scalar but can be vectorized with np.vectorize()
 
 
-# TODO:
+## TODO:
 - Add tests for tnorms with non-binary masks
 
 ## How to Cite us in your research papers
