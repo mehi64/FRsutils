@@ -10,20 +10,26 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 
 - Implicators
 - T-norms
+*min tnorm
+* product tnorm
 - OWAFRS (Ordered Weighted Average Fuzzy-Rough Sets) 
 - VQRS (Vaguely Quantified Rough Sets)
 - ITFRS (Implicator/T-norm Fuzzy-Rough Sets)
 
+##Notes
+- Make sure the input dataset is normalized. This library expects all inputs to all functions are in range [0,1]
+- This library will use all features of data instances to calculate the fuzzzy-rough measures.
 
-## Installation
 
-```bash
-pip install my-awesome-lib
-```
+##Some technical information to remember
+###tnorms
+- works on 1D vectors (for aggregating the values to a scalar in similarity calculations)
+- works on nxnx2 maps for fast calculations
+- min tnorm and product tnorm will act the same if one of the input parameters takes the binary values; So, no matter which one you use, they provide the same reults
 
-## Usage
+implicators work on scalar but can be vectorized with np.vectorize()
 
-```python
-from my_awesome_lib.core import main
-main.run()
-```
+
+
+#TODO:
+- Add tests for tnorms with non-binary masks
