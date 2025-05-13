@@ -36,7 +36,7 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 - min tnorm and product tnorm will act the same if one of the input parameters takes the binary values; So, no matter which one you use, they provide the same reults
 - implicators work on scalar but can be vectorized with np.vectorize()
 
-| sim (x,y) | A(y) | Gaines | Goedel | KD | Reichenbach | Luk |
+| sim (x,y) | A(y) | Implicator Gaines | Implicator Goedel | Implicator KD | Implicator Reichenbach | Implicator Luk |
 |------|------|------|------|------|------|------|
 | 0.8   |  0.0   |  0.0  |  0.0  |  0.2   |  0.2   |  0.2  | 
 |  x   |  x   |  x   |  x   |  x   |  x   |  x   | 
