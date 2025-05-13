@@ -1,4 +1,4 @@
-<img src="logo.JPG" alt="FRutils Logo" width="100"/>
+<img src="logo.JPG" alt="FRutils Logo" width="250"/>
 
 # Fuzzy-Rough utilities (Under development)
 
