@@ -35,11 +35,52 @@ def test_tn_minimum_scalar_values():
     closeness = np.isclose(result, expected)
     assert np.all(closeness), "outputs are not the expected values"
 
+def test_tn_product_scalar_values():
+    data_dict = sds.syntetic_dataset_factory().tnorm_scalar_testing_data()
+    a_b = data_dict["a_b"]
+    expected = data_dict["product_outputs"]
+    temp_tnorm = tnorms.tn_product
+
+    result = []
+
+    l = len(a_b)
+    for i in range(l):
+        result.append(temp_tnorm(a_b[i]))
+    
+    closeness = np.isclose(result, expected)
+    assert np.all(closeness), "outputs are not the expected values"
+
+# def test_tn_luk_scalar_values():
+#     data_dict = sds.syntetic_dataset_factory().tnorm_scalar_testing_data()
+#     a_b = data_dict["a_b"]
+#     expected = data_dict["luk_outputs"]
+#     temp_tnorm = tnorms.tn_luk
+
+#     result = []
+
+#     l = len(a_b)
+#     for i in range(l):
+#         result.append(temp_tnorm(a_b[i]))
+    
+#     closeness = np.isclose(result, expected)
+#     assert np.all(closeness), "outputs are not the expected values"
+
 def test_tn_minimum_nxnx2_map_values():
-    data_dict = sds.syntetic_dataset_factory().tnorm_nxnx2_testing_data()
+    data_dict = sds.syntetic_dataset_factory().tnorm_nxnx2_testing_dataset()
     nxnx2_map = data_dict["nxnx2_map"]
     expected = data_dict["minimum_outputs"]
     temp_tnorm = tnorms.tn_minimum
+
+    result = temp_tnorm(nxnx2_map)
+    
+    closeness = np.isclose(result, expected)
+    assert np.all(closeness), "outputs are not the expected values"
+
+def test_tn_product_nxnx2_map_values():
+    data_dict = sds.syntetic_dataset_factory().tnorm_nxnx2_testing_dataset()
+    nxnx2_map = data_dict["nxnx2_map"]
+    expected = data_dict["product_outputs"]
+    temp_tnorm = tnorms.tn_product
 
     result = temp_tnorm(nxnx2_map)
     

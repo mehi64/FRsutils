@@ -15,7 +15,7 @@ b_vals = np.linspace(0, 1, 200)
 A, B = np.meshgrid(a_vals, b_vals)
 
 # Vectorized computation of the implicator
-Z = np.vectorize(imp.imp_gaines)(A, B)
+Z = np.vectorize(imp.imp_reichenbach)(A, B)
 
 # Plotting
 fig = plt.figure(figsize=(10, 7))

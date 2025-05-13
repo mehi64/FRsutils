@@ -24,6 +24,7 @@ class ITFRS(FuzzyRoughModel):
         if (__debug__):
             print(label_mask)
         implication_vals = self.implicator(self.similarity_matrix, label_mask)
+        np.fill_diagonal(implication_vals, 1.0)
         return np.min(implication_vals, axis=1)
 
     def upper_approximation(self):

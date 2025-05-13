@@ -125,11 +125,9 @@ Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><pre class="fragment">Collection of fuzzy implicator functions.
 
-These functions implement various types of fuzzy implication operators used in fuzzy logic systems.
-All functions operate on scalar float inputs in the range [0.0, 1.0], representing fuzzy truth values.
-
-Raises:
-    ValueError: If inputs are not in the range [0.0, 1.0].
+This module provides a set of standard fuzzy logic implicators.
+Each function takes two fuzzy truth values (floats in the range [0.0, 1.0])
+and returns the result of the corresponding implicator.
 </pre> </div><h2 class="groupheader">Function Documentation</h2>
 <a id="a02deec5522c04ae0b9beeba689af0804" name="a02deec5522c04ae0b9beeba689af0804"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a02deec5522c04ae0b9beeba689af0804">&#9670;&#160;</a></span>imp_gaines()</h2>
@@ -151,22 +149,16 @@ Raises:
 </div><div class="memdoc">
 <pre class="fragment">Gaines fuzzy implicator.
 
-This operator is defined as:
-    - If a &lt;= b: return 1.0
-    - If a &gt; 0: return b / a
-    - If a == 0: return 0.0
+Returns 1.0 if a &lt;= b.
+Returns b / a if a &gt; b and a &gt; 0.
+Returns 0.0 if a == 0 and b &lt; a.
 
-Parameters:
-    a (float): Antecedent value in [0.0, 1.0].
-    b (float): Consequent value in [0.0, 1.0].
-
-Returns:
-    float: Result of Gaines' implicator.
-
-Raises:
-    ValueError: If a or b is not in the range [0.0, 1.0].
+@param a: Antecedent value in the range [0.0, 1.0].
+@param b: Consequent value in the range [0.0, 1.0].
+@return: Result of Gaines' implicator.
+@throws ValueError: If either input is outside the range [0.0, 1.0].
 </pre> 
-<p class="definition">Definition at line <a class="el" href="implicators_8py_source.html#l00013">13</a> of file <a class="el" href="implicators_8py_source.html">implicators.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="implicators_8py_source.html#l00011">11</a> of file <a class="el" href="implicators_8py_source.html">implicators.py</a>.</p>
 
 </div>
 </div>
@@ -190,21 +182,14 @@ Raises:
 </div><div class="memdoc">
 <pre class="fragment">Gödel fuzzy implicator.
 
-Defined as:
-    - If a &lt;= b: return 1.0
-    - Else: return b
+Returns 1.0 if a &lt;= b, otherwise returns b.
 
-Parameters:
-    a (float): Antecedent value in [0.0, 1.0].
-    b (float): Consequent value in [0.0, 1.0].
-
-Returns:
-    float: Result of Gödel’s implicator.
-
-Raises:
-    ValueError: If a or b is not in the range [0.0, 1.0].
+@param a: Antecedent value in the range [0.0, 1.0].
+@param b: Consequent value in the range [0.0, 1.0].
+@return: Result of Gödel's implicator.
+@throws ValueError: If either input is outside the range [0.0, 1.0].
 </pre> 
-<p class="definition">Definition at line <a class="el" href="implicators_8py_source.html#l00041">41</a> of file <a class="el" href="implicators_8py_source.html">implicators.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="implicators_8py_source.html#l00033">33</a> of file <a class="el" href="implicators_8py_source.html">implicators.py</a>.</p>
 
 </div>
 </div>
@@ -228,20 +213,14 @@ Raises:
 </div><div class="memdoc">
 <pre class="fragment">Kleene-Dienes fuzzy implicator.
 
-Defined as:
-    max(1.0 - a, b)
+Computes max(1 - a, b).
 
-Parameters:
-    a (float): Antecedent value in [0.0, 1.0].
-    b (float): Consequent value in [0.0, 1.0].
-
-Returns:
-    float: Result of the Kleene-Dienes implicator.
-
-Raises:
-    ValueError: If a or b is not in the range [0.0, 1.0].
+@param a: Antecedent value in the range [0.0, 1.0].
+@param b: Consequent value in the range [0.0, 1.0].
+@return: Result of Kleene-Dienes implicator.
+@throws ValueError: If either input is outside the range [0.0, 1.0].
 </pre> 
-<p class="definition">Definition at line <a class="el" href="implicators_8py_source.html#l00063">63</a> of file <a class="el" href="implicators_8py_source.html">implicators.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="implicators_8py_source.html#l00048">48</a> of file <a class="el" href="implicators_8py_source.html">implicators.py</a>.</p>
 
 </div>
 </div>
@@ -265,20 +244,14 @@ Raises:
 </div><div class="memdoc">
 <pre class="fragment">Łukasiewicz fuzzy implicator.
 
-Defined as:
-    min(1.0, 1.0 - a + b)
+Computes min(1, 1 - a + b).
 
-Parameters:
-    a (float): Antecedent value in [0.0, 1.0].
-    b (float): Consequent value in [0.0, 1.0].
-
-Returns:
-    float: Result of Łukasiewicz’s implicator.
-
-Raises:
-    ValueError: If a or b is not in the range [0.0, 1.0].
+@param a: Antecedent value in the range [0.0, 1.0].
+@param b: Consequent value in the range [0.0, 1.0].
+@return: Result of Łukasiewicz implicator.
+@throws ValueError: If either input is outside the range [0.0, 1.0].
 </pre> 
-<p class="definition">Definition at line <a class="el" href="implicators_8py_source.html#l00105">105</a> of file <a class="el" href="implicators_8py_source.html">implicators.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="implicators_8py_source.html#l00078">78</a> of file <a class="el" href="implicators_8py_source.html">implicators.py</a>.</p>
 
 </div>
 </div>
@@ -302,20 +275,14 @@ Raises:
 </div><div class="memdoc">
 <pre class="fragment">Reichenbach fuzzy implicator.
 
-Defined as:
-    1.0 - a + a * b
+Computes 1 - a + a * b.
 
-Parameters:
-    a (float): Antecedent value in [0.0, 1.0].
-    b (float): Consequent value in [0.0, 1.0].
-
-Returns:
-    float: Result of Reichenbach’s implicator.
-
-Raises:
-    ValueError: If a or b is not in the range [0.0, 1.0].
+@param a: Antecedent value in the range [0.0, 1.0].
+@param b: Consequent value in the range [0.0, 1.0].
+@return: Result of Reichenbach implicator.
+@throws ValueError: If either input is outside the range [0.0, 1.0].
 </pre> 
-<p class="definition">Definition at line <a class="el" href="implicators_8py_source.html#l00084">84</a> of file <a class="el" href="implicators_8py_source.html">implicators.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="implicators_8py_source.html#l00063">63</a> of file <a class="el" href="implicators_8py_source.html">implicators.py</a>.</p>
 
 </div>
 </div>

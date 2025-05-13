@@ -133,10 +133,18 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<pre class="fragment">:return: In case of 1D array, returns minimum of the 1D array
-In case of 3D array (nxnx2), performs elementwise minimum of each elemet of the nxnx2[0] array with nxnx2[1]. This is used for vectorized calculations of similarities.
+<pre class="fragment">Computes the minimum T-norm of the input array.
 
-:param values: 1D array or 3D array of form nxnx2
+If the input is a 1D array, returns the minimum value.
+If the input is a 3D array of shape (n, n, 2), computes the element-wise
+minimum along the last axis (between [:, :, 0] and [:, :, 1]), which is
+useful for vectorized similarity calculations.
+
+@param values: A scalar or a NumPy array that is either:
+    - scalar
+    - 3-dimensional numpy array: shape (n, n, 2)
+@return: The minimum value(s) computed as described above.
+@throws ValueError: If the input is not a 1D or 3D NumPy array.
 </pre> 
 <p class="definition">Definition at line <a class="el" href="tnorms_8py_source.html#l00007">7</a> of file <a class="el" href="tnorms_8py_source.html">tnorms.py</a>.</p>
 
@@ -156,12 +164,20 @@ In case of 3D array (nxnx2), performs elementwise minimum of each elemet of the 
         </tr>
       </table>
 </div><div class="memdoc">
-<pre class="fragment">:return: In case of 1D array, returns product of the elements of 1D array
-In case of 3D array (nxnx2), performs elementwise minimum of each elemet of the nxnx2[0] array with nxnx2[1]. This is used for vectorized calculations of similarities.
+<pre class="fragment">Computes the product T-norm of the input array.
 
-:param values: 1D array or 3D array of form nxnx2
+If the input is a 1D array, returns the product of all elements.
+If the input is a 3D array of shape (n, n, 2), computes the element-wise
+product along the last axis (between [:, :, 0] and [:, :, 1]), which is
+useful for vectorized similarity calculations.
+
+@param values: A scalar or a NumPy array that is either:
+    - scalar
+    - 3-dimensional numpy array: shape (n, n, 2)
+@return: The product value(s) computed as described above.
+@throws ValueError: If the input is not a 1D or 3D NumPy array.
 </pre> 
-<p class="definition">Definition at line <a class="el" href="tnorms_8py_source.html#l00021">21</a> of file <a class="el" href="tnorms_8py_source.html">tnorms.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tnorms_8py_source.html#l00028">28</a> of file <a class="el" href="tnorms_8py_source.html">tnorms.py</a>.</p>
 
 </div>
 </div>
