@@ -1,4 +1,4 @@
-![FRutils Logo](logo.JPG)
+<img src="logo.JPG" alt="FRutils Logo" width="100"/>
 
 # Fuzzy-Rough utilities (Under development)
 
