@@ -31,9 +31,7 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 
 ## Some technical information to remember
 ### In ITFRS
-#### lower approximation for each instance: $$
-\mu_{\underline{S}X}(x) = \inf_{y \in U} \{ I(S(x, y), \mu_X(y)) \}
-$$
+#### lower approximation for each instance: ![Equation](lower.JPG)
 
 
 
