@@ -32,6 +32,7 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 ## Some technical information to remember
 ### In ITFRS
 #### lower approximation for each instance: ![Equation](lower.JPG)
+#### upper approximation for each instance:<img src="upper.JPG" alt="lower aaproximation" width="100"/>
 
 
 
