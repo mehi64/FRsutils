@@ -9,9 +9,14 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 ## Algorithgms and containings
 
 - Implicators
+  - Gaines
+  - Goedel
+  - Kleene–Dienes
+  - Reichenbach
+  - Lukasiewicz
 - T-norms
-*min tnorm
-* product tnorm
+  - min tnorm
+  - product tnorm
 - OWAFRS (Ordered Weighted Average Fuzzy-Rough Sets) 
 - VQRS (Vaguely Quantified Rough Sets)
 - ITFRS (Implicator/T-norm Fuzzy-Rough Sets)
