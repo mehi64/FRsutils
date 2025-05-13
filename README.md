@@ -34,7 +34,22 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 - min tnorm and product tnorm will act the same if one of the input parameters takes the binary values; So, no matter which one you use, they provide the same reults
 - implicators work on scalar but can be vectorized with np.vectorize()
 
+## How to Cite
 
+If you use this library in your research, please cite it as follows:
+
+**APA** (adjust to your preferred style):  
+> Mehran Amiri. (*2025r*). *FRutils* (Version 0.0.1) [Computer software]. https://github.com/mehi64/FRutils
+
+**BibTeX** (for LaTeX users):
+```bibtex
+@software{Mehran_Amiri_FRutils_2025,
+  author = {Mehran_Amiri},
+  title = {FRutils},
+  url = {https://github.com/mehi64/FRutils},
+  version = {0.0.1},
+  year = {2025}
+}
 
 #TODO:
 - Add tests for tnorms with non-binary masks
