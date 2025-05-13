@@ -30,6 +30,10 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 
 
 ## Some technical information to remember
+### In ITFRS
+#### lower approximation for each instance: $$\mu_{\underline{S}X}(x) = \inf_{y \in U} \left\{ I\left[S(x,y), \mu_X(y)\right] \right\}$$
+
+
 ### tnorms
 - works on 1D vectors (for aggregating the values to a scalar in similarity calculations)
 - works on nxnx2 maps for fast calculations
