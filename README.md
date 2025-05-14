@@ -1,5 +1,13 @@
 <img src="images/logo/logo4.png" alt="FRutils Logo" width="250"/>
 
+# Installation
+
+- $pip install frsutils
+
+- Requirements
+  - Python
+  - Numpy 
+
 # Fuzzy-Rough set utilities (Under development)
 
 A basic Python library needed for fuzzy rough set calculations e.g.:
