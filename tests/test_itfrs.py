@@ -4,10 +4,10 @@ import sys
 import os
 import syntetic_data_for_tests as sds
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../models')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../FRsutils/core')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../FRsutils/core/models')))
 
-from models.itfrs import ITFRS
+from itfrs import ITFRS
 import tnorms as tn
 import implicators as imp
 

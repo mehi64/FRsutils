@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "FRsutils"
 version = "0.0.1"
-description = "A Python library for fuzzy-rough utility functions."
+description = "A Python library for fuzzy-rough set utility functions."
 authors = [{ name = "Mehran Amiri", email = "mehran.amiri.ac@gmail.com" }]
 readme = "README.md"
 license = {text = " AGPL-3.0"}
@@ -15,5 +15,5 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/mehi64/FRutils"
-"Documentation" = "https://mehi64.github.io/FRutils/"
+"Homepage" = "https://github.com/mehi64/FRsutils"
+"Documentation" = "https://mehi64.github.io/FRsutils/"

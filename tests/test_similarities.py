@@ -3,7 +3,7 @@ import sys
 import os
 import syntetic_data_for_tests as sds
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../FRsutils/core')))
 
 import similarities
 import tnorms as tn

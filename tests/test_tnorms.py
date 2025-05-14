@@ -2,7 +2,7 @@ import numpy as np
 import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../FRsutils/core')))
 
 import tnorms
 import syntetic_data_for_tests as sds
