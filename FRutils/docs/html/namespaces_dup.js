@@ -2,6 +2,10 @@ var namespaces_dup =
 [
     [ "experimental_test", "namespaceexperimental__test.html", null ],
     [ "FRutils", "namespace_f_rutils.html", "namespace_f_rutils" ],
+    [ "snippets", "namespacesnippets.html", [
+      [ "a", "namespacesnippets.html#a819266bdf92721ceda1501ecd6f9ff1f", null ],
+      [ "b", "namespacesnippets.html#ac0367b05fd2f8e9c78aee22dfc0a1693", null ]
+    ] ],
     [ "syntetic_data_for_tests", "namespacesyntetic__data__for__tests.html", "namespacesyntetic__data__for__tests" ],
     [ "test_implicators", "namespacetest__implicators.html", [
       [ "test_gaines_implicator_outputs", "namespacetest__implicators.html#a3cc2c4e3a89301b16a39a0751d106f13", null ],
@@ -17,7 +21,11 @@ var namespaces_dup =
       [ "test_reichenbach_implicator_outputs", "namespacetest__implicators.html#af661be91e949138d5f707b5661ef05be", null ]
     ] ],
     [ "test_itfrs", "namespacetest__itfrs.html", [
-      [ "test_itfrs_approximations", "namespacetest__itfrs.html#ae0100dec7e15f460e33a3ee52d708169", null ]
+      [ "test_itfrs_approximations_Gaines_imp_product_tnorm", "namespacetest__itfrs.html#ab94045ae49f6b784f677e26711c6356c", null ],
+      [ "test_itfrs_approximations_Goedel_imp_product_tnorm", "namespacetest__itfrs.html#a2c27db050d19249e879d0e6c1d7812cd", null ],
+      [ "test_itfrs_approximations_KD_imp_product_tnorm", "namespacetest__itfrs.html#a5f96e64260e4781fee07672b249a3b1a", null ],
+      [ "test_itfrs_approximations_Luk_imp_product_tnorm", "namespacetest__itfrs.html#aa9c483dc722fc570e042ca093f5d01ec", null ],
+      [ "test_itfrs_approximations_reichenbach_imp_product_tnorm", "namespacetest__itfrs.html#a5b02bbd444fc5809d4006ead724aca30", null ]
     ] ],
     [ "test_models", "namespacetest__models.html", [
       [ "get_sample_data", "namespacetest__models.html#a523c6fb88d50510a62ec35250c3e146c", null ],
@@ -28,10 +36,8 @@ var namespaces_dup =
     [ "test_similarities", "namespacetest__similarities.html", [
       [ "test_aggregate_similarities", "namespacetest__similarities.html#a3d53941d057c67e84c8bfd1832900143", null ],
       [ "test_compute_feature_similarities_linear", "namespacetest__similarities.html#adfb800d01a4afe67858fb33c187fe7bf", null ],
-      [ "test_compute_instance_similarities_basic", "namespacetest__similarities.html#ab7c59bdd61bf63dc7acc9beda3c1abc8", null ],
-      [ "test_compute_instance_similarities_output_range", "namespacetest__similarities.html#a27f75eecb4a850bb1bac6c0d361e1399", null ],
-      [ "test_compute_instance_similarities_shape", "namespacetest__similarities.html#a430ac3143c68d5a29b8d62d8931f64ce", null ],
-      [ "test_compute_similarity_matrix", "namespacetest__similarities.html#aeea7114154d7df5a00361b5ea8461f88", null ],
+      [ "test_compute_similarity_matrix_with_linear_similarity_minimum_tnorm", "namespacetest__similarities.html#a1a23259590f6c3dde8c039285ff8b300", null ],
+      [ "test_compute_similarity_matrix_with_linear_similarity_product_tnorm", "namespacetest__similarities.html#a8124c01111d71ee8799689a43b415f31", null ],
       [ "test_linear_similarity", "namespacetest__similarities.html#a5975b3ff0e6dbcc5646413d08e0c9a77", null ]
     ] ],
     [ "test_tnorms", "namespacetest__tnorms.html", [

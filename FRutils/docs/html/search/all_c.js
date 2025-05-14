@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['positive_5fregion_0',['positive_region',['../class_f_rutils_1_1core_1_1approximations_1_1_fuzzy_rough_model.html#ab24e903034dcadae3be91eb29f5e1ed6',1,'FRutils::core::approximations::FuzzyRoughModel']]]
+  ['owafrs_0',['OWAFRS',['../class_f_rutils_1_1core_1_1models_1_1owafrs_1_1_o_w_a_f_r_s.html',1,'FRutils::core::models::owafrs']]],
+  ['owafrs_2epy_1',['owafrs.py',['../owafrs_8py.html',1,'']]]
 ];

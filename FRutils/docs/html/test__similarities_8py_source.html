@@ -118,17 +118,17 @@ $(function(){initNavTree('test__similarities_8py_source.html',''); initResizable
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
 <div class="foldopen" id="foldopen00011" data-start="" data-end="">
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno"><a class="line" href="namespacetest__similarities.html#a5975b3ff0e6dbcc5646413d08e0c9a77">   11</a></span><span class="keyword">def </span><a class="code hl_function" href="namespacetest__similarities.html#a5975b3ff0e6dbcc5646413d08e0c9a77">test_linear_similarity</a>():</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    <span class="keyword">assert</span> similarities.linear_similarity(1.0, 1.0) == 1.0</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    <span class="keyword">assert</span> similarities.linear_similarity(0.0, 1.0) == 0.0</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    <span class="keyword">assert</span> similarities.linear_similarity(0.3, 0.5) == 0.8</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="keyword">assert</span> similarities.linear_similarity(0.73, 0.91) == 0.82</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    <span class="keyword">assert</span> similarities._linear_similarity_scalar(1.0, 1.0) == 1.0</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    <span class="keyword">assert</span> similarities._linear_similarity_scalar(0.0, 1.0) == 0.0</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    <span class="keyword">assert</span> similarities._linear_similarity_scalar(0.3, 0.5) == 0.8</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="keyword">assert</span> similarities._linear_similarity_scalar(0.73, 0.91) == 0.82</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
 </div>
 <div class="foldopen" id="foldopen00017" data-start="" data-end="">
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="namespacetest__similarities.html#adfb800d01a4afe67858fb33c187fe7bf">   17</a></span><span class="keyword">def </span><a class="code hl_function" href="namespacetest__similarities.html#adfb800d01a4afe67858fb33c187fe7bf">test_compute_feature_similarities_linear</a>():</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    x1 = np.array([0.1, 0.2])</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    x2 = np.array([0.3, 0.8])</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    sim = similarities.compute_feature_similarities(x1, x2, sim_func=similarities.linear_similarity)</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    sim = similarities._compute_feature_similarities(x1, x2, sim_func=similarities._linear_similarity_scalar)</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    <span class="keyword">assert</span> np.allclose(sim, [0.8, 0.4])</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="keyword">assert</span> sim.shape == x1.shape</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="keyword">assert</span> (0.0 &lt;= sim).all() <span class="keywordflow">and</span> (sim &lt;= 1.0).all()</div>
@@ -137,69 +137,80 @@ $(function(){initNavTree('test__similarities_8py_source.html',''); initResizable
 <div class="foldopen" id="foldopen00025" data-start="" data-end="">
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="namespacetest__similarities.html#a3d53941d057c67e84c8bfd1832900143">   25</a></span><span class="keyword">def </span><a class="code hl_function" href="namespacetest__similarities.html#a3d53941d057c67e84c8bfd1832900143">test_aggregate_similarities</a>():</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    sims = np.array([0.8, 0.9, 0.56])</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    agg = similarities.aggregate_similarities(sims, agg_func=tn.tn_minimum)</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    agg = similarities._aggregate_similarities(sims, agg_tnorm=tn.tn_minimum)</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="keyword">assert</span> agg == 0.56</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <span class="keyword">assert</span> 0.0 &lt;= agg &lt;= 1.0</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    agg = similarities.aggregate_similarities(sims, agg_func=tn.tn_product)</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    agg = similarities._aggregate_similarities(sims, agg_tnorm=tn.tn_product)</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keyword">assert</span> np.isclose(agg, 0.4032)</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keyword">assert</span> 0.0 &lt;= agg &lt;= 1.0</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
 </div>
 <div class="foldopen" id="foldopen00035" data-start="" data-end="">
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="namespacetest__similarities.html#aeea7114154d7df5a00361b5ea8461f88">   35</a></span><span class="keyword">def </span><a class="code hl_function" href="namespacetest__similarities.html#aeea7114154d7df5a00361b5ea8461f88">test_compute_similarity_matrix</a>():</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    X = np.array([[0.1, 0.5], [0.5, 1.0],[0.7, 0.2],[0.1, 0.9]])</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="comment"># dsm = sds.syntetic_dataset_factory()</span></div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="comment"># X, _ = dsm.get_ds1()</span></div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    sim_matrix = similarities.compute_similarity_matrix(X, sim_func=similarities.linear_similarity, agg_func=tn.tn_product)</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keyword">assert</span> sim_matrix.shape == (4, 4)</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keyword">assert</span> (0.0 &lt;= sim_matrix).all() <span class="keywordflow">and</span> (sim_matrix &lt;= 1.0).all()</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="namespacetest__similarities.html#a8124c01111d71ee8799689a43b415f31">   35</a></span><span class="keyword">def </span><a class="code hl_function" href="namespacetest__similarities.html#a8124c01111d71ee8799689a43b415f31">test_compute_similarity_matrix_with_linear_similarity_product_tnorm</a>():</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    dsm = sds.syntetic_dataset_factory()</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    data_dict = dsm.similarity_testing_dataset()</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    X = data_dict[<span class="stringliteral">&quot;X&quot;</span>]</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    expected = data_dict[<span class="stringliteral">&quot;sim_matrix_with_linear_similarity_product_tnorm&quot;</span>]</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    sim_matrix = similarities.compute_similarity_matrix(X, sim_func=similarities._linear_similarity_scalar, agg_func=tn.tn_product)</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keyword">assert</span> sim_matrix.shape == (5, 5), <span class="stringliteral">&quot;dimension mismatch&quot;</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keyword">assert</span> (0.0 &lt;= sim_matrix).all() <span class="keywordflow">and</span> (sim_matrix &lt;= 1.0).all(), <span class="stringliteral">&quot;similarity matrix values are not normalized&quot;</span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    closeness = np.isclose(sim_matrix, expected)</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keyword">assert</span> np.all(closeness), <span class="stringliteral">&quot;outputs are not the expected values&quot;</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
 </div>
-<div class="foldopen" id="foldopen00044" data-start="" data-end="">
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="namespacetest__similarities.html#ab7c59bdd61bf63dc7acc9beda3c1abc8">   44</a></span><span class="keyword">def </span><a class="code hl_function" href="namespacetest__similarities.html#ab7c59bdd61bf63dc7acc9beda3c1abc8">test_compute_instance_similarities_basic</a>():</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    X = np.array([</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        [0.0, 0.5],</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        [0.5, 0.5],</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        [1.0, 0.5]</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    ])</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    instance = np.array([0.25, 0.7])</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    sims = similarities.compute_instance_similarities(instance, X, sim_func=similarities.linear_similarity, agg_func=tn.tn_minimum)</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    expected = np.array([</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        min(similarities.linear_similarity(0.25, 0.0), similarities.linear_similarity(0.7, 0.5)),</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        min(similarities.linear_similarity(0.25, 0.5), similarities.linear_similarity(0.7, 0.5)),</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        min(similarities.linear_similarity(0.25, 1.0), similarities.linear_similarity(0.7, 0.5))</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    ])</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    np.testing.assert_allclose(sims, expected, rtol=1e-5)</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
+<div class="foldopen" id="foldopen00048" data-start="" data-end="">
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="namespacetest__similarities.html#a1a23259590f6c3dde8c039285ff8b300">   48</a></span><span class="keyword">def </span><a class="code hl_function" href="namespacetest__similarities.html#a1a23259590f6c3dde8c039285ff8b300">test_compute_similarity_matrix_with_linear_similarity_minimum_tnorm</a>():</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    dsm = sds.syntetic_dataset_factory()</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    data_dict = dsm.similarity_testing_dataset()</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    X = data_dict[<span class="stringliteral">&quot;X&quot;</span>]</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    expected = data_dict[<span class="stringliteral">&quot;sim_matrix_with_linear_similarity_minimum_tnorm&quot;</span>]</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    sim_matrix = similarities.compute_similarity_matrix(X, sim_func=similarities._linear_similarity_scalar, agg_func=tn.tn_minimum)</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="keyword">assert</span> sim_matrix.shape == (5, 5), <span class="stringliteral">&quot;dimension mismatch&quot;</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keyword">assert</span> (0.0 &lt;= sim_matrix).all() <span class="keywordflow">and</span> (sim_matrix &lt;= 1.0).all(), <span class="stringliteral">&quot;similarity matrix values are not normalized&quot;</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    closeness = np.isclose(sim_matrix, expected)</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keyword">assert</span> np.all(closeness), <span class="stringliteral">&quot;outputs are not the expected values&quot;</span></div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="comment"># def test_compute_instance_similarities_basic():</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="comment">#     X = np.array([</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="comment">#         [0.0, 0.5],</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="comment">#         [0.5, 0.5],</span></div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="comment">#         [1.0, 0.5]</span></div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="comment">#     ])</span></div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="comment">#     instance = np.array([0.25, 0.7])</span></div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="comment">#     sims = similarities.compute_instance_similarities(instance, X, sim_func=similarities._linear_similarity_scalar, agg_func=tn.tn_minimum)</span></div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="comment">#     expected = np.array([</span></div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="comment">#         min(similarities._linear_similarity_scalar(0.25, 0.0), similarities._linear_similarity_scalar(0.7, 0.5)),</span></div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="comment">#         min(similarities._linear_similarity_scalar(0.25, 0.5), similarities._linear_similarity_scalar(0.7, 0.5)),</span></div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span><span class="comment">#         min(similarities._linear_similarity_scalar(0.25, 1.0), similarities._linear_similarity_scalar(0.7, 0.5))</span></div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span><span class="comment">#     ])</span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="comment">#     np.testing.assert_allclose(sims, expected, rtol=1e-5)</span></div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="comment"># def test_compute_instance_similarities_output_range():</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="comment">#     X = np.array([</span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="comment">#         [0.1, 0.9],</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="comment">#         [0.4, 0.4],</span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span><span class="comment">#         [0.9, 0.1]</span></div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="comment">#     ])</span></div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span><span class="comment">#     instance = np.array([0.5, 0.5])</span></div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span><span class="comment">#     sims = similarities.compute_instance_similarities(instance, X, sim_func=similarities._linear_similarity_scalar, agg_func=tn.tn_minimum)</span></div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span><span class="comment">#     assert np.all((0.0 &lt;= sims) &amp; (sims &lt;= 1.0)), &quot;All similarity values should be in range [0.0, 1.0]&quot;</span></div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="comment"># def test_compute_instance_similarities_shape():</span></div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="comment">#     X = np.random.rand(10, 5)</span></div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="comment">#     instance = X[0]</span></div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span><span class="comment">#     sims = similarities.compute_instance_similarities(instance, X, sim_func=similarities._linear_similarity_scalar, agg_func=tn.tn_minimum)</span></div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="comment">#     assert sims.shape == (10,), &quot;Output should have shape (n_samples,)&quot;</span></div>
 </div>
-<div class="foldopen" id="foldopen00059" data-start="" data-end="">
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="namespacetest__similarities.html#a27f75eecb4a850bb1bac6c0d361e1399">   59</a></span><span class="keyword">def </span><a class="code hl_function" href="namespacetest__similarities.html#a27f75eecb4a850bb1bac6c0d361e1399">test_compute_instance_similarities_output_range</a>():</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    X = np.array([</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        [0.1, 0.9],</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        [0.4, 0.4],</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        [0.9, 0.1]</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    ])</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    instance = np.array([0.5, 0.5])</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    sims = similarities.compute_instance_similarities(instance, X, sim_func=similarities.linear_similarity, agg_func=tn.tn_minimum)</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keyword">assert</span> np.all((0.0 &lt;= sims) &amp; (sims &lt;= 1.0)), <span class="stringliteral">&quot;All similarity values should be in range [0.0, 1.0]&quot;</span></div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
-</div>
-<div class="foldopen" id="foldopen00069" data-start="" data-end="">
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno"><a class="line" href="namespacetest__similarities.html#a430ac3143c68d5a29b8d62d8931f64ce">   69</a></span><span class="keyword">def </span><a class="code hl_function" href="namespacetest__similarities.html#a430ac3143c68d5a29b8d62d8931f64ce">test_compute_instance_similarities_shape</a>():</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    X = np.random.rand(10, 5)</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    instance = X[0]</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    sims = similarities.compute_instance_similarities(instance, X, sim_func=similarities.linear_similarity, agg_func=tn.tn_minimum)</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    <span class="keyword">assert</span> sims.shape == (10,), <span class="stringliteral">&quot;Output should have shape (n_samples,)&quot;</span></div>
-</div>
-<div class="ttc" id="anamespacetest__similarities_html_a27f75eecb4a850bb1bac6c0d361e1399"><div class="ttname"><a href="namespacetest__similarities.html#a27f75eecb4a850bb1bac6c0d361e1399">test_similarities.test_compute_instance_similarities_output_range</a></div><div class="ttdeci">test_compute_instance_similarities_output_range()</div><div class="ttdef"><b>Definition</b> <a href="#l00059">test_similarities.py:59</a></div></div>
+<div class="ttc" id="anamespacetest__similarities_html_a1a23259590f6c3dde8c039285ff8b300"><div class="ttname"><a href="namespacetest__similarities.html#a1a23259590f6c3dde8c039285ff8b300">test_similarities.test_compute_similarity_matrix_with_linear_similarity_minimum_tnorm</a></div><div class="ttdeci">test_compute_similarity_matrix_with_linear_similarity_minimum_tnorm()</div><div class="ttdef"><b>Definition</b> <a href="#l00048">test_similarities.py:48</a></div></div>
 <div class="ttc" id="anamespacetest__similarities_html_a3d53941d057c67e84c8bfd1832900143"><div class="ttname"><a href="namespacetest__similarities.html#a3d53941d057c67e84c8bfd1832900143">test_similarities.test_aggregate_similarities</a></div><div class="ttdeci">test_aggregate_similarities()</div><div class="ttdef"><b>Definition</b> <a href="#l00025">test_similarities.py:25</a></div></div>
-<div class="ttc" id="anamespacetest__similarities_html_a430ac3143c68d5a29b8d62d8931f64ce"><div class="ttname"><a href="namespacetest__similarities.html#a430ac3143c68d5a29b8d62d8931f64ce">test_similarities.test_compute_instance_similarities_shape</a></div><div class="ttdeci">test_compute_instance_similarities_shape()</div><div class="ttdef"><b>Definition</b> <a href="#l00069">test_similarities.py:69</a></div></div>
 <div class="ttc" id="anamespacetest__similarities_html_a5975b3ff0e6dbcc5646413d08e0c9a77"><div class="ttname"><a href="namespacetest__similarities.html#a5975b3ff0e6dbcc5646413d08e0c9a77">test_similarities.test_linear_similarity</a></div><div class="ttdeci">test_linear_similarity()</div><div class="ttdef"><b>Definition</b> <a href="#l00011">test_similarities.py:11</a></div></div>
-<div class="ttc" id="anamespacetest__similarities_html_ab7c59bdd61bf63dc7acc9beda3c1abc8"><div class="ttname"><a href="namespacetest__similarities.html#ab7c59bdd61bf63dc7acc9beda3c1abc8">test_similarities.test_compute_instance_similarities_basic</a></div><div class="ttdeci">test_compute_instance_similarities_basic()</div><div class="ttdef"><b>Definition</b> <a href="#l00044">test_similarities.py:44</a></div></div>
+<div class="ttc" id="anamespacetest__similarities_html_a8124c01111d71ee8799689a43b415f31"><div class="ttname"><a href="namespacetest__similarities.html#a8124c01111d71ee8799689a43b415f31">test_similarities.test_compute_similarity_matrix_with_linear_similarity_product_tnorm</a></div><div class="ttdeci">test_compute_similarity_matrix_with_linear_similarity_product_tnorm()</div><div class="ttdef"><b>Definition</b> <a href="#l00035">test_similarities.py:35</a></div></div>
 <div class="ttc" id="anamespacetest__similarities_html_adfb800d01a4afe67858fb33c187fe7bf"><div class="ttname"><a href="namespacetest__similarities.html#adfb800d01a4afe67858fb33c187fe7bf">test_similarities.test_compute_feature_similarities_linear</a></div><div class="ttdeci">test_compute_feature_similarities_linear()</div><div class="ttdef"><b>Definition</b> <a href="#l00017">test_similarities.py:17</a></div></div>
-<div class="ttc" id="anamespacetest__similarities_html_aeea7114154d7df5a00361b5ea8461f88"><div class="ttname"><a href="namespacetest__similarities.html#aeea7114154d7df5a00361b5ea8461f88">test_similarities.test_compute_similarity_matrix</a></div><div class="ttdeci">test_compute_similarity_matrix()</div><div class="ttdef"><b>Definition</b> <a href="#l00035">test_similarities.py:35</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

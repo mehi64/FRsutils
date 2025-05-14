@@ -111,51 +111,93 @@ $(function(){initNavTree('namespace_f_rutils_1_1core_1_1similarities.html',''); 
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ac28626e97a42a18880a7e24789e79251" id="r_ac28626e97a42a18880a7e24789e79251"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac28626e97a42a18880a7e24789e79251">linear_similarity</a> (float v1, float v2)</td></tr>
-<tr class="separator:ac28626e97a42a18880a7e24789e79251"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5567e856ea88cfaee4d284a856831280" id="r_a5567e856ea88cfaee4d284a856831280"><td class="memItemLeft" align="right" valign="top">np.ndarray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5567e856ea88cfaee4d284a856831280">compute_feature_similarities</a> (np.ndarray x1, np.ndarray x2, sim_func)</td></tr>
-<tr class="separator:a5567e856ea88cfaee4d284a856831280"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac165ebc67ac4311df121d7b8014e9a43" id="r_ac165ebc67ac4311df121d7b8014e9a43"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac165ebc67ac4311df121d7b8014e9a43">aggregate_similarities</a> (np.ndarray similarities, agg_func)</td></tr>
-<tr class="separator:ac165ebc67ac4311df121d7b8014e9a43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa23454314a48c2a9635d95e497cae79" id="r_aaa23454314a48c2a9635d95e497cae79"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa23454314a48c2a9635d95e497cae79">_linear_similarity_scalar</a> (float v1, float v2)</td></tr>
+<tr class="separator:aaa23454314a48c2a9635d95e497cae79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aebf3282ff1c5b772c7847c96fdb746d0" id="r_aebf3282ff1c5b772c7847c96fdb746d0"><td class="memItemLeft" align="right" valign="top">np.ndarray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aebf3282ff1c5b772c7847c96fdb746d0">_compute_feature_similarities</a> (np.ndarray x1, np.ndarray x2, sim_func)</td></tr>
+<tr class="separator:aebf3282ff1c5b772c7847c96fdb746d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46c5b43a515e4a60dd038d1d370f32ab" id="r_a46c5b43a515e4a60dd038d1d370f32ab"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a46c5b43a515e4a60dd038d1d370f32ab">_aggregate_similarities</a> (np.ndarray similarities, agg_tnorm)</td></tr>
+<tr class="separator:a46c5b43a515e4a60dd038d1d370f32ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad398590ee28dac3aeb84db2d02092811" id="r_ad398590ee28dac3aeb84db2d02092811"><td class="memItemLeft" align="right" valign="top">np.ndarray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad398590ee28dac3aeb84db2d02092811">compute_similarity_matrix</a> (np.ndarray X, sim_func, agg_func)</td></tr>
 <tr class="separator:ad398590ee28dac3aeb84db2d02092811"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adeb0bdc42c030be35a59f94e15dc772b" id="r_adeb0bdc42c030be35a59f94e15dc772b"><td class="memItemLeft" align="right" valign="top">np.ndarray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adeb0bdc42c030be35a59f94e15dc772b">compute_instance_similarities</a> (np.ndarray instance, np.ndarray X, sim_func, agg_func)</td></tr>
-<tr class="separator:adeb0bdc42c030be35a59f94e15dc772b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><pre class="fragment">Module for calculating similarities and similarity matrices.
+<div class="textblock"><pre class="fragment">frutil.similarities
+====================
+
+This module provides functions for computing similarities between normalized feature vectors and generating
+similarity matrices. It is useful in fuzzy-rough set-based machine learning, clustering, and other
+similarity-based computations.
+
+All similarity functions assume values are in the normalized range [0.0, 1.0].
+
+Functions
+---------
+- linear_similarity: Basic similarity measure based on inverse distance.
+- compute_feature_similarities: Applies a similarity function elementwise on two vectors.
+- aggregate_similarities: Aggregates an array of similarity scores into a single scalar.
+- compute_similarity_matrix: Computes a full NxN similarity matrix from a dataset.
+- compute_instance_similarities: Computes similarity scores between a single instance and a dataset.
 </pre> </div><h2 class="groupheader">Function Documentation</h2>
-<a id="ac165ebc67ac4311df121d7b8014e9a43" name="ac165ebc67ac4311df121d7b8014e9a43"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac165ebc67ac4311df121d7b8014e9a43">&#9670;&#160;</a></span>aggregate_similarities()</h2>
+<a id="a46c5b43a515e4a60dd038d1d370f32ab" name="a46c5b43a515e4a60dd038d1d370f32ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46c5b43a515e4a60dd038d1d370f32ab">&#9670;&#160;</a></span>_aggregate_similarities()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"> float FRutils.core.similarities.aggregate_similarities </td>
+          <td class="memname"> float FRutils.core.similarities._aggregate_similarities </td>
           <td>(</td>
           <td class="paramtype">np.ndarray</td>          <td class="paramname"><span class="paramname"><em>similarities</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>agg_func</em></span>&#160;)</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>agg_tnorm</em></span>&#160;)</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
+<pre class="fragment">Aggregate a set of similarity scores into a single value using the provided aggregation tnorm.
 
-<p class="definition">Definition at line <a class="el" href="similarities_8py_source.html#l00028">28</a> of file <a class="el" href="similarities_8py_source.html">similarities.py</a>.</p>
+Parameters
+----------
+similarities : np.ndarray
+    Array of similarity scores in the range [0.0, 1.0].
+agg_tnorm : Callable[[np.ndarray], float]
+    Aggregation tnorm.
+
+Returns
+-------
+float
+    Aggregated similarity score.
+
+Raises
+------
+ValueError
+    If any similarity value is outside the range [0.0, 1.0].
+</pre> 
+<p class="definition">Definition at line <a class="el" href="similarities_8py_source.html#l00071">71</a> of file <a class="el" href="similarities_8py_source.html">similarities.py</a>.</p>
 
 </div>
 </div>
-<a id="a5567e856ea88cfaee4d284a856831280" name="a5567e856ea88cfaee4d284a856831280"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5567e856ea88cfaee4d284a856831280">&#9670;&#160;</a></span>compute_feature_similarities()</h2>
+<a id="aebf3282ff1c5b772c7847c96fdb746d0" name="aebf3282ff1c5b772c7847c96fdb746d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aebf3282ff1c5b772c7847c96fdb746d0">&#9670;&#160;</a></span>_compute_feature_similarities()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"> np.ndarray FRutils.core.similarities.compute_feature_similarities </td>
+          <td class="memname"> np.ndarray FRutils.core.similarities._compute_feature_similarities </td>
           <td>(</td>
           <td class="paramtype">np.ndarray</td>          <td class="paramname"><span class="paramname"><em>x1</em></span>, </td>
         </tr>
@@ -170,43 +212,79 @@ Functions</h2></td></tr>
           <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>sim_func</em></span>&#160;)</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
-<pre class="fragment">Compute the similarity between two feature vectors using the specified similarity function.
-output is a numpy.ndarray of length n, where n is the number of features in the input vectors.</pre> 
-<p class="definition">Definition at line <a class="el" href="similarities_8py_source.html#l00021">21</a> of file <a class="el" href="similarities_8py_source.html">similarities.py</a>.</p>
+<pre class="fragment">Compute the similarity between two feature vectors using the provided similarity function.
+
+Parameters
+----------
+x1 : np.ndarray
+    First feature vector (1D array).
+x2 : np.ndarray
+    Second feature vector (1D array), must be same length as x1.
+sim_func : Callable[[float, float], float]
+    Similarity function to apply to each pair of feature values.
+
+Returns
+-------
+np.ndarray
+    1D array of similarity scores between each pair of corresponding features.
+</pre> 
+<p class="definition">Definition at line <a class="el" href="similarities_8py_source.html#l00050">50</a> of file <a class="el" href="similarities_8py_source.html">similarities.py</a>.</p>
 
 </div>
 </div>
-<a id="adeb0bdc42c030be35a59f94e15dc772b" name="adeb0bdc42c030be35a59f94e15dc772b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adeb0bdc42c030be35a59f94e15dc772b">&#9670;&#160;</a></span>compute_instance_similarities()</h2>
+<a id="aaa23454314a48c2a9635d95e497cae79" name="aaa23454314a48c2a9635d95e497cae79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa23454314a48c2a9635d95e497cae79">&#9670;&#160;</a></span>_linear_similarity_scalar()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"> np.ndarray FRutils.core.similarities.compute_instance_similarities </td>
+          <td class="memname"> float FRutils.core.similarities._linear_similarity_scalar </td>
           <td>(</td>
-          <td class="paramtype">np.ndarray</td>          <td class="paramname"><span class="paramname"><em>instance</em></span>, </td>
+          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>v1</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">np.ndarray</td>          <td class="paramname"><span class="paramname"><em>X</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>sim_func</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>agg_func</em></span>&#160;)</td>
+          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>v2</em></span>&#160;)</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
+<pre class="fragment">Compute linear similarity between two scalar values using the formula:
+`max(0, 1 - |v1 - v2|)`
 
-<p class="definition">Definition at line <a class="el" href="similarities_8py_source.html#l00047">47</a> of file <a class="el" href="similarities_8py_source.html">similarities.py</a>.</p>
+Parameters
+----------
+v1 : float
+    First input value in the range [0.0, 1.0].
+v2 : float
+    Second input value in the range [0.0, 1.0].
+
+Returns
+-------
+float
+    Similarity score in the range [0.0, 1.0].
+
+Raises
+------
+ValueError
+    If either input or the output is outside the [0.0, 1.0] range.
+</pre> 
+<p class="definition">Definition at line <a class="el" href="similarities_8py_source.html#l00023">23</a> of file <a class="el" href="similarities_8py_source.html">similarities.py</a>.</p>
 
 </div>
 </div>
@@ -233,36 +311,23 @@ output is a numpy.ndarray of length n, where n is the number of features in the 
         </tr>
       </table>
 </div><div class="memdoc">
+<pre class="fragment">Compute a pairwise similarity matrix for all instances in a dataset.
 
-<p class="definition">Definition at line <a class="el" href="similarities_8py_source.html#l00034">34</a> of file <a class="el" href="similarities_8py_source.html">similarities.py</a>.</p>
+Parameters
+----------
+X : np.ndarray
+    A 2D array of shape (n_samples, n_features).
+sim_func : Callable[[float, float], float]
+    Similarity function to apply to feature pairs.
+agg_func : Callable[[np.ndarray], float]
+    Aggregation function for reducing feature similarities to instance similarity.
 
-</div>
-</div>
-<a id="ac28626e97a42a18880a7e24789e79251" name="ac28626e97a42a18880a7e24789e79251"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac28626e97a42a18880a7e24789e79251">&#9670;&#160;</a></span>linear_similarity()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"> float FRutils.core.similarities.linear_similarity </td>
-          <td>(</td>
-          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>v1</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>v2</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<pre class="fragment">computes max(0, 1 - |v1 - v2|)
-
-:param v1: float in range [0, 1]
-:param v2: float in range [0, 1]
-:return: float in range [0, 1]
+Returns
+-------
+np.ndarray
+    A 2D similarity matrix of shape (n_samples, n_samples).
 </pre> 
-<p class="definition">Definition at line <a class="el" href="similarities_8py_source.html#l00008">8</a> of file <a class="el" href="similarities_8py_source.html">similarities.py</a>.</p>
+<p class="definition">Definition at line <a class="el" href="similarities_8py_source.html#l00097">97</a> of file <a class="el" href="similarities_8py_source.html">similarities.py</a>.</p>
 
 </div>
 </div>

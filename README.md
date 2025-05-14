@@ -40,6 +40,8 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 
 #### Since for the calculations of upper approximation, we calculate sup which is basically a maximum, to exclude the same instance from calculations we need to set the main diagonal to 0.0 which is ignored by max operator. Otherwise all upper approxamations will be 1.0.
 
+#### In ITFRS, POS(x) = lower_approximation(x) where x  is a data instance, and datasets having crisp classes.
+
 
 ### tnorms
 - works on 1D vectors (for aggregating the values to a scalar in similarity calculations)
@@ -83,10 +85,10 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 
 ------
 
-| sim(x,y) | A(y) | Implicator Gaines | Implicator Goedel | Implicator KD | Implicator Reichenbach | Implicator Luk |
-|------|------|------|------|------|------|------|
-| 0.8   |  0.0   |  0.0  |  0.0  |  0.2   |  0.2   |  0.2  | 
-|  x   |  x   |  x   |  x   |  x   |  x   |  x   | 
+<!-- | sim(x,y) | A(y) | Implicator Gaines | Implicator Goedel | Implicator KD | Implicator Reichenbach | Implicator Luk | -->
+<!-- |------|------|------|------|------|------|------| -->
+<!-- | 0.8   |  0.0   |  0.0  |  0.0  |  0.2   |  0.2   |  0.2  | -->
+<!-- |  x   |  x   |  x   |  x   |  x   |  x   |  x   | -->
 
 where x, y are two data instances; A(y) means if the instance y has the same class as X and returns 0.0 or 1.0. 
 
@@ -118,7 +120,7 @@ If you use this library in your research, please cite it as follows:
 **BibTeX** (for LaTeX users):
 ```bibtex
 @software{Mehran_Amiri_FRutils_2025,
-  author = {Mehran_Amiri},
+  author = {Amiri, Mehran},
   title = {FRutils},
   url = {https://github.com/mehi64/FRutils},
   version = {0.0.1},

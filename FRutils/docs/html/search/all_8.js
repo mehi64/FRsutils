@@ -9,5 +9,6 @@ var searchData=
   ['implicator_5ftesting_5fdata_6',['implicator_testing_data',['../classsyntetic__data__for__tests_1_1syntetic__dataset__factory.html#a79f4d0eaa3ba4166383def804cb0398b',1,'syntetic_data_for_tests::syntetic_dataset_factory']]],
   ['implicators_2epy_7',['implicators.py',['../implicators_8py.html',1,'']]],
   ['itfrs_8',['ITFRS',['../class_f_rutils_1_1core_1_1models_1_1itfrs_1_1_i_t_f_r_s.html',1,'FRutils::core::models::itfrs']]],
-  ['itfrs_2epy_9',['itfrs.py',['../itfrs_8py.html',1,'']]]
+  ['itfrs_2epy_9',['itfrs.py',['../itfrs_8py.html',1,'']]],
+  ['itfrs_5ftesting_5fdataset_10',['ITFRS_testing_dataset',['../classsyntetic__data__for__tests_1_1syntetic__dataset__factory.html#a428cec5a50e05e738e6344c9e1a9a41c',1,'syntetic_data_for_tests::syntetic_dataset_factory']]]
 ];

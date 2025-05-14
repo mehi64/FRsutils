@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['boundary_5fregion_0',['boundary_region',['../class_f_rutils_1_1core_1_1approximations_1_1_fuzzy_rough_model.html#a725199b046194c15f95d66d99b85ade4',1,'FRutils::core::approximations::FuzzyRoughModel']]]
+  ['compute_5fsimilarity_5fmatrix_0',['compute_similarity_matrix',['../namespace_f_rutils_1_1core_1_1similarities.html#ad398590ee28dac3aeb84db2d02092811',1,'FRutils::core::similarities']]]
 ];

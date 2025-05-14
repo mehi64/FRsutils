@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['owafrs_0',['OWAFRS',['../class_f_rutils_1_1core_1_1models_1_1owafrs_1_1_o_w_a_f_r_s.html',1,'FRutils::core::models::owafrs']]],
-  ['owafrs_2epy_1',['owafrs.py',['../owafrs_8py.html',1,'']]]
+  ['norms_0',['t-norms',['../F:/Personal_Files/FRutils/FRutils/core/tests/experimental_test.py#autotoc_md0',1,'']]]
 ];
