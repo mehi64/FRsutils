@@ -20,8 +20,6 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 - T-norms
   - min tnorm
   - product tnorm
-- OWAFRS (Ordered Weighted Average Fuzzy-Rough Sets) 
-- VQRS (Vaguely Quantified Rough Sets)
 - ITFRS (Implicator/T-norm Fuzzy-Rough Sets)
 
 ## Notes
@@ -102,6 +100,8 @@ These are two ways:
 
 ## TODO:
 - Add tests for tnorms with non-binary masks
+- Implemene and debug OWAFRS (Ordered Weighted Average Fuzzy-Rough Sets) 
+- Implemene and debug VQRS (Vaguely Quantified Rough Sets)
 
 ## License
 
