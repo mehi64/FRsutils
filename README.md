@@ -1,6 +1,6 @@
 <img src="images/logo/logo4.png" alt="FRutils Logo" width="250"/>
 
-# Fuzzy-Rough utilities (Under development)
+# Fuzzy-Rough set utilities (Under development)
 
 A basic Python library needed for fuzzy rough set calculations e.g.:
 
@@ -116,7 +116,7 @@ This project is licensed under the AGPL-3.0 License. See the [LICENSE](./LICENSE
 If you use this library in your research, please cite it as follows:
 
 **APA** :  
-> Mehran Amiri. (*2025*). *FRutils* (Version 0.0.1) [Computer software]. https://github.com/mehi64/FRutils
+> Mehran Amiri. (*2025*). *FRsutils* (Version 0.0.1) [Computer software]. https://github.com/mehi64/FRutils
 
 **BibTeX** (for LaTeX users):
 ```bibtex
