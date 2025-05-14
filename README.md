@@ -7,6 +7,7 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 - lower approximation
 - upper approximation
 - positive region
+- boundry region
 
 ## Algorithgms and containings
 
@@ -101,6 +102,11 @@ These are two ways:
 
 ## TODO:
 - Add tests for tnorms with non-binary masks
+
+## License
+
+This project is licensed under the AGPL-3.0 License. See the [LICENSE](./LICENSE) file for details.
+
 
 ## How to Cite us in your research papers
 
