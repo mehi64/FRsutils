@@ -1,4 +1,4 @@
-<img src="logo4.png" alt="FRutils Logo" width="250"/>
+<img src="images/logo/logo4.png" alt="FRutils Logo" width="250"/>
 
 # Fuzzy-Rough utilities (Under development)
 
@@ -32,11 +32,14 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 ## Some technical information to remember
 ### In ITFRS
 #### lower approximation for each instance: 
-<img src="lower.JPG" alt="lower aaproximation" width="250"/>
+<img src="images/ITFRS/lower.JPG" alt="lower aaproximation" width="250"/>
 
 #### upper approximation for each instance:
-<img src="upper.JPG" alt="lower aaproximation" width="250"/>
+<img src="images/ITFRS/upper.JPG" alt="upper aproximation" width="250"/>
 
+#### Since for the calculations of lower approximation, we calculate Inf which is basically a minimum, to exclude the same instance from calculations we don’t need anything because the main diagonal is set to 1.0 which is ignored by min operator. To be sure all is correct, inside code, we set main diagonal to 1.0
+
+#### Since for the calculations of upper approximation, we calculate sup which is basically a maximum, to exclude the same instance from calculations we need to set the main diagonal to 0.0 which is ignored by max operator. Otherwise all upper approxamations will be 1.0.
 
 
 ### tnorms
