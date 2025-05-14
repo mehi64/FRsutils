@@ -35,11 +35,11 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../mode
 
 import itfrs
 import test_itfrs as ti
-# ti.test_itfrs_approximations_reichenbach_imp_product_tnorm()
+ti.test_itfrs_approximations_reichenbach_imp_product_tnorm()
 # ti.test_itfrs_approximations_KD_imp_product_tnorm()
 # ti.test_itfrs_approximations_Luk_imp_product_tnorm()
 # ti.test_itfrs_approximations_Goedel_imp_product_tnorm()
-ti.test_itfrs_approximations_Gaines_imp_product_tnorm()
+# ti.test_itfrs_approximations_Gaines_imp_product_tnorm()
 
 
 

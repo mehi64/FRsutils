@@ -15,6 +15,7 @@ import implicators as imp
 def test_itfrs_approximations_reichenbach_imp_product_tnorm():
     data_dict = sds.syntetic_dataset_factory().ITFRS_testing_dataset()
     expected_lowerBound = data_dict["Reichenbach_lowerBound"]
+    expected_upperBound = data_dict["prod_tn_upperBound"]
     sim_matrix = data_dict["sim_matrix"]
     y = data_dict["y"]
 
@@ -29,6 +30,9 @@ def test_itfrs_approximations_reichenbach_imp_product_tnorm():
 
     closeness_LB = np.isclose(lower, expected_lowerBound)
     assert np.all(closeness_LB), "outputs are not the expected values"
+
+    closeness_UB = np.isclose(upper, expected_upperBound)
+    assert np.all(closeness_UB), "outputs are not the expected values"
 
 
 def test_itfrs_approximations_KD_imp_product_tnorm():

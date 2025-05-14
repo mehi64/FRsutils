@@ -160,12 +160,17 @@ class syntetic_dataset_factory:
         Goedel_lowerBound = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
         Gaines_lowerBound = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
 
+        prod_tn_upperBound = np.array([0.54, 0.54, 0.73, 0.29, 0.73])
+        min_tn_upperBound = np.array([0.54, 0.54, 0.73, 0.29, 0.73])
+
         data_dict = {"y" : y,
                      "sim_matrix" : sim_matrix,
                      "Reichenbach_lowerBound" : Reichenbach_lowerBound,
                      "KD_lowerBound" : KD_lowerBound,
                      "Luk_lowerBound" : Luk_lowerBound,
                      "Goedel_lowerBound" : Goedel_lowerBound,
-                     "Gaines_lowerBound" : Gaines_lowerBound
+                     "Gaines_lowerBound" : Gaines_lowerBound,
+                     "prod_tn_upperBound" : prod_tn_upperBound,
+                     "min_tn_upperBound" : min_tn_upperBound
                     }
         return data_dict
