@@ -43,8 +43,21 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 - works on 1D vectors (for aggregating the values to a scalar in similarity calculations)
 - works on nxnx2 maps for fast calculations
 - min tnorm and product tnorm will act the same if one of the input parameters takes the binary values; So, no matter which one you use, they provide the same reults
+
+
+### Implicators
+- Since in this library, A(y) in implicators--if instance x has the same class of instance y, is used, therefore different implicators boil down to the same thing:
+  - Goedel and Gaines produce the same results
+  - KD, Reichenbach and Luk also produce the same results
 - implicators work on scalar but can be vectorized with np.vectorize()
 - implicators do not generate the same values for these (0,0) , (1,0) , (0,1) , (1,1). Their behavior is different. Do not draw a general conclusion on them.
+
+
+<img src="images/implicators/Luk.png" alt="Luk" width="250"/>
+<img src="images/implicators/Goedel.png" alt="Goedel" width="250"/>
+<img src="images/implicators/KD.png" alt="KD" width="250"/>
+<img src="images/implicators/Reichenbach.png" alt="Reichenbach" width="250"/>
+<img src="images/implicators/Gaines.png" alt="Gaines" width="250"/>
 
 | sim(x,y) | A(y) | Implicator Gaines | Implicator Goedel | Implicator KD | Implicator Reichenbach | Implicator Luk |
 |------|------|------|------|------|------|------|
