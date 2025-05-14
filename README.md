@@ -45,6 +45,14 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 - min tnorm and product tnorm will act the same if one of the input parameters takes the binary values; So, no matter which one you use, they provide the same reults
 
 
+
+<img src="images/tnorms/min_tnorm.png" alt="min_tnorm" width="500"/>
+
+------
+
+<img src="images/tnorms/product_tnorm.png" alt="product_tnorm" width="500"/>
+
+------
 ### Implicators
 - Since in this library, A(y) in implicators--if instance x has the same class of instance y, is used, therefore different implicators boil down to the same thing:
   - Goedel and Gaines produce the same results
