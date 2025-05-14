@@ -54,10 +54,15 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 
 
 <img src="images/implicators/Luk.png" alt="Luk" width="500"/>
+---
 <img src="images/implicators/Goedel.png" alt="Goedel" width="500"/>
+---
 <img src="images/implicators/KD.png" alt="KD" width="500"/>
+---
 <img src="images/implicators/Reichenbach.png" alt="Reichenbach" width="500"/>
+---
 <img src="images/implicators/Gaines.png" alt="Gaines" width="500"/>
+---
 
 | sim(x,y) | A(y) | Implicator Gaines | Implicator Goedel | Implicator KD | Implicator Reichenbach | Implicator Luk |
 |------|------|------|------|------|------|------|
