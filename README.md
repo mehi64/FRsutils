@@ -71,9 +71,9 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 
 
 ### OWA weights
-- OWA weights are used for softening strict operators: inf and sup. They are a set of weights ordered in ascending or descending based on the use. they are shown by W={w1, w2,...wn} and they are multiplied by  vector V{v1,v2,...vn}. Assume V is always ordered in dissending order, namely v1 is the max and vn is the min.
-  - For inf calculations, which is basically a minimum, higher values of W will be multiplied by lower values of V. This means W is ordered as ascending order; Namely w1 is the smallest value and wn is the biggest value in vector W. Then, OWA(W,V) = w1.v1 + w2.v2 + ... wn.vn
-  - For sup calculations, which is basically a maximum, higher values of W will be multiplied by higher values of V. This means W is ordered as decending order; Namely w1 is the biggest value and wn is the smallest value in vector W. Then, OWA(W,V) = w1.v1 + w2.v2 + ... wn.vn
+OWA weights are used for softening strict operators: inf and sup. They are a set of weights ordered in ascending or descending based on the use. they are shown by W={w1, w2,...wn} and they are multiplied by  vector V{v1,v2,...vn}. Assume V is always ordered in dissending order, namely v1 is the max and vn is the min.
+- For inf calculations, which is basically a minimum, higher values of W will be multiplied by lower values of V. This means W is ordered as ascending order; Namely w1 is the smallest value and wn is the biggest value in vector W. Then, OWA(W,V) = w1.v1 + w2.v2 + ... wn.vn
+- For sup calculations, which is basically a maximum, higher values of W will be multiplied by higher values of V. This means W is ordered as decending order; Namely w1 is the biggest value and wn is the smallest value in vector W. Then, OWA(W,V) = w1.v1 + w2.v2 + ... wn.vn
 
 ### tnorms
 - works on 1D vectors (for aggregating the values to a scalar in similarity calculations)
