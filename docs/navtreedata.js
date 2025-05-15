@@ -24,7 +24,7 @@
 */
 var NAVTREE =
 [
-  [ "FRutils", "index.html", [
+  [ "FRsūtil̲s", "index.html", [
     [ "Files", "files.html", [
       [ "File List", "files.html", "files_dup" ],
       [ "File Members", "globals.html", [

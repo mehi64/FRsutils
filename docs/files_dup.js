@@ -1,4 +1,4 @@
 var files_dup =
 [
-    [ "FRutils", "dir_05669306cd03c9e6f78e6e420b86d7a4.html", "dir_05669306cd03c9e6f78e6e420b86d7a4" ]
+    [ "FRsutils", "dir_bdaac124a1676610f812fc7b3f5d0bf1.html", "dir_bdaac124a1676610f812fc7b3f5d0bf1" ]
 ];
