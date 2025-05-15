@@ -14,6 +14,16 @@ def test_linear_similarity():
     assert similarities._linear_similarity_scalar(0.3, 0.5) == 0.8
     assert similarities._linear_similarity_scalar(0.73, 0.91) == 0.82
 
+def test_Gaussian_similarity():
+    assert similarities._gaussian_similarity_scalar(1.0, 1.0, 0.25) == 1.0
+    assert similarities._gaussian_similarity_scalar(0.0, 0.0, 0.25) == 1.0
+    val = similarities._gaussian_similarity_scalar(0.0, 1.0, 0.25)
+    assert np.isclose(val, 0.00033546262790)
+    val = similarities._gaussian_similarity_scalar(0.3, 0.5, 0.25)
+    assert np.isclose(val, 0.72614903707369)
+    val =  similarities._gaussian_similarity_scalar(0.73, 0.91, 0.25)
+    assert np.isclose(val, 0.771668673874526157)
+
 def test_compute_feature_similarities_linear():
     x1 = np.array([0.1, 0.2])
     x2 = np.array([0.3, 0.8])

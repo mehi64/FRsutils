@@ -19,6 +19,9 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 
 ## Algorithgms and containings
 
+- Similarities
+  - Linear
+  - Gaussian
 - Implicators
   - Gaines
   - Goedel

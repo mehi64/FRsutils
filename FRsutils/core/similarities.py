@@ -11,6 +11,7 @@ All similarity functions assume values are in the normalized range [0.0, 1.0].
 Functions
 ---------
 - linear_similarity: Basic similarity measure based on inverse distance.
+- Gaussian_similarity: Basic similarity measure based on Gaussian distribution.
 - compute_feature_similarities: Applies a similarity function elementwise on two vectors.
 - aggregate_similarities: Aggregates an array of similarity scores into a single scalar.
 - compute_similarity_matrix: Computes a full NxN similarity matrix from a dataset.
@@ -43,6 +44,42 @@ def _linear_similarity_scalar(v1: float, v2: float) -> float:
         If either input or the output is outside the [0.0, 1.0] range.
     """
     sim = max(0.0, 1.0 - abs(v1 - v2))
+    if not ((0.0 <= v1 <= 1.0) and (0.0 <= v2 <= 1.0) and (0.0 <= sim <= 1.0)):
+        raise ValueError("inputs/outputs must be in [0.0, 1.0].")
+    return sim
+
+def _gaussian_similarity_scalar(v1: float, v2: float, sigma: float) -> float:
+    """
+    Compute Gaussian similarity between two scalar values using the formula:
+    `exp(-([v1-v2]^2) / (2.0 * sigma^2))`
+
+    Parameters
+    ----------
+    v1 : float
+        First input value in the range [0.0, 1.0].
+    v2 : float
+        Second input value in the range [0.0, 1.0].
+    sigma: float
+        sigma in gaussian calculations (STD)
+
+    Returns
+    -------
+    float
+        Similarity score in the range [0.0, 1.0].
+
+    Raises
+    ------
+    ValueError
+        If either input or the output is outside the [0.0, 1.0] range.
+    """
+    # TODO: Check this condition mathematically 
+    if (sigma > 0.5):
+        raise ValueError("sigma cannot be more than 0.5 in gaussian similarity")
+    if (sigma <= 0.0):
+        raise ValueError("sigma cannot be 0.0 or negative in gaussian similarity")
+
+    diff = v1 - v2
+    sim = np.exp(-(diff * diff) / (2.0 * sigma * sigma))
     if not ((0.0 <= v1 <= 1.0) and (0.0 <= v2 <= 1.0) and (0.0 <= sim <= 1.0)):
         raise ValueError("inputs/outputs must be in [0.0, 1.0].")
     return sim
