@@ -8,9 +8,15 @@ goto root of the project containing (FRsutils, images, tests, etc.)
 
 python -m build
 
+NOTICE:
+TO TEST INSTALLATION LOCALLY:
+
+pip install .
+check if the library is importable and working. Then remove it with command
+pip uninstall FRsutils
 
 
-
+Upload to PyPi
 twine upload dist/*
 I have a file with my token
 
