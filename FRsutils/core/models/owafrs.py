@@ -7,7 +7,7 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-import owa_weights
+import owa_weights as owa_weights
 from approximations import FuzzyRoughModel
 import numpy as np
 

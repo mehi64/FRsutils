@@ -31,7 +31,10 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 - T-norms
   - min tnorm
   - product tnorm
+- OWA weights (Ordered Weighted Average)
+  - Linear
 - ITFRS (Implicator/T-norm Fuzzy-Rough Sets)
+- OWAFRS (Ordered Weighted Average Fuzzy-Rough Sets) 
 
 ## Notes
 - All functions expect to get normalized scalar of normalized numpy arrays.
@@ -64,7 +67,13 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 
 #### Since for the calculations of upper approximation, we calculate soft sup which is basically a product, to exclude the same instance from calculations we need to set the main diagonal to 0.0 which is ignored by max operator. Otherwise all upper approxamations will be 1.0.
 
-#### In ITFRS, POS(x) = ????????????????????????
+#### In OWAFRS, POS(x) = ????????????????????????
+
+
+### OWA weights
+- OWA weights are used for softening strict operators: inf and sup. They are a set of weights ordered in ascending or descending based on the use. they are shown by W={w1, w2,...wn} and they are multiplied by  vector V{v1,v2,...vn}. Assume V is always ordered in dissending order, namely v1 is the max and vn is the min.
+  - For inf calculations, which is basically a minimum, higher values of W will be multiplied by lower values of V. This means W is ordered as ascending order; Namely w1 is the smallest value and wn is the biggest value in vector W. Then, OWA(W,V) = w1.v1 + w2.v2 + ... wn.vn
+  - For sup calculations, which is basically a maximum, higher values of W will be multiplied by higher values of V. This means W is ordered as decending order; Namely w1 is the biggest value and wn is the smallest value in vector W. Then, OWA(W,V) = w1.v1 + w2.v2 + ... wn.vn
 
 ### tnorms
 - works on 1D vectors (for aggregating the values to a scalar in similarity calculations)
@@ -126,7 +135,6 @@ These are two ways:
 
 ## TODO:
 - Add tests for tnorms with non-binary masks
-- Implemene and debug OWAFRS (Ordered Weighted Average Fuzzy-Rough Sets) 
 - Implemene and debug VQRS (Vaguely Quantified Rough Sets)
 
 ## License
