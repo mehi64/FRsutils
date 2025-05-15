@@ -1,4 +1,8 @@
-# frutil/models/__init__.py
-from owafrs import OWAFRS
-from vqrs import VQRS
-from itfrs import ITFRS
+
+# This lets users write:
+# from frsutils.core.models import ITFRS
+
+from .itfrs import ITFRS
+
+
+__all__ = ['ITFRS']

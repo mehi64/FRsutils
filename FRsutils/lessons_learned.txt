@@ -1,7 +1,25 @@
-tnorms
-works on vectors
-works on nxnx2 maps for fast calculations
-min tnorm and product tnorm will act the same if one of the input parameters takes the binary values.
-
 implicators work on scalar but can be vectorized with np.vectorize()
+
+
+build project:
+pip install build twine
+
+goto root of the project containing (FRsutils, images, tests, etc.)
+
+python -m build
+
+
+
+
+twine upload dist/*
+I have a file with my token
+
+
+Installation and remove from PyPi
+pip install FRsutils
+
+pip uninstall Frsutils
+
+
+
 

@@ -1,10 +1,8 @@
-# frutil/__init__.py
+# This is the core submodule
+# This lets users do:
+# from frsutils.core import tnorms, similarities, itfrs
 
-import sys
-import os
+from . import tnorms, implicators, similarities
+from .models import itfrs
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '/models')))
-
-import approximations, similarities, tnorms, implicators
-from models import owafrs, vqrs, itfrs
+__all__ = ['tnorms', 'implicators', 'similarities', 'itfrs']

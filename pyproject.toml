@@ -4,9 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "FRsutils"
-version = "0.0.1"
+version = "0.0.2"
 description = "A Python library for fuzzy-rough set utility functions."
-authors = [{ name = "Mehran Amiri", email = "mehran.amiri.ac@gmail.com" }]
+authors = [{ name = "Mehran Amiri", email = "meam64@gmail.com" }]
 readme = "README.md"
 license = {text = " AGPL-3.0"}
 keywords = ["fuzzy-rough sets", "mathematics", "data science"]
