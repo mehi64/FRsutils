@@ -27,22 +27,35 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../FRsu
 # timp.test_kd_implicator_outputs()
 # timp.test_reichenbach_implicator_outputs()
 ######################################################################
-# similarities
-import similarities
-import test_similarities as ts
-ts.test_compute_similarity_matrix_with_linear_similarity_product_tnorm()
-ts.test_compute_similarity_matrix_with_linear_similarity_minimum_tnorm()
+# # similarities
+# import similarities
+# import test_similarities as ts
+# ts.test_compute_similarity_matrix_with_linear_similarity_product_tnorm()
+# ts.test_compute_similarity_matrix_with_linear_similarity_minimum_tnorm()
 
-ts.test_Gaussian_similarity()
+# ts.test_Gaussian_similarity()
 
-import itfrs
-import test_itfrs as ti
-ti.test_itfrs_approximations_reichenbach_imp_product_tnorm()
+##################################################################
+# # itfrs
+# import itfrs
+# import test_itfrs as ti
+# ti.test_itfrs_approximations_reichenbach_imp_product_tnorm()
 # ti.test_itfrs_approximations_KD_imp_product_tnorm()
 # ti.test_itfrs_approximations_Luk_imp_product_tnorm()
 # ti.test_itfrs_approximations_Goedel_imp_product_tnorm()
 # ti.test_itfrs_approximations_Gaines_imp_product_tnorm()
 
+##################################################################
+# # # owa_weights
+# import owa_weights as ow
+
+# ow._owa_suprimum_weights_linear(5)
+
+##################################################################
+# owafrs
+import owafrs
+import test_owafrs as to
+to.test_owafrs_approximations_reichenbach_imp_product_tnorm()
 
 
 
