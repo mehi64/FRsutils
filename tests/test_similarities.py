@@ -67,6 +67,20 @@ def test_compute_similarity_matrix_with_linear_similarity_minimum_tnorm():
     closeness = np.isclose(sim_matrix, expected)
     assert np.all(closeness), "outputs are not the expected values"
 
+def test_compute_similarity_matrix_with_Gaussian_similarity_product_tnorm():
+    dsm = sds.syntetic_dataset_factory()
+    data_dict = dsm.similarity_testing_dataset()
+    X = data_dict["X"]
+    # expected = data_dict["sim_matrix_with_linear_similarity_minimum_tnorm"]
+
+    sim_matrix = similarities.compute_similarity_matrix(X, sim_func=similarities._gaussian_similarity_scalar, agg_func=tn.tn_product, sigma=0.3)
+    # assert sim_matrix.shape == (5, 5), "dimension mismatch"
+    # assert (0.0 <= sim_matrix).all() and (sim_matrix <= 1.0).all(), "similarity matrix values are not normalized"
+    # closeness = np.isclose(sim_matrix, expected)
+    # assert np.all(closeness), "outputs are not the expected values"
+    print(1)
+
+
 
 # def test_compute_instance_similarities_basic():
 #     X = np.array([

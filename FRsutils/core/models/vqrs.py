@@ -28,3 +28,29 @@ class VQRS(FuzzyRoughModel):
     def upper_approximation(self):
         raise NotImplementedError
         return (self.similarity_matrix >= self.beta).astype(float).max(axis=1)
+    def vqrs_upper_approximation(universe, fuzzy_set, partition, alpha=0.3, beta=0.7):
+        pass
+    # """
+    #     Compute vaguely quantified rough set upper approximation.
+
+    #     Parameters:
+    #     - universe: list of elements
+    #     - fuzzy_set: dict or array, fuzzy membership for each element in universe
+    #     - partition: list of lists or sets, representing granules/blocks
+    #     - alpha, beta: quantifier parameters
+
+    #     Returns:
+    #     - List of degrees (one per block in partition)
+    #     """
+    #     Q = lambda p: fuzzy_quantifier_quad(np.array([p]), alpha, beta)[0]
+    #     degrees = []
+
+    #     for block in partition:
+    #         block_indices = [universe.index(e) for e in block]
+    #         block_membership_sum = sum(fuzzy_set[i] for i in block_indices)
+    #         block_size = len(block)
+    #         proportion = block_membership_sum / block_size
+    #         degree = Q(proportion)
+    #         degrees.append(degree)
+
+    #     return degrees

@@ -84,7 +84,7 @@ def _gaussian_similarity_scalar(v1: float, v2: float, sigma: float) -> float:
         raise ValueError("inputs/outputs must be in [0.0, 1.0].")
     return sim
 
-def _compute_feature_similarities(x1: np.ndarray, x2: np.ndarray, sim_func) -> np.ndarray:
+def _compute_feature_similarities(x1: np.ndarray, x2: np.ndarray, sim_func, *args, **kwargs) -> np.ndarray:
     """
     Compute the similarity between two feature vectors using the provided similarity function.
 
@@ -102,7 +102,7 @@ def _compute_feature_similarities(x1: np.ndarray, x2: np.ndarray, sim_func) -> n
     np.ndarray
         1D array of similarity scores between each pair of corresponding features.
     """
-    fs = np.vectorize(sim_func)(x1, x2)
+    fs = np.array([sim_func(v1, v2, *args, **kwargs) for v1, v2 in zip(x1, x2)])
     return fs
 
 def _aggregate_similarities(similarities: np.ndarray, agg_tnorm) -> float:
@@ -131,7 +131,7 @@ def _aggregate_similarities(similarities: np.ndarray, agg_tnorm) -> float:
     agg = agg_tnorm(similarities)
     return agg
 
-def compute_similarity_matrix(X: np.ndarray, sim_func, agg_func) -> np.ndarray:
+def compute_similarity_matrix(X: np.ndarray, sim_func, agg_func, *args, **kwargs) -> np.ndarray:
     """
     Compute a pairwise similarity matrix for all instances in a dataset.
 
@@ -154,7 +154,7 @@ def compute_similarity_matrix(X: np.ndarray, sim_func, agg_func) -> np.ndarray:
     for i in range(n):
         sims = np.array([
             _aggregate_similarities(
-                _compute_feature_similarities(X[i], X[j], sim_func),
+                _compute_feature_similarities(X[i], X[j], sim_func, *args, **kwargs),
                 agg_func
             ) for j in range(n)
         ])

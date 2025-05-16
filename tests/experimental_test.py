@@ -27,13 +27,14 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../FRsu
 # timp.test_kd_implicator_outputs()
 # timp.test_reichenbach_implicator_outputs()
 ######################################################################
-# # similarities
-# import similarities
-# import test_similarities as ts
+# similarities
+import similarities
+import test_similarities as ts
 # ts.test_compute_similarity_matrix_with_linear_similarity_product_tnorm()
 # ts.test_compute_similarity_matrix_with_linear_similarity_minimum_tnorm()
 
-# ts.test_Gaussian_similarity()
+ts.test_Gaussian_similarity()
+ts.test_compute_similarity_matrix_with_Gaussian_similarity_product_tnorm()
 
 ##################################################################
 # # itfrs
