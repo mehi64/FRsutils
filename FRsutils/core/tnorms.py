@@ -1,48 +1,48 @@
-# frutil/tnorms.py
 """
-Collection of common T-norm functions.
+T-norm System
+
+Provides an extensible and optimized framework to compute T-norms (using
+function-call wrappers).
+
+@author: Mehran Amiri
 """
+
 import numpy as np
+from abc import ABC, abstractmethod
+from typing import Callable
 
-def tn_minimum(values: np.ndarray):
+
+# ------------------------------------------------------------------------------
+# T-Norm Function Wrapper
+# ------------------------------------------------------------------------------
+
+class TNorm:
     """
-    Computes the minimum T-norm of the input array.
+    Wrapper for T-norm operations that allows parameterized calls.
 
-    If the input is a 1D array, returns the minimum value.
-    If the input is a 3D array of shape (n, n, 2), computes the element-wise
-    minimum along the last axis (between [:, :, 0] and [:, :, 1]), which is
-    useful for vectorized similarity calculations.
-
-    @param values: A scalar or a NumPy array that is either:
-        - scalar
-        - 3-dimensional numpy array: shape (n, n, 2)
-    @return: The minimum value(s) computed as described above.
-    @throws ValueError: If the input is not a 1D or 3D NumPy array.
+    @param func: A function that takes two ndarrays and optional kwargs
+    @param kwargs: Optional keyword arguments passed to the function
     """
-    if(values.ndim == 1):
-        return np.min(values)
-    elif(values.ndim == 3):
-        return np.min(values, axis=-1)
-    raise ValueError("Input must be a 1-dimensional or 3-dimensional numpy array.")
-    
-def tn_product(values: np.ndarray):
-    """
-    Computes the product T-norm of the input array.
+    def __init__(self, func: Callable, **kwargs):
+        self.func = func
+        self.kwargs = kwargs
 
-    If the input is a 1D array, returns the product of all elements.
-    If the input is a 3D array of shape (n, n, 2), computes the element-wise
-    product along the last axis (between [:, :, 0] and [:, :, 1]), which is
-    useful for vectorized similarity calculations.
+    def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
+        return self.func(a, b, **self.kwargs)
 
-    @param values: A scalar or a NumPy array that is either:
-        - scalar
-        - 3-dimensional numpy array: shape (n, n, 2)
-    @return: The product value(s) computed as described above.
-    @throws ValueError: If the input is not a 1D or 3D NumPy array.
-    """
-    if(values.ndim == 1):
-        return np.prod(values)
-    elif(values.ndim == 3):
-        return np.prod(values, axis=-1)
-    raise ValueError("Input must be a 1-dimensional or 3-dimensional numpy array.")
 
+# ------------------------------------------------------------------------------
+# Common T-norm Functions
+# ------------------------------------------------------------------------------
+
+def tnorm_min(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    return np.minimum(a, b)
+
+def tnorm_product(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    return a * b
+
+def tnorm_lukasiewicz(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    return np.maximum(0.0, a + b - 1.0)
+
+def tnorm_yager(a: np.ndarray, b: np.ndarray, p: float = 2.0) -> np.ndarray:
+    return 1.0 - np.minimum(1.0, ((1 - a) ** p + (1 - b) ** p) ** (1 / p))

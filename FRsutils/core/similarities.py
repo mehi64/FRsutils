@@ -1,187 +1,82 @@
 """
-frutil.similarities
-====================
+Similarity System
 
-This module provides functions for computing similarities between normalized feature vectors and generating
-similarity matrices. It is useful in fuzzy-rough set-based machine learning, clustering, and other
-similarity-based computations.
+Provides an extensible and optimized framework to compute similarity matrices
+with pluggable similarity functions (using inheritance)
 
-All similarity functions assume values are in the normalized range [0.0, 1.0].
-
-Functions
----------
-- linear_similarity: Basic similarity measure based on inverse distance.
-- Gaussian_similarity: Basic similarity measure based on Gaussian distribution.
-- compute_feature_similarities: Applies a similarity function elementwise on two vectors.
-- aggregate_similarities: Aggregates an array of similarity scores into a single scalar.
-- compute_similarity_matrix: Computes a full NxN similarity matrix from a dataset.
-- compute_instance_similarities: Computes similarity scores between a single instance and a dataset.
+@author: Mehran Amiri
 """
 
 import numpy as np
+from abc import ABC, abstractmethod
+from typing import Callable
 
+# ------------------------------------------------------------------------------
+# Similarity Function Base & Implementations
+# ------------------------------------------------------------------------------
 
-def _linear_similarity_scalar(v1: float, v2: float) -> float:
+class SimilarityFunction(ABC):
     """
-    Compute linear similarity between two scalar values using the formula:
-    `max(0, 1 - |v1 - v2|)`
-
-    Parameters
-    ----------
-    v1 : float
-        First input value in the range [0.0, 1.0].
-    v2 : float
-        Second input value in the range [0.0, 1.0].
-
-    Returns
-    -------
-    float
-        Similarity score in the range [0.0, 1.0].
-
-    Raises
-    ------
-    ValueError
-        If either input or the output is outside the [0.0, 1.0] range.
+    Abstract base class for scalar similarity functions.
     """
-    sim = max(0.0, 1.0 - abs(v1 - v2))
-    if not ((0.0 <= v1 <= 1.0) and (0.0 <= v2 <= 1.0) and (0.0 <= sim <= 1.0)):
-        raise ValueError("inputs/outputs must be in [0.0, 1.0].")
-    return sim
+    @abstractmethod
+    def compute(self, diff: np.ndarray) -> np.ndarray:
+        pass
 
-def _gaussian_similarity_scalar(v1: float, v2: float, sigma: float) -> float:
+    def __call__(self, diff: np.ndarray) -> np.ndarray:
+        return self.compute(diff)
+
+
+class LinearSimilarity(SimilarityFunction):
     """
-    Compute Gaussian similarity between two scalar values using the formula:
-    `exp(-([v1-v2]^2) / (2.0 * sigma^2))`
-
-    Parameters
-    ----------
-    v1 : float
-        First input value in the range [0.0, 1.0].
-    v2 : float
-        Second input value in the range [0.0, 1.0].
-    sigma: float
-        sigma in gaussian calculations (STD)
-
-    Returns
-    -------
-    float
-        Similarity score in the range [0.0, 1.0].
-
-    Raises
-    ------
-    ValueError
-        If either input or the output is outside the [0.0, 1.0] range.
+    Linear similarity: sim = max(0, 1 - |v1 - v2|)
     """
-    # TODO: Check this condition mathematically 
-    if (sigma > 0.5):
-        raise ValueError("sigma cannot be more than 0.5 in gaussian similarity")
-    if (sigma <= 0.0):
-        raise ValueError("sigma cannot be 0.0 or negative in gaussian similarity")
+    def compute(self, diff: np.ndarray) -> np.ndarray:
+        return np.maximum(0.0, 1.0 - np.abs(diff))
 
-    diff = v1 - v2
-    sim = np.exp(-(diff * diff) / (2.0 * sigma * sigma))
-    if not ((0.0 <= v1 <= 1.0) and (0.0 <= v2 <= 1.0) and (0.0 <= sim <= 1.0)):
-        raise ValueError("inputs/outputs must be in [0.0, 1.0].")
-    return sim
 
-def _compute_feature_similarities(x1: np.ndarray, x2: np.ndarray, sim_func, *args, **kwargs) -> np.ndarray:
+class GaussianSimilarity(SimilarityFunction):
     """
-    Compute the similarity between two feature vectors using the provided similarity function.
+    Gaussian similarity: sim = exp(-diff^2 / (2 * sigma^2))
 
-    Parameters
-    ----------
-    x1 : np.ndarray
-        First feature vector (1D array).
-    x2 : np.ndarray
-        Second feature vector (1D array), must be same length as x1.
-    sim_func : Callable[[float, float], float]
-        Similarity function to apply to each pair of feature values.
-
-    Returns
-    -------
-    np.ndarray
-        1D array of similarity scores between each pair of corresponding features.
+    @param sigma: Standard deviation for the Gaussian kernel (must be > 0)
     """
-    fs = np.array([sim_func(v1, v2, *args, **kwargs) for v1, v2 in zip(x1, x2)])
-    return fs
+    def __init__(self, sigma: float = 0.1):
+        if not (0 < sigma <= 0.5):
+            raise ValueError("sigma must be in the range (0, 0.5]")
+        self.sigma = sigma
 
-def _aggregate_similarities(similarities: np.ndarray, agg_tnorm) -> float:
+    def compute(self, diff: np.ndarray) -> np.ndarray:
+        return np.exp(-(diff ** 2) / (2.0 * self.sigma ** 2))
+
+
+
+# ------------------------------------------------------------------------------
+# Similarity Matrix Computation
+# ------------------------------------------------------------------------------
+
+def calculate_similarity_matrix(
+    X: np.ndarray,
+    similarity_func: SimilarityFunction,
+    tnorm: Callable[[np.ndarray, np.ndarray], np.ndarray]
+) -> np.ndarray:
     """
-    Aggregate a set of similarity scores into a single value using the provided aggregation tnorm.
+    Compute the pairwise similarity matrix for samples using a vectorized
+    similarity function and T-norm operator.
 
-    Parameters
-    ----------
-    similarities : np.ndarray
-        Array of similarity scores in the range [0.0, 1.0].
-    agg_tnorm : Callable[[np.ndarray], float]
-        Aggregation tnorm.
-
-    Returns
-    -------
-    float
-        Aggregated similarity score.
-
-    Raises
-    ------
-    ValueError
-        If any similarity value is outside the range [0.0, 1.0].
+    @param X: Normalized input matrix of shape (n_samples, n_features)
+    @param similarity_func: Instance of SimilarityFunction subclass
+    @param tnorm: Callable T-norm function (e.g., min, product, Yager)
+    @return: Similarity matrix of shape (n_samples, n_samples)
     """
-    if not ((0.0 <= similarities).all() and (similarities <= 1.0).all()):
-        raise ValueError("All similarities must be in the range [0.0, 1.0].")
-    agg = agg_tnorm(similarities)
-    return agg
+    n_samples, n_features = X.shape
+    sim_matrix = np.ones((n_samples, n_samples), dtype=np.float64)
 
-def compute_similarity_matrix(X: np.ndarray, sim_func, agg_func, *args, **kwargs) -> np.ndarray:
-    """
-    Compute a pairwise similarity matrix for all instances in a dataset.
+    for k in range(n_features):
+        col = X[:, k].reshape(-1, 1)  # Shape (n, 1)
+        diff = col - col.T            # Shape (n, n)
+        sim_k = similarity_func(diff) # Compute similarity
+        sim_matrix = tnorm(sim_matrix, sim_k)  # Apply T-norm
 
-    Parameters
-    ----------
-    X : np.ndarray
-        A 2D array of shape (n_samples, n_features).
-    sim_func : Callable[[float, float], float]
-        Similarity function to apply to feature pairs.
-    agg_func : Callable[[np.ndarray], float]
-        Aggregation function for reducing feature similarities to instance similarity.
-
-    Returns
-    -------
-    np.ndarray
-        A 2D similarity matrix of shape (n_samples, n_samples).
-    """
-    n = X.shape[0]
-    sim_matrix = np.zeros((n, n))
-    for i in range(n):
-        sims = np.array([
-            _aggregate_similarities(
-                _compute_feature_similarities(X[i], X[j], sim_func, *args, **kwargs),
-                agg_func
-            ) for j in range(n)
-        ])
-        sim_matrix[i, :] = sims
+    np.fill_diagonal(sim_matrix, 1.0)
     return sim_matrix
-
-# def compute_instance_similarities(instance: np.ndarray, X: np.ndarray, sim_func, agg_func) -> np.ndarray:
-#     """
-#     Compute similarity scores between a single instance and all instances in a dataset.
-
-#     Parameters
-#     ----------
-#     instance : np.ndarray
-#         A 1D array representing a single instance (feature vector).
-#     X : np.ndarray
-#         A 2D array of shape (n_samples, n_features) representing the dataset.
-#     sim_func : Callable[[float, float], float]
-#         Similarity function for individual features.
-#     agg_func : Callable[[np.ndarray], float]
-#         Aggregation function for reducing feature-level similarities.
-
-#     Returns
-#     -------
-#     np.ndarray
-#         1D array of similarity scores between the instance and each sample in X.
-#     """
-#     return np.array([
-#         aggregate_similarities(compute_feature_similarities(instance, other, sim_func), agg_func)
-#         for other in X
-#     ])
