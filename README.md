@@ -134,7 +134,6 @@ These are two ways:
 - If you want to run tests in debug mode, find and run the file experimental_tests.py (Make sure all functions in test files are called in this file. Maybe some are forgotten)
 
 ## Technical decisions justification
-- TNorms class provides a wrapper for T-norm operations that allows parameterized calls. It works by function-call. That is faster than inheritance for small logic like tnorms. New tnorms can be added eaily even if they have different input parameters.
 - 
 
 ## TODO:

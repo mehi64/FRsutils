@@ -1,5 +1,5 @@
 """
-Similarity System
+Similarities
 
 Provides an extensible and optimized framework to compute similarity matrices
 with pluggable similarity functions (using inheritance)
