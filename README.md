@@ -2,7 +2,7 @@
 
 # Installation
 
-- $pip install frsutils
+``` $pip install frsutils```
 
 - Requirements
   - Python
@@ -133,6 +133,10 @@ These are two ways:
 - use pytest and it finds and runs all tests
 - If you want to run tests in debug mode, find and run the file experimental_tests.py (Make sure all functions in test files are called in this file. Maybe some are forgotten)
 
+## Technical decisions justification
+- 
+
+
 ## TODO:
 - Add tests for tnorms with non-binary masks
 - Implemene and debug VQRS (Vaguely Quantified Rough Sets)
@@ -158,3 +162,6 @@ If you use this library in your research, please cite it as follows:
   version = {0.0.1},
   year = {2025}
 }
+
+
+
