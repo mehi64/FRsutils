@@ -11,6 +11,7 @@ import numpy as np
 from abc import ABC, abstractmethod
 from typing import Callable
 
+
 # ------------------------------------------------------------------------------
 # Similarity Function Base & Implementations
 # ------------------------------------------------------------------------------
@@ -48,8 +49,6 @@ class GaussianSimilarity(SimilarityFunction):
 
     def compute(self, diff: np.ndarray) -> np.ndarray:
         return np.exp(-(diff ** 2) / (2.0 * self.sigma ** 2))
-
-
 
 # ------------------------------------------------------------------------------
 # Similarity Matrix Computation

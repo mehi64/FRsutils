@@ -134,8 +134,8 @@ These are two ways:
 - If you want to run tests in debug mode, find and run the file experimental_tests.py (Make sure all functions in test files are called in this file. Maybe some are forgotten)
 
 ## Technical decisions justification
+- TNorms class provides a wrapper for T-norm operations that allows parameterized calls. It works by function-call. That is faster than inheritance for small logic like tnorms. New tnorms can be added eaily even if they have different input parameters.
 - 
-
 
 ## TODO:
 - Add tests for tnorms with non-binary masks
@@ -161,7 +161,6 @@ If you use this library in your research, please cite it as follows:
   url = {https://github.com/mehi64/FRsutils},
   version = {0.0.1},
   year = {2025}
-}
-
+}```
 
 

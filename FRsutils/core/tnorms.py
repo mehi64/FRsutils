@@ -11,11 +11,9 @@ import numpy as np
 from abc import ABC, abstractmethod
 from typing import Callable
 
-
 # ------------------------------------------------------------------------------
 # T-Norm Function Wrapper
 # ------------------------------------------------------------------------------
-
 class TNorm:
     """
     Wrapper for T-norm operations that allows parameterized calls.
@@ -45,4 +43,4 @@ def tnorm_lukasiewicz(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     return np.maximum(0.0, a + b - 1.0)
 
 def tnorm_yager(a: np.ndarray, b: np.ndarray, p: float = 2.0) -> np.ndarray:
-    return 1.0 - np.minimum(1.0, ((1 - a) ** p + (1 - b) ** p) ** (1 / p))
+    return 1.0 - np.minimum(1.0, ((1 - a) ** p + (1 - b) ** p) ** (1.0 / p))

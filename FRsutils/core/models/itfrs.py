@@ -9,12 +9,13 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 
 from approximations import FuzzyRoughModel
-from tnorms import tn_product
-from implicators import imp_goedel
+import tnorms
+import implicators
 import numpy as np
+import similarities
 
 class ITFRS(FuzzyRoughModel):
-    def __init__(self, similarity_matrix: np.ndarray, labels: np.ndarray, tnorm, implicator):
+    def __init__(self, similarity_matrix: np.ndarray, labels: np.ndarray, tnorm: tnorms.TNorm, implicator):
         super().__init__(similarity_matrix, labels)
         self.tnorm = tnorm
         self.implicator = np.vectorize(implicator)
