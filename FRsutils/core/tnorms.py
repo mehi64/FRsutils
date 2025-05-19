@@ -31,7 +31,7 @@ class TNorm(ABC):
         Reduce a single array using the T-norm.
 
         @param arr: Array of shape (n_samples, n_samples).
-        @return: Reduced value for each row/column.
+        @return: Reduced value for each row/column on axis=1.
         """
         pass
 
@@ -45,7 +45,7 @@ class MinTNorm(TNorm):
         return np.minimum(a, b)
 
     def reduce(self, arr: np.ndarray) -> np.ndarray:
-        return np.min(arr, axis=1)
+        return np.min(arr, axis=0)
 
 
 class ProductTNorm(TNorm):
@@ -57,7 +57,8 @@ class ProductTNorm(TNorm):
         return a * b
 
     def reduce(self, arr: np.ndarray) -> np.ndarray:
-        return np.prod(arr, axis=1)
+        return np.prod(arr, axis=0)
+
 
 
 class LukasiewiczTNorm(TNorm):
@@ -69,28 +70,32 @@ class LukasiewiczTNorm(TNorm):
         return np.maximum(0.0, a + b - 1.0)
 
     def reduce(self, arr: np.ndarray) -> np.ndarray:
-        return np.maximum(0.0, np.sum(arr, axis=1) - (arr.shape[1] - 1))
+        result = arr[0]
+        for x in arr[1:]:
+            result = max(0.0, result + x - 1.0)
+        return result
 
 
-class YagerTNorm(TNorm):
-    """
-    Yager T-norm: 1 - min(1, [(1 - a)^p + (1 - b)^p]^(1/p))
+# TODO: uncomment and test this TNorm
+# class YagerTNorm(TNorm):
+#     """
+#     Yager T-norm: 1 - min(1, [(1 - a)^p + (1 - b)^p]^(1/p))
 
-    @param p: The exponent parameter (default: 2.0)
-    """
+#     @param p: The exponent parameter (default: 2.0)
+#     """
 
-    def __init__(self, p: float = 2.0):
-        self.p = p
+#     def __init__(self, p: float = 2.0):
+#         self.p = p
 
-    def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
-        return 1.0 - np.minimum(
-            1.0, ((1.0 - a) ** self.p + (1.0 - b) ** self.p) ** (1.0 / self.p)
-        )
+#     def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
+#         return 1.0 - np.minimum(
+#             1.0, ((1.0 - a) ** self.p + (1.0 - b) ** self.p) ** (1.0 / self.p)
+#         )
 
-    def reduce(self, arr: np.ndarray) -> np.ndarray:
-        return 1.0 - np.minimum(
-            1.0, np.sum((1.0 - arr) ** self.p, axis=1) ** (1.0 / self.p)
-        )
+#     def reduce(self, arr: np.ndarray) -> np.ndarray:
+#         return 1.0 - np.minimum(
+#             1.0, np.sum((1.0 - arr) ** self.p, axis=0) ** (1.0 / self.p)
+#         )
 
 # example usage
 # tnorm = YagerTNorm(p=3.0)

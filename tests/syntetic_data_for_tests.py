@@ -58,7 +58,7 @@ class syntetic_dataset_factory:
         data_dict = {"a_b" : a_b,
                      "minimum_outputs" : minimum_outputs,
                      "product_outputs": product_outputs
-                    #  ,"luk_outputs" : luk_outputs
+                     ,"luk_outputs" : luk_outputs
                      }
         return data_dict
     
@@ -86,8 +86,6 @@ class syntetic_dataset_factory:
             [0.0, 0.0, 1.0, 0.0, 1.0]
         ])
 
-        nxnx2_map = np.stack([similarity_matrix, label_mask], axis=-1)
-
         minimum_outputs = np.array([
             [1.0,     0.2673,  0.0,     0.1197,  0.0],
             [0.2673,  1.0,     0.0,     0.1624,  0.0],
@@ -102,12 +100,20 @@ class syntetic_dataset_factory:
             [0.1197,  0.1624,  0.0,     1.0,     0.0],
             [0.0,     0.0,     0.53217, 0.0,     1.0]
         ])
-        luk_outputs = np.array([np.nan, np.nan, np.nan, np.nan, np.nan, np.nan])
 
-        data_dict = {"nxnx2_map" : nxnx2_map,
+        luk_outputs = np.array([
+            [1.0,	    0.2673, 0.0,	0.1197,	0.0],
+            [0.2673,	1.0,	0.0,	0.1624,	0.0],
+            [0.0,	    0.0,	1.0,	0.0,	0.53217],
+            [0.1197,	0.1624,	0.0,	1.0,	0.0],
+            [0.0,	    0.0,	0.53217,0.0,	1.0]
+        ])
+
+        data_dict = {"similarity_matrix" : similarity_matrix,
+                     "label_mask" : label_mask,
                      "minimum_outputs" : minimum_outputs,
                      "product_outputs": product_outputs
-                    #  ,"luk_outputs" : luk_outputs
+                     ,"luk_outputs" : luk_outputs
                      }
         return data_dict
     
