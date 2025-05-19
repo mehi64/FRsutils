@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['tnorms_2epy_0',['tnorms.py',['../tnorms_8py.html',1,'']]]
+  ['similarities_2epy_0',['similarities.py',['../similarities_8py.html',1,'']]]
 ];

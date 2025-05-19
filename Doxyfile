@@ -1,7 +1,7 @@
 # Doxyfile 1.9.x config for Python documentation generation
 
 # Project settings
-PROJECT_NAME           = "FRsutils"
+PROJECT_NAME           = "FRsūtil̲s"
 PROJECT_BRIEF          = "A fuzzy-rough reasoning utilities library"
 OUTPUT_DIRECTORY       = docs
 OUTPUT_LANGUAGE        = English
@@ -55,3 +55,6 @@ WARN_IF_UNDOCUMENTED   = YES
 
 # Customization
 ALIASES                = "docstring=\verbatim" "\endverbatim"
+
+
+PROJECT_LOGO = "images/logo/logo4_small.png"
