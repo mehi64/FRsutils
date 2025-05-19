@@ -14,19 +14,19 @@
             "justMyCode": true,
             "env": {
                 "PYTHONPATH": "${workspaceFolder}/FRsutils/core:${workspaceFolder}/tests"
-            },
-            "cwd": "${workspaceFolder}"
+            }
+            // ,"cwd": "${workspaceFolder}"
         }
         ,{
             "name": "Python: run_tests_debug_mode",
             "type": "debugpy",
             "request": "launch",
-            "module": "run_tests_debug_mode",
+            "module": "tests.run_tests_debug_mode",
             "justMyCode": true,
             "env": {
-                "PYTHONPATH": "${workspaceFolder}/FRsutils/core:${workspaceFolder}/tests"
-            },
-            "cwd": "${workspaceFolder}"
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+            ,"cwd": "${workspaceFolder}"
         }
         // ,{
         //     "name": "Python: test_tnorms",
