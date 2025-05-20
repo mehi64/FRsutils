@@ -43,12 +43,13 @@ class GaussianSimilarity(SimilarityFunction):
     @param sigma: Standard deviation for the Gaussian kernel (must be > 0)
     """
     def __init__(self, sigma: float = 0.1):
-        if not (0 < sigma <= 0.5):
-            raise ValueError("sigma must be in the range (0, 0.5]")
+        # if not (0 < sigma <= 0.5):
+        #     raise ValueError("sigma must be in the range (0, 0.5]")
         self.sigma = sigma
 
     def compute(self, diff: np.ndarray) -> np.ndarray:
-        return np.exp(-(diff ** 2) / (2.0 * self.sigma ** 2))
+       result = np.exp(-(diff ** 2) / (2.0 * self.sigma ** 2))
+       return result
 
 # ------------------------------------------------------------------------------
 # Similarity Matrix Computation

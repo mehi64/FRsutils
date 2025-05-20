@@ -142,9 +142,46 @@ class syntetic_dataset_factory:
             [0.10, 0.20, 0.73, 0.74, 1.00]
         ])
 
+        sim_matrix_with_linear_similarity_luk_tnorm = np.array([
+            [1.00,	0.00,	0.03,	0.00,	0.05],
+            [0.00,	1.00,	0.00,	0.00,	0.00],
+            [0.03,	0.00,	1.00,	0.07,	0.44],
+            [0.00,	0.00,	0.07,	1.00,	0.45],
+            [0.05,	0.00,	0.44,	0.45,	1.00]
+        ])
+
+        sim_matrix_with_Gaussian_similarity_product_tnorm = np.array([
+            [1.0000,	0.6235,	0.6014,	0.4365,	0.4049],
+            [0.6235,	1.0,	0.3059,	0.4935,	0.2932],
+            [0.6014,	0.3059,	1.0,	0.6964,	0.8759],
+            [0.4365,	0.4935,	0.6964,	1.0,	0.8791],
+            [0.4049,	0.2932,	0.8759,	0.8791,	1.0]
+        ])
+
+        sim_matrix_with_Gaussian_similarity_minimum_tnorm = np.array([
+            [1.,     0.79,   0.6427, 0.4815, 0.4057],
+            [0.79,   1.,     0.6246, 0.5704, 0.4902],
+            [0.6427, 0.6246, 1.,     0.7981, 0.922 ],
+            [0.4815, 0.5704, 0.7981, 1.,     0.9275],
+            [0.4057, 0.4902, 0.922,  0.9275, 1.    ]
+        ])
+
+        sim_matrix_with_Gaussian_similarity_luk_tnorm = np.array([
+            [1.0000,	0.5770,	0.5775,	0.3862,	0.4038],
+            [0.5770,	1.0000,	0.0256,	0.4314,	0.0371],
+            [0.5775,	0.0256,	1.0000,	0.6673,	0.8715],
+            [0.3862,	0.4314,	0.6673,	1.0000,	0.8749],
+            [0.4038,	0.0371,	0.8715,	0.8749,	1.0000]
+        ])
+
         data_dict = {"X" : X,
                      "sim_matrix_with_linear_similarity_product_tnorm" : sim_matrix_with_linear_similarity_product_tnorm,
-                     "sim_matrix_with_linear_similarity_minimum_tnorm" : sim_matrix_with_linear_similarity_minimum_tnorm
+                     "sim_matrix_with_linear_similarity_minimum_tnorm" : sim_matrix_with_linear_similarity_minimum_tnorm,
+                     "sim_matrix_with_linear_similarity_luk_tnorm" : sim_matrix_with_linear_similarity_luk_tnorm,
+                     "sim_matrix_with_Gaussian_similarity_product_tnorm" : sim_matrix_with_Gaussian_similarity_product_tnorm,
+                     "sim_matrix_with_Gaussian_similarity_minimum_tnorm" : sim_matrix_with_Gaussian_similarity_minimum_tnorm,
+                     "sim_matrix_with_Gaussian_similarity_luk_tnorm" : sim_matrix_with_Gaussian_similarity_luk_tnorm,
+                     "sigma_for_Gaussian" : 0.67
                     }
         return data_dict
     

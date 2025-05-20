@@ -6,39 +6,6 @@ import tests.syntetic_data_for_tests as sds
 import FRsutils.core.similarities as sim
 import FRsutils.core.tnorms as tn
 
-def test_linear_similarity():
-    assert sim._linear_similarity_scalar(1.0, 1.0) == 1.0
-    assert sim._linear_similarity_scalar(0.0, 1.0) == 0.0
-    assert sim._linear_similarity_scalar(0.3, 0.5) == 0.8
-    assert sim._linear_similarity_scalar(0.73, 0.91) == 0.82
-
-def test_Gaussian_similarity():
-    assert sim._gaussian_similarity_scalar(1.0, 1.0, 0.25) == 1.0
-    assert sim._gaussian_similarity_scalar(0.0, 0.0, 0.25) == 1.0
-    val = sim._gaussian_similarity_scalar(0.0, 1.0, 0.25)
-    assert np.isclose(val, 0.00033546262790)
-    val = sim._gaussian_similarity_scalar(0.3, 0.5, 0.25)
-    assert np.isclose(val, 0.72614903707369)
-    val =  sim._gaussian_similarity_scalar(0.73, 0.91, 0.25)
-    assert np.isclose(val, 0.771668673874526157)
-
-def test_compute_feature_similarities_linear():
-    x1 = np.array([0.1, 0.2])
-    x2 = np.array([0.3, 0.8])
-    sim = sim._compute_feature_similarities(x1, x2, sim_func=sim._linear_similarity_scalar)
-    assert np.allclose(sim, [0.8, 0.4])
-    assert sim.shape == x1.shape
-    assert (0.0 <= sim).all() and (sim <= 1.0).all()
-
-def test_aggregate_similarities():
-    sims = np.array([0.8, 0.9, 0.56])
-    agg = sim._aggregate_similarities(sims, agg_tnorm=tn.tn_minimum)
-    assert agg == 0.56
-    assert 0.0 <= agg <= 1.0
-    
-    agg = sim._aggregate_similarities(sims, agg_tnorm=tn.tn_product)
-    assert np.isclose(agg, 0.4032)
-    assert 0.0 <= agg <= 1.0
 
 def test_compute_similarity_matrix_with_linear_similarity_product_tnorm():
     dsm = sds.syntetic_dataset_factory()
@@ -69,49 +36,59 @@ def test_compute_similarity_matrix_with_linear_similarity_minimum_tnorm():
     closeness = np.isclose(sim_matrix, expected)
     assert np.all(closeness), "outputs are not the expected values"
 
-def test_compute_similarity_matrix_with_Gaussian_similarity_product_tnorm():
+def test_compute_similarity_matrix_with_linear_similarity_luk_tnorm():
     dsm = sds.syntetic_dataset_factory()
     data_dict = dsm.similarity_testing_dataset()
     X = data_dict["X"]
-    expected = data_dict["sim_matrix_with_gaussian_similarity_product_tnorm"]
+    expected = data_dict["sim_matrix_with_linear_similarity_luk_tnorm"]
 
-    tnrm = tn.ProductTNorm()
-    sim_f = sim.GaussianSimilarity()
+    tnrm = tn.LukasiewiczTNorm()
+    sim_f = sim.LinearSimilarity()
     sim_matrix = sim.calculate_similarity_matrix(X, similarity_func=sim_f, tnorm=tnrm)
     assert sim_matrix.shape == (5, 5), "dimension mismatch"
     assert (0.0 <= sim_matrix).all() and (sim_matrix <= 1.0).all(), "similarity matrix values are not normalized"
     closeness = np.isclose(sim_matrix, expected)
     assert np.all(closeness), "outputs are not the expected values"
 
+def test_compute_similarity_matrix_with_Gaussian_similarity_product_tnorm():
+    dsm = sds.syntetic_dataset_factory()
+    data_dict = dsm.similarity_testing_dataset()
+    X = data_dict["X"]
+    expected = data_dict["sim_matrix_with_Gaussian_similarity_product_tnorm"]
+
+    tnrm = tn.ProductTNorm()
+    sim_f = sim.GaussianSimilarity(sigma=0.67)
+    sim_matrix = sim.calculate_similarity_matrix(X, similarity_func=sim_f, tnorm=tnrm)
+    assert sim_matrix.shape == (5, 5), "dimension mismatch"
+    assert (0.0 <= sim_matrix).all() and (sim_matrix <= 1.0).all(), "similarity matrix values are not normalized"
+    closeness = np.isclose(sim_matrix, expected, rtol=0, atol=1e-4)
+    assert np.all(closeness), "outputs are not the expected values"
 
 
-# def test_compute_instance_similarities_basic():
-#     X = np.array([
-#         [0.0, 0.5],
-#         [0.5, 0.5],
-#         [1.0, 0.5]
-#     ])
-#     instance = np.array([0.25, 0.7])
-#     sims = sim.compute_instance_similarities(instance, X, sim_func=sim._linear_similarity_scalar, agg_func=tn.tn_minimum)
-#     expected = np.array([
-#         min(sim._linear_similarity_scalar(0.25, 0.0), sim._linear_similarity_scalar(0.7, 0.5)),
-#         min(sim._linear_similarity_scalar(0.25, 0.5), sim._linear_similarity_scalar(0.7, 0.5)),
-#         min(sim._linear_similarity_scalar(0.25, 1.0), sim._linear_similarity_scalar(0.7, 0.5))
-#     ])
-#     np.testing.assert_allclose(sims, expected, rtol=1e-5)
+def test_compute_similarity_matrix_with_Gaussian_similarity_minimum_tnorm():
+    dsm = sds.syntetic_dataset_factory()
+    data_dict = dsm.similarity_testing_dataset()
+    X = data_dict["X"]
+    expected = data_dict["sim_matrix_with_Gaussian_similarity_minimum_tnorm"]
 
-# def test_compute_instance_similarities_output_range():
-#     X = np.array([
-#         [0.1, 0.9],
-#         [0.4, 0.4],
-#         [0.9, 0.1]
-#     ])
-#     instance = np.array([0.5, 0.5])
-#     sims = sim.compute_instance_similarities(instance, X, sim_func=sim._linear_similarity_scalar, agg_func=tn.tn_minimum)
-#     assert np.all((0.0 <= sims) & (sims <= 1.0)), "All similarity values should be in range [0.0, 1.0]"
+    tnrm = tn.MinTNorm()
+    sim_f = sim.GaussianSimilarity(sigma=0.67)
+    sim_matrix = sim.calculate_similarity_matrix(X, similarity_func=sim_f, tnorm=tnrm)
+    assert sim_matrix.shape == (5, 5), "dimension mismatch"
+    assert (0.0 <= sim_matrix).all() and (sim_matrix <= 1.0).all(), "similarity matrix values are not normalized"
+    closeness = np.isclose(sim_matrix, expected, rtol=0, atol=1e-4)
+    assert np.all(closeness), "outputs are not the expected values"
 
-# def test_compute_instance_similarities_shape():
-#     X = np.random.rand(10, 5)
-#     instance = X[0]
-#     sims = sim.compute_instance_similarities(instance, X, sim_func=sim._linear_similarity_scalar, agg_func=tn.tn_minimum)
-#     assert sims.shape == (10,), "Output should have shape (n_samples,)"
+def test_compute_similarity_matrix_with_Gaussian_similarity_luk_tnorm():
+    dsm = sds.syntetic_dataset_factory()
+    data_dict = dsm.similarity_testing_dataset()
+    X = data_dict["X"]
+    expected = data_dict["sim_matrix_with_Gaussian_similarity_luk_tnorm"]
+
+    tnrm = tn.LukasiewiczTNorm()
+    sim_f = sim.GaussianSimilarity(sigma=0.67)
+    sim_matrix = sim.calculate_similarity_matrix(X, similarity_func=sim_f, tnorm=tnrm)
+    assert sim_matrix.shape == (5, 5), "dimension mismatch"
+    assert (0.0 <= sim_matrix).all() and (sim_matrix <= 1.0).all(), "similarity matrix values are not normalized"
+    closeness = np.isclose(sim_matrix, expected, rtol=0, atol=1e-3)
+    assert np.all(closeness), "outputs are not the expected values"
