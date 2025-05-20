@@ -164,8 +164,8 @@ Data Fields</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="similarities_8py_source.html#l00045">45</a> of file <a class="el" href="similarities_8py_source.html">similarities.py</a>.</p>
 <div class="fragment"><div class="line"><span class="lineno">   45</span>    <span class="keyword">def </span>__init__(self, sigma: float = 0.1):</div>
-<div class="line"><span class="lineno">   46</span>        <span class="keywordflow">if</span> <span class="keywordflow">not</span> (0 &lt; sigma &lt;= 0.5):</div>
-<div class="line"><span class="lineno">   47</span>            <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;sigma must be in the range (0, 0.5]&quot;</span>)</div>
+<div class="line"><span class="lineno">   46</span>        <span class="comment"># if not (0 &lt; sigma &lt;= 0.5):</span></div>
+<div class="line"><span class="lineno">   47</span>        <span class="comment">#     raise ValueError(&quot;sigma must be in the range (0, 0.5]&quot;)</span></div>
 <div class="line"><span class="lineno">   48</span>        self.sigma = sigma</div>
 <div class="line"><span class="lineno">   49</span> </div>
 </div><!-- fragment -->
@@ -195,12 +195,13 @@ Data Fields</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="similarities_8py_source.html#l00050">50</a> of file <a class="el" href="similarities_8py_source.html">similarities.py</a>.</p>
 <div class="fragment"><div class="line"><span class="lineno">   50</span>    <span class="keyword">def </span>compute(self, diff: np.ndarray) -&gt; np.ndarray:</div>
-<div class="line"><span class="lineno">   51</span>        <span class="keywordflow">return</span> np.exp(-(diff ** 2) / (2.0 * self.sigma ** 2))</div>
-<div class="line"><span class="lineno">   52</span> </div>
-<div class="line"><span class="lineno">   53</span><span class="comment"># ------------------------------------------------------------------------------</span></div>
-<div class="line"><span class="lineno">   54</span><span class="comment"># Similarity Matrix Computation</span></div>
-<div class="line"><span class="lineno">   55</span><span class="comment"># ------------------------------------------------------------------------------</span></div>
-<div class="line"><span class="lineno">   56</span> </div>
+<div class="line"><span class="lineno">   51</span>       result = np.exp(-(diff ** 2) / (2.0 * self.sigma ** 2))</div>
+<div class="line"><span class="lineno">   52</span>       <span class="keywordflow">return</span> result</div>
+<div class="line"><span class="lineno">   53</span> </div>
+<div class="line"><span class="lineno">   54</span><span class="comment"># ------------------------------------------------------------------------------</span></div>
+<div class="line"><span class="lineno">   55</span><span class="comment"># Similarity Matrix Computation</span></div>
+<div class="line"><span class="lineno">   56</span><span class="comment"># ------------------------------------------------------------------------------</span></div>
+<div class="line"><span class="lineno">   57</span> </div>
 </div><!-- fragment -->
 <p class="reference">References <a class="el" href="similarities_8py_source.html#l00048">sigma</a>.</p>
 

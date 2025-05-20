@@ -15,5 +15,6 @@ var searchData=
   ['frsutils_3a_3autils_12',['utils',['../namespacefrsutils_1_1utils.html',1,'frsutils']]],
   ['frsutils_3a_3autils_3a_3aplot_5ffuzzy_5fquantifiers_13',['plot_fuzzy_quantifiers',['../namespacefrsutils_1_1utils_1_1plot__fuzzy__quantifiers.html',1,'frsutils::utils']]],
   ['frsutils_3a_3autils_3a_3aplot_5fimplicators_14',['plot_implicators',['../namespacefrsutils_1_1utils_1_1plot__implicators.html',1,'frsutils::utils']]],
-  ['frsutils_3a_3autils_3a_3aplot_5ftnorms_15',['plot_tnorms',['../namespacefrsutils_1_1utils_1_1plot__tnorms.html',1,'frsutils::utils']]]
+  ['frsutils_3a_3autils_3a_3aplot_5ftnorms_15',['plot_tnorms',['../namespacefrsutils_1_1utils_1_1plot__tnorms.html',1,'frsutils::utils']]],
+  ['frsutils_3a_3autils_3a_3asnippet_16',['snippet',['../namespacefrsutils_1_1utils_1_1snippet.html',1,'frsutils::utils']]]
 ];

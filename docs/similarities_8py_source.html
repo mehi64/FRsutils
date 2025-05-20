@@ -164,47 +164,48 @@ $(function(){initNavTree('similarities_8py_source.html',''); initResizable(true)
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="stringliteral">    &quot;&quot;&quot;</span></div>
 <div class="foldopen" id="foldopen00045" data-start="" data-end="">
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno"><a class="line" href="classfrsutils_1_1core_1_1similarities_1_1_gaussian_similarity.html#a6b34e8e5d7ff8ab4d6aeec89a23de9a8">   45</a></span>    <span class="keyword">def </span><a class="code hl_function" href="classfrsutils_1_1core_1_1similarities_1_1_gaussian_similarity.html#a6b34e8e5d7ff8ab4d6aeec89a23de9a8">__init__</a>(self, sigma: float = 0.1):</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <span class="keywordflow">if</span> <span class="keywordflow">not</span> (0 &lt; sigma &lt;= 0.5):</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>            <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;sigma must be in the range (0, 0.5]&quot;</span>)</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <span class="comment"># if not (0 &lt; sigma &lt;= 0.5):</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        <span class="comment">#     raise ValueError(&quot;sigma must be in the range (0, 0.5]&quot;)</span></div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="classfrsutils_1_1core_1_1similarities_1_1_gaussian_similarity.html#ac0b7b95adf5d9918144897dffdf1bc86">   48</a></span>        self.<a class="code hl_variable" href="classfrsutils_1_1core_1_1similarities_1_1_gaussian_similarity.html#ac0b7b95adf5d9918144897dffdf1bc86">sigma</a> = sigma</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
 </div>
 <div class="foldopen" id="foldopen00050" data-start="" data-end="">
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="classfrsutils_1_1core_1_1similarities_1_1_gaussian_similarity.html#aa61ac9ead3da45eaf2ce608f5689c899">   50</a></span>    <span class="keyword">def </span><a class="code hl_function" href="classfrsutils_1_1core_1_1similarities_1_1_gaussian_similarity.html#aa61ac9ead3da45eaf2ce608f5689c899">compute</a>(self, diff: np.ndarray) -&gt; np.ndarray:</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        <span class="keywordflow">return</span> np.exp(-(diff ** 2) / (2.0 * self.<a class="code hl_variable" href="classfrsutils_1_1core_1_1similarities_1_1_gaussian_similarity.html#ac0b7b95adf5d9918144897dffdf1bc86">sigma</a> ** 2))</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="comment"># ------------------------------------------------------------------------------</span></div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="comment"># Similarity Matrix Computation</span></div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="comment"># ------------------------------------------------------------------------------</span></div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>       result = np.exp(-(diff ** 2) / (2.0 * self.<a class="code hl_variable" href="classfrsutils_1_1core_1_1similarities_1_1_gaussian_similarity.html#ac0b7b95adf5d9918144897dffdf1bc86">sigma</a> ** 2))</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>       <span class="keywordflow">return</span> result</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="comment"># ------------------------------------------------------------------------------</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="comment"># Similarity Matrix Computation</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="comment"># ------------------------------------------------------------------------------</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
 </div>
 </div>
-<div class="foldopen" id="foldopen00057" data-start="" data-end="">
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="namespacefrsutils_1_1core_1_1similarities.html#a2b6286f0c31a639daa53d66209654ad0">   57</a></span><span class="keyword">def </span><a class="code hl_function" href="namespacefrsutils_1_1core_1_1similarities.html#a2b6286f0c31a639daa53d66209654ad0">calculate_similarity_matrix</a>(</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    X: np.ndarray,</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    similarity_func: SimilarityFunction,</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    tnorm: Callable[[np.ndarray, np.ndarray], np.ndarray]</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>) -&gt; np.ndarray:</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <span class="stringliteral">&quot;&quot;&quot;</span></div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="stringliteral">    Compute the pairwise similarity matrix for samples using a vectorized</span></div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="stringliteral">    similarity function and T-norm operator.</span></div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="stringliteral"></span> </div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="stringliteral">    @param X: Normalized input matrix of shape (n_samples, n_features)</span></div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="stringliteral">    @param similarity_func: Instance of SimilarityFunction subclass</span></div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="stringliteral">    @param tnorm: Callable T-norm function (e.g., min, product, Yager)</span></div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="stringliteral">    @return: Similarity matrix of shape (n_samples, n_samples)</span></div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="stringliteral">    &quot;&quot;&quot;</span></div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    n_samples, n_features = X.shape</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    sim_matrix = np.ones((n_samples, n_samples), dtype=np.float64)</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keywordflow">for</span> k <span class="keywordflow">in</span> range(n_features):</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        col = X[:, k].reshape(-1, 1)  <span class="comment"># Shape (n, 1)</span></div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        diff = col - col.T            <span class="comment"># Shape (n, n)</span></div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        sim_k = similarity_func(diff) <span class="comment"># Compute similarity</span></div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        sim_matrix = tnorm(sim_matrix, sim_k)  <span class="comment"># Apply T-norm</span></div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    np.fill_diagonal(sim_matrix, 1.0)</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    <span class="keywordflow">return</span> sim_matrix</div>
+<div class="foldopen" id="foldopen00058" data-start="" data-end="">
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno"><a class="line" href="namespacefrsutils_1_1core_1_1similarities.html#a2b6286f0c31a639daa53d66209654ad0">   58</a></span><span class="keyword">def </span><a class="code hl_function" href="namespacefrsutils_1_1core_1_1similarities.html#a2b6286f0c31a639daa53d66209654ad0">calculate_similarity_matrix</a>(</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    X: np.ndarray,</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    similarity_func: SimilarityFunction,</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    tnorm: Callable[[np.ndarray, np.ndarray], np.ndarray]</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>) -&gt; np.ndarray:</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    <span class="stringliteral">&quot;&quot;&quot;</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="stringliteral">    Compute the pairwise similarity matrix for samples using a vectorized</span></div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="stringliteral">    similarity function and T-norm operator.</span></div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="stringliteral"></span> </div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="stringliteral">    @param X: Normalized input matrix of shape (n_samples, n_features)</span></div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="stringliteral">    @param similarity_func: Instance of SimilarityFunction subclass</span></div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="stringliteral">    @param tnorm: Callable T-norm function (e.g., min, product, Yager)</span></div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="stringliteral">    @return: Similarity matrix of shape (n_samples, n_samples)</span></div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="stringliteral">    &quot;&quot;&quot;</span></div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    n_samples, n_features = X.shape</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    sim_matrix = np.ones((n_samples, n_samples), dtype=np.float64)</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    <span class="keywordflow">for</span> k <span class="keywordflow">in</span> range(n_features):</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        col = X[:, k].reshape(-1, 1)  <span class="comment"># Shape (n, 1)</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        diff = col - col.T            <span class="comment"># Shape (n, n)</span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        sim_k = similarity_func(diff) <span class="comment"># Compute similarity</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        sim_matrix = tnorm(sim_matrix, sim_k)  <span class="comment"># Apply T-norm</span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    np.fill_diagonal(sim_matrix, 1.0)</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="keywordflow">return</span> sim_matrix</div>
 </div>
 <div class="ttc" id="aclassfrsutils_1_1core_1_1similarities_1_1_gaussian_similarity_html"><div class="ttname"><a href="classfrsutils_1_1core_1_1similarities_1_1_gaussian_similarity.html">frsutils.core.similarities.GaussianSimilarity</a></div><div class="ttdef"><b>Definition</b> <a href="#l00039">similarities.py:39</a></div></div>
 <div class="ttc" id="aclassfrsutils_1_1core_1_1similarities_1_1_gaussian_similarity_html_a6b34e8e5d7ff8ab4d6aeec89a23de9a8"><div class="ttname"><a href="classfrsutils_1_1core_1_1similarities_1_1_gaussian_similarity.html#a6b34e8e5d7ff8ab4d6aeec89a23de9a8">frsutils.core.similarities.GaussianSimilarity.__init__</a></div><div class="ttdeci">__init__(self, float sigma=0.1)</div><div class="ttdef"><b>Definition</b> <a href="#l00045">similarities.py:45</a></div></div>
@@ -215,7 +216,7 @@ $(function(){initNavTree('similarities_8py_source.html',''); initResizable(true)
 <div class="ttc" id="aclassfrsutils_1_1core_1_1similarities_1_1_similarity_function_html"><div class="ttname"><a href="classfrsutils_1_1core_1_1similarities_1_1_similarity_function.html">frsutils.core.similarities.SimilarityFunction</a></div><div class="ttdef"><b>Definition</b> <a href="#l00019">similarities.py:19</a></div></div>
 <div class="ttc" id="aclassfrsutils_1_1core_1_1similarities_1_1_similarity_function_html_a2da2bc378b80ca331574b4ca6cb4d4eb"><div class="ttname"><a href="classfrsutils_1_1core_1_1similarities_1_1_similarity_function.html#a2da2bc378b80ca331574b4ca6cb4d4eb">frsutils.core.similarities.SimilarityFunction.compute</a></div><div class="ttdeci">np.ndarray compute(self, np.ndarray diff)</div><div class="ttdef"><b>Definition</b> <a href="#l00024">similarities.py:24</a></div></div>
 <div class="ttc" id="aclassfrsutils_1_1core_1_1similarities_1_1_similarity_function_html_aece52b56284eadd0da20bd06fb98656a"><div class="ttname"><a href="classfrsutils_1_1core_1_1similarities_1_1_similarity_function.html#aece52b56284eadd0da20bd06fb98656a">frsutils.core.similarities.SimilarityFunction.__call__</a></div><div class="ttdeci">np.ndarray __call__(self, np.ndarray diff)</div><div class="ttdef"><b>Definition</b> <a href="#l00027">similarities.py:27</a></div></div>
-<div class="ttc" id="anamespacefrsutils_1_1core_1_1similarities_html_a2b6286f0c31a639daa53d66209654ad0"><div class="ttname"><a href="namespacefrsutils_1_1core_1_1similarities.html#a2b6286f0c31a639daa53d66209654ad0">frsutils.core.similarities.calculate_similarity_matrix</a></div><div class="ttdeci">np.ndarray calculate_similarity_matrix(np.ndarray X, SimilarityFunction similarity_func, Callable[[np.ndarray, np.ndarray], np.ndarray] tnorm)</div><div class="ttdef"><b>Definition</b> <a href="#l00057">similarities.py:61</a></div></div>
+<div class="ttc" id="anamespacefrsutils_1_1core_1_1similarities_html_a2b6286f0c31a639daa53d66209654ad0"><div class="ttname"><a href="namespacefrsutils_1_1core_1_1similarities.html#a2b6286f0c31a639daa53d66209654ad0">frsutils.core.similarities.calculate_similarity_matrix</a></div><div class="ttdeci">np.ndarray calculate_similarity_matrix(np.ndarray X, SimilarityFunction similarity_func, Callable[[np.ndarray, np.ndarray], np.ndarray] tnorm)</div><div class="ttdef"><b>Definition</b> <a href="#l00058">similarities.py:62</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

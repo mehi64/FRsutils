@@ -17,8 +17,9 @@ var searchData=
   ['frsutils_3a_3autils_3a_3aplot_5ffuzzy_5fquantifiers_14',['plot_fuzzy_quantifiers',['../namespacefrsutils_1_1utils_1_1plot__fuzzy__quantifiers.html',1,'frsutils::utils']]],
   ['frsutils_3a_3autils_3a_3aplot_5fimplicators_15',['plot_implicators',['../namespacefrsutils_1_1utils_1_1plot__implicators.html',1,'frsutils::utils']]],
   ['frsutils_3a_3autils_3a_3aplot_5ftnorms_16',['plot_tnorms',['../namespacefrsutils_1_1utils_1_1plot__tnorms.html',1,'frsutils::utils']]],
-  ['fuzzy_5fquantifier1_17',['fuzzy_quantifier1',['../namespacefrsutils_1_1core_1_1fuzzy__quantifiers.html#a9ba2b68e72f6e5401b26dbcd725d1667',1,'frsutils::core::fuzzy_quantifiers']]],
-  ['fuzzy_5fquantifier_5fquad_18',['fuzzy_quantifier_quad',['../namespacefrsutils_1_1core_1_1fuzzy__quantifiers.html#aaf4181ad3fe1494da438997955d3409d',1,'frsutils::core::fuzzy_quantifiers']]],
-  ['fuzzy_5fquantifiers_2epy_19',['fuzzy_quantifiers.py',['../fuzzy__quantifiers_8py.html',1,'']]],
-  ['fuzzyroughmodel_20',['FuzzyRoughModel',['../classfrsutils_1_1core_1_1approximations_1_1_fuzzy_rough_model.html',1,'frsutils::core::approximations']]]
+  ['frsutils_3a_3autils_3a_3asnippet_17',['snippet',['../namespacefrsutils_1_1utils_1_1snippet.html',1,'frsutils::utils']]],
+  ['fuzzy_5fquantifier1_18',['fuzzy_quantifier1',['../namespacefrsutils_1_1core_1_1fuzzy__quantifiers.html#a9ba2b68e72f6e5401b26dbcd725d1667',1,'frsutils::core::fuzzy_quantifiers']]],
+  ['fuzzy_5fquantifier_5fquad_19',['fuzzy_quantifier_quad',['../namespacefrsutils_1_1core_1_1fuzzy__quantifiers.html#aaf4181ad3fe1494da438997955d3409d',1,'frsutils::core::fuzzy_quantifiers']]],
+  ['fuzzy_5fquantifiers_2epy_20',['fuzzy_quantifiers.py',['../fuzzy__quantifiers_8py.html',1,'']]],
+  ['fuzzyroughmodel_21',['FuzzyRoughModel',['../classfrsutils_1_1core_1_1approximations_1_1_fuzzy_rough_model.html',1,'frsutils::core::approximations']]]
 ];

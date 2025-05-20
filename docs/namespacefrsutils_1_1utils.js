@@ -33,5 +33,9 @@ var namespacefrsutils_1_1utils =
       [ "similarity_vals", "namespacefrsutils_1_1utils_1_1plot__tnorms.html#a782f38b11f1ae09dbc329fc4e9ab2cdb", null ],
       [ "simVals", "namespacefrsutils_1_1utils_1_1plot__tnorms.html#adcec95f9e572fdd22a7152f1aa65dd24", null ],
       [ "TNVals", "namespacefrsutils_1_1utils_1_1plot__tnorms.html#ad03b82cd441570a5167132bbfddf0d69", null ]
+    ] ],
+    [ "snippet", "namespacefrsutils_1_1utils_1_1snippet.html", [
+      [ "matrix", "namespacefrsutils_1_1utils_1_1snippet.html#a448ad013778d8d2ce1cc7c3e11a357ce", null ],
+      [ "product_tnorm", "namespacefrsutils_1_1utils_1_1snippet.html#ae7252c1b085cecd52353019889daac6f", null ]
     ] ]
 ];

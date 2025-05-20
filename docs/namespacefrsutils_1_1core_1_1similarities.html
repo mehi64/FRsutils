@@ -165,28 +165,28 @@ similarity function and T-norm operator.
 @param tnorm: Callable T-norm function (e.g., min, product, Yager)
 @return: Similarity matrix of shape (n_samples, n_samples)
 </pre> 
-<p class="definition">Definition at line <a class="el" href="similarities_8py_source.html#l00057">57</a> of file <a class="el" href="similarities_8py_source.html">similarities.py</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   61</span>) -&gt; np.ndarray:</div>
-<div class="line"><span class="lineno">   62</span>    <span class="stringliteral">&quot;&quot;&quot;</span></div>
-<div class="line"><span class="lineno">   63</span><span class="stringliteral">    Compute the pairwise similarity matrix for samples using a vectorized</span></div>
-<div class="line"><span class="lineno">   64</span><span class="stringliteral">    similarity function and T-norm operator.</span></div>
-<div class="line"><span class="lineno">   65</span><span class="stringliteral"></span> </div>
-<div class="line"><span class="lineno">   66</span><span class="stringliteral">    @param X: Normalized input matrix of shape (n_samples, n_features)</span></div>
-<div class="line"><span class="lineno">   67</span><span class="stringliteral">    @param similarity_func: Instance of SimilarityFunction subclass</span></div>
-<div class="line"><span class="lineno">   68</span><span class="stringliteral">    @param tnorm: Callable T-norm function (e.g., min, product, Yager)</span></div>
-<div class="line"><span class="lineno">   69</span><span class="stringliteral">    @return: Similarity matrix of shape (n_samples, n_samples)</span></div>
-<div class="line"><span class="lineno">   70</span><span class="stringliteral">    &quot;&quot;&quot;</span></div>
-<div class="line"><span class="lineno">   71</span>    n_samples, n_features = X.shape</div>
-<div class="line"><span class="lineno">   72</span>    sim_matrix = np.ones((n_samples, n_samples), dtype=np.float64)</div>
-<div class="line"><span class="lineno">   73</span> </div>
-<div class="line"><span class="lineno">   74</span>    <span class="keywordflow">for</span> k <span class="keywordflow">in</span> range(n_features):</div>
-<div class="line"><span class="lineno">   75</span>        col = X[:, k].reshape(-1, 1)  <span class="comment"># Shape (n, 1)</span></div>
-<div class="line"><span class="lineno">   76</span>        diff = col - col.T            <span class="comment"># Shape (n, n)</span></div>
-<div class="line"><span class="lineno">   77</span>        sim_k = similarity_func(diff) <span class="comment"># Compute similarity</span></div>
-<div class="line"><span class="lineno">   78</span>        sim_matrix = tnorm(sim_matrix, sim_k)  <span class="comment"># Apply T-norm</span></div>
-<div class="line"><span class="lineno">   79</span> </div>
-<div class="line"><span class="lineno">   80</span>    np.fill_diagonal(sim_matrix, 1.0)</div>
-<div class="line"><span class="lineno">   81</span>    <span class="keywordflow">return</span> sim_matrix</div>
+<p class="definition">Definition at line <a class="el" href="similarities_8py_source.html#l00058">58</a> of file <a class="el" href="similarities_8py_source.html">similarities.py</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   62</span>) -&gt; np.ndarray:</div>
+<div class="line"><span class="lineno">   63</span>    <span class="stringliteral">&quot;&quot;&quot;</span></div>
+<div class="line"><span class="lineno">   64</span><span class="stringliteral">    Compute the pairwise similarity matrix for samples using a vectorized</span></div>
+<div class="line"><span class="lineno">   65</span><span class="stringliteral">    similarity function and T-norm operator.</span></div>
+<div class="line"><span class="lineno">   66</span><span class="stringliteral"></span> </div>
+<div class="line"><span class="lineno">   67</span><span class="stringliteral">    @param X: Normalized input matrix of shape (n_samples, n_features)</span></div>
+<div class="line"><span class="lineno">   68</span><span class="stringliteral">    @param similarity_func: Instance of SimilarityFunction subclass</span></div>
+<div class="line"><span class="lineno">   69</span><span class="stringliteral">    @param tnorm: Callable T-norm function (e.g., min, product, Yager)</span></div>
+<div class="line"><span class="lineno">   70</span><span class="stringliteral">    @return: Similarity matrix of shape (n_samples, n_samples)</span></div>
+<div class="line"><span class="lineno">   71</span><span class="stringliteral">    &quot;&quot;&quot;</span></div>
+<div class="line"><span class="lineno">   72</span>    n_samples, n_features = X.shape</div>
+<div class="line"><span class="lineno">   73</span>    sim_matrix = np.ones((n_samples, n_samples), dtype=np.float64)</div>
+<div class="line"><span class="lineno">   74</span> </div>
+<div class="line"><span class="lineno">   75</span>    <span class="keywordflow">for</span> k <span class="keywordflow">in</span> range(n_features):</div>
+<div class="line"><span class="lineno">   76</span>        col = X[:, k].reshape(-1, 1)  <span class="comment"># Shape (n, 1)</span></div>
+<div class="line"><span class="lineno">   77</span>        diff = col - col.T            <span class="comment"># Shape (n, n)</span></div>
+<div class="line"><span class="lineno">   78</span>        sim_k = similarity_func(diff) <span class="comment"># Compute similarity</span></div>
+<div class="line"><span class="lineno">   79</span>        sim_matrix = tnorm(sim_matrix, sim_k)  <span class="comment"># Apply T-norm</span></div>
+<div class="line"><span class="lineno">   80</span> </div>
+<div class="line"><span class="lineno">   81</span>    np.fill_diagonal(sim_matrix, 1.0)</div>
+<div class="line"><span class="lineno">   82</span>    <span class="keywordflow">return</span> sim_matrix</div>
 </div><!-- fragment -->
 </div>
 </div>

@@ -5,7 +5,7 @@ var indexSectionsWithContent =
   2: "f",
   3: "_afiopstv",
   4: "_bcfilpruv",
-  5: "_abcfilmnstuxy"
+  5: "_abcfilmnpstuxy"
 };
 
 var indexSectionNames =
