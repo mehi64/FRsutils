@@ -1,18 +1,9 @@
 import numpy as np
 
-import sys
-import os
-import syntetic_data_for_tests as sds
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../FRsutils/core')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../FRsutils/core/models')))
-
-from itfrs import ITFRS
-import tnorms as tn
-import implicators as imp
-from sklearn.datasets import make_classification
-import similarities
-
+import tests.syntetic_data_for_tests as sds
+from FRsutils.core.models.itfrs import ITFRS
+import FRsutils.core.tnorms as tn
+import FRsutils.core.implicators as imp
 
 def test_itfrs_approximations_reichenbach_imp_product_tnorm():
     data_dict = sds.syntetic_dataset_factory().ITFRS_testing_dataset()
@@ -23,16 +14,31 @@ def test_itfrs_approximations_reichenbach_imp_product_tnorm():
 
     tnrm = tn.ProductTNorm()
 
-    #  Generate imbalanced data
-    X, y = make_classification(n_samples=5000, n_features=10, n_informative=2, # Increased sample size
-                               n_redundant=0, n_repeated=0, n_classes=2,
-                               n_clusters_per_class=1, weights=[0.95, 0.05], # More imbalance
-                               class_sep=0.7, random_state=42)
-
-    simil = similarities.GaussianSimilarity(sigma=0.3)
-    sim_matrix = similarities.calculate_similarity_matrix(X,simil, tnrm)
-
     model = ITFRS(sim_matrix, y, tnorm=tnrm, implicator=imp.imp_reichenbach)
+    lower = model.lower_approximation()
+    upper = model.upper_approximation()
+
+    assert lower.shape == (5,)
+    assert upper.shape == (5,)
+    assert np.all((0.0 <= lower) & (lower <= 1.0))
+    assert np.all((0.0 <= upper) & (upper <= 1.0))
+
+    closeness_LB = np.isclose(lower, expected_lowerBound)
+    assert np.all(closeness_LB), "outputs are not similatr to the expected values"
+
+    closeness_UB = np.isclose(upper, expected_upperBound)
+    assert np.all(closeness_UB), "outputs are not similar to the expected values"
+
+def test_itfrs_approximations_KD_imp_product_tnorm():
+    data_dict = sds.syntetic_dataset_factory().ITFRS_testing_dataset()
+    expected_lowerBound = data_dict["KD_lowerBound"]
+    expected_upperBound = data_dict["prod_tn_upperBound"]
+    sim_matrix = data_dict["sim_matrix"]
+    y = data_dict["y"]
+
+    tnrm = tn.ProductTNorm()
+    
+    model = ITFRS(sim_matrix, y, tnorm=tnrm, implicator=imp.imp_kleene_dienes)
     lower = model.lower_approximation()
     upper = model.upper_approximation()
 
@@ -45,34 +51,19 @@ def test_itfrs_approximations_reichenbach_imp_product_tnorm():
     assert np.all(closeness_LB), "outputs are not the expected values"
 
     closeness_UB = np.isclose(upper, expected_upperBound)
-    assert np.all(closeness_UB), "outputs are not the expected values"
+    assert np.all(closeness_UB), "outputs are not similar to the expected values"
 
-
-def test_itfrs_approximations_KD_imp_product_tnorm():
-    data_dict = sds.syntetic_dataset_factory().ITFRS_testing_dataset()
-    expected_lowerBound = data_dict["KD_lowerBound"]
-    sim_matrix = data_dict["sim_matrix"]
-    y = data_dict["y"]
-
-    model = ITFRS(sim_matrix, y, tnorm=tn.tn_product, implicator=imp.imp_kleene_dienes)
-    lower = model.lower_approximation()
-    upper = model.upper_approximation()
-
-    assert lower.shape == (5,)
-    assert upper.shape == (5,)
-    assert np.all((0.0 <= lower) & (lower <= 1.0))
-    assert np.all((0.0 <= upper) & (upper <= 1.0))
-
-    closeness_LB = np.isclose(lower, expected_lowerBound)
-    assert np.all(closeness_LB), "outputs are not the expected values"
 
 def test_itfrs_approximations_Luk_imp_product_tnorm():
     data_dict = sds.syntetic_dataset_factory().ITFRS_testing_dataset()
     expected_lowerBound = data_dict["Luk_lowerBound"]
+    expected_upperBound = data_dict["prod_tn_upperBound"]
     sim_matrix = data_dict["sim_matrix"]
     y = data_dict["y"]
 
-    model = ITFRS(sim_matrix, y, tnorm=tn.tn_product, implicator=imp.imp_lukasiewicz)
+    tnrm = tn.ProductTNorm()
+
+    model = ITFRS(sim_matrix, y, tnorm=tnrm, implicator=imp.imp_lukasiewicz)
     lower = model.lower_approximation()
     upper = model.upper_approximation()
 
@@ -83,14 +74,21 @@ def test_itfrs_approximations_Luk_imp_product_tnorm():
 
     closeness_LB = np.isclose(lower, expected_lowerBound)
     assert np.all(closeness_LB), "outputs are not the expected values"
+
+    closeness_UB = np.isclose(upper, expected_upperBound)
+    assert np.all(closeness_UB), "outputs are not similar to the expected values"
+
 
 def test_itfrs_approximations_Goedel_imp_product_tnorm():
     data_dict = sds.syntetic_dataset_factory().ITFRS_testing_dataset()
     expected_lowerBound = data_dict["Goedel_lowerBound"]
+    expected_upperBound = data_dict["prod_tn_upperBound"]
     sim_matrix = data_dict["sim_matrix"]
     y = data_dict["y"]
 
-    model = ITFRS(sim_matrix, y, tnorm=tn.tn_product, implicator=imp.imp_goedel)
+    tnrm = tn.ProductTNorm()
+
+    model = ITFRS(sim_matrix, y, tnorm=tnrm, implicator=imp.imp_goedel)
     lower = model.lower_approximation()
     upper = model.upper_approximation()
 
@@ -101,14 +99,21 @@ def test_itfrs_approximations_Goedel_imp_product_tnorm():
 
     closeness_LB = np.isclose(lower, expected_lowerBound)
     assert np.all(closeness_LB), "outputs are not the expected values"
+
+    closeness_UB = np.isclose(upper, expected_upperBound)
+    assert np.all(closeness_UB), "outputs are not similar to the expected values"
+
 
 def test_itfrs_approximations_Gaines_imp_product_tnorm():
     data_dict = sds.syntetic_dataset_factory().ITFRS_testing_dataset()
     expected_lowerBound = data_dict["Gaines_lowerBound"]
+    expected_upperBound = data_dict["prod_tn_upperBound"]
     sim_matrix = data_dict["sim_matrix"]
     y = data_dict["y"]
 
-    model = ITFRS(sim_matrix, y, tnorm=tn.tn_product, implicator=imp.imp_gaines)
+    tnrm = tn.ProductTNorm()
+
+    model = ITFRS(sim_matrix, y, tnorm=tnrm, implicator=imp.imp_gaines)
     lower = model.lower_approximation()
     upper = model.upper_approximation()
 
@@ -119,3 +124,6 @@ def test_itfrs_approximations_Gaines_imp_product_tnorm():
 
     closeness_LB = np.isclose(lower, expected_lowerBound)
     assert np.all(closeness_LB), "outputs are not the expected values"
+
+    closeness_UB = np.isclose(upper, expected_upperBound)
+    assert np.all(closeness_UB), "outputs are not similar to the expected values"

@@ -22,8 +22,6 @@ class ITFRS(FuzzyRoughModel):
 
     def lower_approximation(self):
         label_mask = (self.labels[:, None] == self.labels[None, :]).astype(float)
-        if (__debug__):
-            print(label_mask)
         implication_vals = self.implicator(self.similarity_matrix, label_mask)
         
         # Since for the calculations of lower approximation, 
@@ -37,9 +35,7 @@ class ITFRS(FuzzyRoughModel):
 
     def upper_approximation(self):
         label_mask = (self.labels[:, None] == self.labels[None, :]).astype(float)
-        aa = np.stack([self.similarity_matrix, label_mask], axis=-1)
-        
-        tnorm_vals = self.tnorm.reduce(aa)
+        tnorm_vals = self.tnorm(self.similarity_matrix, label_mask)
 
         # Since for the calculations of upper approximation, 
         # we calculate sup which is basically a maximum, 

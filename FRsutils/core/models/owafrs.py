@@ -47,8 +47,6 @@ class OWAFRS(FuzzyRoughModel):
 
     def lower_approximation(self):
         label_mask = (self.labels[:, None] == self.labels[None, :]).astype(float)
-        if (__debug__):
-            print(label_mask)
         implication_vals = self.implicator(self.similarity_matrix, label_mask)
         
         # Since for the calculations of lower approximation, 
@@ -67,8 +65,6 @@ class OWAFRS(FuzzyRoughModel):
 
     def upper_approximation(self):
         label_mask = (self.labels[:, None] == self.labels[None, :]).astype(float)
-        if (__debug__):
-            print(label_mask)
         implication_vals = self.implicator(self.similarity_matrix, label_mask)
         
         # Since for the calculations of upper approximation, 

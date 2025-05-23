@@ -31,6 +31,7 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 - T-norms
   - min tnorm
   - product tnorm
+  - Lukasiewicz tnorm
 - OWA weights (Ordered Weighted Average)
   - Linear
 - ITFRS (Implicator/T-norm Fuzzy-Rough Sets)
