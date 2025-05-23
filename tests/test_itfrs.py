@@ -21,10 +21,10 @@ def test_itfrs_approximations_reichenbach_imp_product_tnorm():
     sim_matrix = data_dict["sim_matrix"]
     y = data_dict["y"]
 
-    tnrm = tn.TNorm(tn.tnorm_product)
+    tnrm = tn.ProductTNorm()
 
-     # Generate imbalanced data
-    X, y = make_classification(n_samples=2000, n_features=10, n_informative=2, # Increased sample size
+    #  Generate imbalanced data
+    X, y = make_classification(n_samples=5000, n_features=10, n_informative=2, # Increased sample size
                                n_redundant=0, n_repeated=0, n_classes=2,
                                n_clusters_per_class=1, weights=[0.95, 0.05], # More imbalance
                                class_sep=0.7, random_state=42)
