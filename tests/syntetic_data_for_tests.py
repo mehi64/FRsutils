@@ -217,3 +217,20 @@ class syntetic_dataset_factory:
                      "min_tn_upperBound" : min_tn_upperBound
                     }
         return data_dict
+
+    def owa_weights_linear_testing_data(self):
+        """
+        owa weights
+        """
+        owa_infimum_weights_linear_len_5 = np.array([0.06666667, 0.13333333, 0.2, 0.26666667, 0.33333333])
+        owa_infimum_weights_linear_len_10 = np.array([0.01818182, 0.03636364, 0.05454545, 0.07272727, 0.09090909, 0.10909091, 0.12727273, 0.14545455, 0.16363636, 0.18181818])
+        
+        owa_suprimum_weights_linear_len_8 = np.array([0.22222222, 0.19444444, 0.16666667, 0.13888889, 0.11111111, 0.08333333, 0.05555556, 0.02777778])
+        owa_supriimum_weights_linear_len_13 = np.array([0.14285714, 0.13186813, 0.12087912, 0.10989011, 0.0989011,  0.08791209, 0.07692308, 0.06593407, 0.05494505, 0.04395604, 0.03296703, 0.02197802, 0.01098901])
+        
+
+        data_dict = {"owa_infimum_weights_linear_len_5" : owa_infimum_weights_linear_len_5,
+                     "owa_infimum_weights_linear_len_10" : owa_infimum_weights_linear_len_10,
+                     "owa_suprimum_weights_linear_len_8":owa_suprimum_weights_linear_len_8,
+                     "owa_suprimum_weights_linear_len_13":owa_supriimum_weights_linear_len_13}
+        return data_dict
