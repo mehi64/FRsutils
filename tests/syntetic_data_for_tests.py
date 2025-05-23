@@ -217,6 +217,39 @@ class syntetic_dataset_factory:
                      "min_tn_upperBound" : min_tn_upperBound
                     }
         return data_dict
+    
+    def OWAFRS_testing_dataset(self):
+        
+        y = np.array([1, 1, 0, 1, 0])
+
+        sim_matrix = np.array([
+            [1.00, 0.54, 0.37, 0.19, 0.10],
+            [0.54, 1.00, 0.35, 0.29, 0.20],
+            [0.37, 0.35, 1.00, 0.55, 0.73],
+            [0.19, 0.29, 0.55, 1.00, 0.74],
+            [0.10, 0.20, 0.73, 0.74, 1.00]
+        ])
+
+        owa_linear_Reichenbach_lowerBound = np.array([0.822 , 0.8, 0.599, 0.539, 0.624])
+        owa_linear_KD_lowerBound = np.array([0.822 , 0.8, 0.599, 0.539, 0.624])
+        Luk_lowerBound = np.array([0.63, 0.65, 0.45, 0.26, 0.26])
+        Goedel_lowerBound = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+        Gaines_lowerBound = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+
+        prod_tn_upperBound = np.array([0.54, 0.54, 0.73, 0.29, 0.73])
+        min_tn_upperBound = np.array([0.54, 0.54, 0.73, 0.29, 0.73])
+
+        data_dict = {"y" : y,
+                     "sim_matrix" : sim_matrix,
+                     "Reichenbach_lowerBound" : Reichenbach_lowerBound,
+                     "KD_lowerBound" : KD_lowerBound,
+                     "Luk_lowerBound" : Luk_lowerBound,
+                     "Goedel_lowerBound" : Goedel_lowerBound,
+                     "Gaines_lowerBound" : Gaines_lowerBound,
+                     "prod_tn_upperBound" : prod_tn_upperBound,
+                     "min_tn_upperBound" : min_tn_upperBound
+                    }
+        return data_dict
 
     def owa_weights_linear_testing_data(self):
         """
