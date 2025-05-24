@@ -46,7 +46,7 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 ## Some technical information to remember
 ### In VQRS
 #### lower and upper approximations for each instance: 
-<img src="images/VQRS/lb_ub.PNG" alt="lower & upper approximation" width="250"/>
+<img src="images/VQRS/lb_ub.PNG" alt="lower & upper approximation" width="350"/>
 
 ### In ITFRS
 #### lower approximation for each instance: 
