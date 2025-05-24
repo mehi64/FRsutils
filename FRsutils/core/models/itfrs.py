@@ -8,7 +8,11 @@ import FRsutils.core.tnorms as tn
 import numpy as np
 
 class ITFRS(FuzzyRoughModel):
-    def __init__(self, similarity_matrix: np.ndarray, labels: np.ndarray, tnorm: tn.TNorm, implicator):
+    def __init__(self, 
+                 similarity_matrix: np.ndarray, 
+                 labels: np.ndarray, 
+                 tnorm: tn.TNorm, 
+                 implicator):
         super().__init__(similarity_matrix, labels)
         self.tnorm = tnorm
         self.implicator = np.vectorize(implicator)
