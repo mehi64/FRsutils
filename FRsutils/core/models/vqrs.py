@@ -13,14 +13,14 @@ class VQRS(FuzzyRoughModel):
                  similarity_matrix: np.ndarray, 
                  labels: np.ndarray, 
                  alpha_lower: float,
-                 betha_lower: float,
+                 beta_lower: float,
                  alpha_upper: float,
-                 betha_upper: float):
+                 beta_upper: float):
         super().__init__(similarity_matrix, labels)
         self.alpha_lower = alpha_lower
-        self.betha_lower = betha_lower
+        self.beta_lower = beta_lower
         self.alpha_upper = alpha_upper
-        self.betha_upper = betha_upper
+        self.beta_upper = beta_upper
 
         self.tnorm = tn.MinTNorm()
 
@@ -33,11 +33,12 @@ class VQRS(FuzzyRoughModel):
         # is ignored by sum operator. To be sure all is correct,
         # inside code, we set main diagonal to 0.0
         np.fill_diagonal(tnorm_vals, 0.0)
+        # print(tnorm_vals)
         nominator =  np.sum(tnorm_vals, axis=1)
 
-        temp_similarity_matrix = np.copy(self.similarity_matrix)
-        np.fill_diagonal(temp_similarity_matrix, 0.0)
-        denominator =  np.sum(temp_similarity_matrix, axis=1)
+        # since the similarity of each instance with itself must not be in the calculations,
+        # we can set the main diagonal of the similarity_matrix to 0.0 as well. But instead we reduce 1.0 from the sum
+        denominator =  np.sum(self.similarity_matrix, axis=1) - 1.0
 
         result = nominator / denominator
         return result
@@ -46,7 +47,7 @@ class VQRS(FuzzyRoughModel):
         result = self._interim_calculations()
         result = fq.fuzzy_quantifier_quad(result,
                                           self.alpha_lower,
-                                          self.betha_lower)
+                                          self.beta_lower)
 
         return result
 
@@ -54,7 +55,7 @@ class VQRS(FuzzyRoughModel):
         result = self._interim_calculations()
         result = fq.fuzzy_quantifier_quad(result,
                                           self.alpha_upper,
-                                          self.betha_upper)
+                                          self.beta_upper)
 
         return result
 

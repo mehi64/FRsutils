@@ -185,6 +185,33 @@ class syntetic_dataset_factory:
                     }
         return data_dict
     
+    def VQRS_testing_dataset(self):
+        
+        y = np.array([1, 1, 0, 1, 0])
+
+        sim_matrix = np.array([
+            [1.00, 0.54, 0.37, 0.19, 0.10],
+            [0.54, 1.00, 0.35, 0.29, 0.20],
+            [0.37, 0.35, 1.00, 0.55, 0.73],
+            [0.19, 0.29, 0.55, 1.00, 0.74],
+            [0.10, 0.20, 0.73, 0.74, 1.00]
+        ])
+
+        upper_bound = np.array([0.521049496528125,	0.50362976378912,	0.085078125,	0.015835966374605,	0.141019503319767628125])
+        lower_bound = np.array([1.0,	1.0,	0.5582,	0.2344383779189888,	0.718538097101394872])
+
+        data_dict = {"y" : y,
+                     "sim_matrix" : sim_matrix,
+                     "upper_bound" : upper_bound,
+                     "lower_bound" : lower_bound,
+                     "alpha_lower" : 0.1,
+                     "beta_lower"  :0.6,
+                     "alpha_upper" :0.2,
+                     "beta_upper"  :1.0,
+                     "fuzzy_quantifier": 'quadratic'
+                    }
+        return data_dict
+
     def ITFRS_testing_dataset(self):
         
         y = np.array([1, 1, 0, 1, 0])
