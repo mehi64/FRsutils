@@ -5,10 +5,10 @@ OWAFRS implementation.
 
 import FRsutils.core.tnorms as tn
 import FRsutils.core.owa_weights as owa_weights
-from FRsutils.core.approximations import FuzzyRoughModel
+from FRsutils.core.approximations import FuzzyRoughModel_Base
 import numpy as np
 
-class OWAFRS(FuzzyRoughModel):
+class OWAFRS(FuzzyRoughModel_Base):
     def __init__(self, 
                  similarity_matrix: np.ndarray,
                  labels: np.ndarray,

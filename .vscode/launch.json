@@ -16,6 +16,17 @@
             "cwd": "${workspaceFolder}"
         },
         {
+            "name": "Python: plot_smote",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "FRsutils.utils.plot_SMOTE",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}"
+        },
+        {
             "name": "Python: run_tests_debug_mode",
             "type": "debugpy",
             "request": "launch",

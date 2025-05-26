@@ -3,11 +3,11 @@
 ITFRS implementation.
 """
 
-from FRsutils.core.approximations import FuzzyRoughModel
+from FRsutils.core.approximations import FuzzyRoughModel_Base
 import FRsutils.core.tnorms as tn
 import numpy as np
 
-class ITFRS(FuzzyRoughModel):
+class ITFRS(FuzzyRoughModel_Base):
     def __init__(self, 
                  similarity_matrix: np.ndarray, 
                  labels: np.ndarray, 

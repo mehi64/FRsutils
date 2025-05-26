@@ -17,3 +17,6 @@ w_inf = oww._owa_suprimum_weights_linear(8)
 print(w_inf)
 w_inf = oww._owa_suprimum_weights_linear(13)
 print(w_inf)
+
+import FRsutils.core.models.vqrs as VQRS_
+
