@@ -37,6 +37,9 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 - ITFRS (Implicator/T-norm Fuzzy-Rough Sets)
 - OWAFRS (Ordered Weighted Average Fuzzy-Rough Sets) 
 
+## Fuzzy-rough oversampling
+### FRSMOTE
+- Compatible with scikit learn and its pipeline
 ## Notes
 - All functions expect to get normalized scalar of normalized numpy arrays.
 - Make sure the input dataset is normalized. This library expects all inputs to all functions are in range [0,1]
