@@ -27,10 +27,21 @@
             "cwd": "${workspaceFolder}"
         },
         {
-            "name": "Python: experiment_1",
+            "name": "Python: experiment_1_non_pipeline",
             "type": "debugpy",
             "request": "launch",
-            "module": "experiments.experiment_1",
+            "module": "experiments.experiment_1_non_pipeline.py",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Python: experiment_1_pipeline",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "experiments.experiment_1_pipeline",
             "justMyCode": true,
             "env": {
                 "PYTHONPATH": "${workspaceFolder}"

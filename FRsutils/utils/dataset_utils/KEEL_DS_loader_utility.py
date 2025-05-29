@@ -3,9 +3,12 @@ import numpy as np
 import os
 import re
 import warnings
+from sklearn.preprocessing import LabelEncoder
+from typing import List, Tuple, Dict
 
 
-def parse_keel_file(file_path, one_hot_encode=True, normalize=True):
+
+def parse_keel_file(file_path, one_hot_encode=False, normalize=True):
     """
     @brief Parses a KEEL dataset file (.dat) into a structured DataFrame.
     NOTE: This method expects each keel dataset file has just one class attribute. NOt more than that
@@ -14,7 +17,8 @@ def parse_keel_file(file_path, one_hot_encode=True, normalize=True):
     @param one_hot_encode If True, perform one-hot encoding on categorical input features. (default: True)
     @param normalize If True, normalize numerical input features to [0, 1]. (default: True)
 
-    @return A tuple containing:
+    @return
+    Returns a tuple containing:
         - metadata (dict): Dataset metadata.
         - df (pd.DataFrame): The parsed dataset with the output feature(s) at the end.
         - input_features (list[str]): Names of input (non-class) features.
@@ -152,6 +156,7 @@ def parse_keel_file(file_path, one_hot_encode=True, normalize=True):
     if normalize:
         metadata, df = _normalize_data(metadata, df, input_features)
 
+    df, label_encoders, mappings = _encode_class_columns(df, output_features)
     return metadata, df, input_features, output_features
 
 # TODO: NOT TESTED. TEST IT
@@ -255,6 +260,30 @@ def _normalize_data(metadata, df, input_features):
                 metadata['attributes'][feature]['range_source'] = 'normalized'
     return metadata, normalized_df
 
+# TODO: NOTE: Not tested. TEST it
+def _encode_class_columns(df: pd.DataFrame, output_features: List[str]) -> Tuple[pd.DataFrame, List[LabelEncoder], Dict[str, Dict[str, int]]]:
+    """
+    @brief Encodes specified class columns in a DataFrame to integers using LabelEncoder.
+
+    @param df: Input DataFrame with string class columns.
+    @param output_features: List of column names to be encoded.
+
+    @return: 
+        - Transformed DataFrame with encoded class labels.
+        - List of fitted LabelEncoders in order of output_features.
+        - Dictionary of mappings {column_name: {original_label: int_value}}
+    """
+    df = df.copy()
+    label_encoders = []
+    mappings = {}
+
+    for col in output_features:
+        le = LabelEncoder()
+        df[col] = le.fit_transform(df[col])
+        label_encoders.append(le)
+        mappings[col] = {original: int_val for int_val, original in enumerate(le.classes_)}
+
+    return df, label_encoders, mappings
 
 def create_X_y(df: pd.DataFrame, input_features: list[str], output_features: list[str]) -> tuple[np.ndarray, np.ndarray]:
     """
