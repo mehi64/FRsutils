@@ -244,11 +244,12 @@ def _normalize_data(metadata, df, input_features):
             col_data = pd.to_numeric(df[feature], errors='coerce')
             min_val, max_val = col_data.min(), col_data.max()
             
-            if ((min_val != attr_info['min_range']) or (max_val != attr_info['max_range'])):
-                warnings.warn(f"calculated min/max values for feature '{feature}' in dataset '{metadata['file_path']}' are different than those in metadata (KEEL dataset file header). Normalized based on the information inside metadata.",
-                category=UserWarning,
-                stacklevel=2
-                )
+            # TODO: Think about this warning
+            # if ((min_val != attr_info['min_range']) or (max_val != attr_info['max_range'])):
+            #     warnings.warn(f"calculated min/max values for feature '{feature}' in dataset '{metadata['file_path']}' are different than those in metadata (KEEL dataset file header). Normalized based on the information inside metadata.",
+            #     category=UserWarning,
+            #     stacklevel=2
+            #     )
                 
             min_val = attr_info['min_range']
             max_val = attr_info['max_range']

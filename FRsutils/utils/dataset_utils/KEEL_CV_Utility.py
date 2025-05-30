@@ -12,6 +12,7 @@ import os
 import re
 from typing import List, Tuple, Iterator
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import BaseCrossValidator
 import warnings
 
@@ -126,5 +127,32 @@ class KeelCVLoader(BaseCrossValidator):
 
         X_test = df_test[input_order]
         y_test = df_test.drop(columns=input_order).iloc[:, 0]
+
+        return X_train, y_train, X_test, y_test
+   
+    # TODO: Not tested
+    def load_fold_as_array(self, fold_index: int) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+        """
+    @brief Loads data for a specific fold from disk and returns it as NumPy arrays.
+
+    @details
+    This function loads the train and test data for the specified fold index,
+    converting both features and targets from pandas DataFrame and Series formats
+    into NumPy arrays. This may be useful when working with frameworks or codebases
+    that expect raw NumPy input rather than pandas objects.
+
+    @param fold_index Index of the fold to load.
+
+    @return X_train, y_train, X_test, y_test: NumPy arrays containing the training and 
+    testing data (features and targets).
+
+    @see load_fold()
+    """
+        X_train, y_train, X_test, y_test = self.load_fold(fold_index)
+        
+        X_train = X_train.to_numpy()
+        y_train = y_train.to_numpy()
+        X_test = X_test.to_numpy()
+        y_test = y_test.to_numpy()
 
         return X_train, y_train, X_test, y_test

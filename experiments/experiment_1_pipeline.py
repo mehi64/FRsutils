@@ -5,6 +5,9 @@
 
 import os
 import numpy as np
+
+# print(np.__config__.show())
+
 import pandas as pd
 from typing import List, Dict, Any
 from sklearn.svm import SVC
@@ -15,7 +18,7 @@ from sklearn.preprocessing import LabelEncoder
 
 from imblearn.pipeline import Pipeline as ImbPipeline
 from imblearn.over_sampling import SMOTE, ADASYN
-from smote_variants import distance_SMOTE
+# from smote_variants import distance_SMOTE
 from FRsutils.core.preprocess.oversampling.FRSMOTE import FRSMOTE
 from FRsutils.core.models.itfrs import ITFRS
 import FRsutils.core.tnorms as tnorms
@@ -37,7 +40,7 @@ CLASSIFIERS = {
 OVERSAMPLERS = {
     'SMOTE': SMOTE(),
     'ADASYN': ADASYN(),
-    'distance_SMOTE': distance_SMOTE(),
+    # 'distance_SMOTE': distance_SMOTE(),
     'FRSMOTE': 'FRSMOTE'  # Custom handling in code below
 }
 
@@ -86,12 +89,12 @@ def run_experiments():
                                  normalize=True)
 
         for fold_idx in range(cv_loader.get_n_splits()):
-            X_train_df, y_train_s, X_test_df, y_test_s = cv_loader.load_fold(fold_idx)
-            X_train = X_train_df.to_numpy()
-            y_train = y_train_s.to_numpy()
+            X_train, y_train, X_test, y_test = cv_loader.load_fold_as_array(fold_idx)
+            # X_train = X_train_df.to_numpy()
+            # y_train = y_train_s.to_numpy()
             
-            X_test = X_test_df.to_numpy()
-            y_test = y_test_s.to_numpy()
+            # X_test = X_test_df.to_numpy()
+            # y_test = y_test_s.to_numpy()
             
             # le = LabelEncoder()
             # y_train = le.fit_transform(y_train)
@@ -137,5 +140,5 @@ def run_experiments():
 
 if __name__ == "__main__":
     df_results = run_experiments()
-    df_results.to_csv("all_fold_results.csv", index=False)
+    df_results.to_csv("all_fold_results_pipeline.csv", index=False)
     print("Experiment completed and saved to 'all_fold_results.csv'")

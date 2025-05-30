@@ -30,7 +30,7 @@
             "name": "Python: experiment_1_non_pipeline",
             "type": "debugpy",
             "request": "launch",
-            "module": "experiments.experiment_1_non_pipeline.py",
+            "module": "experiments.experiment_1_non_pipeline",
             "justMyCode": true,
             "env": {
                 "PYTHONPATH": "${workspaceFolder}"
