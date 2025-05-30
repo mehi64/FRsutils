@@ -1,24 +1,137 @@
 import numpy as np
 from collections import Counter
-from sklearn.base import BaseEstimator, TransformerMixin
+from imblearn.over_sampling import BaseOverSampler
 from sklearn.utils import check_X_y
 from FRsutils.core.approximations import FuzzyRoughModel_Base
 from abc import ABC, abstractmethod
 import warnings
+from FRsutils.core.models.itfrs import ITFRS
+from FRsutils.core.models.owafrs import OWAFRS
+from FRsutils.core.models.vqrs import VQRS
+from FRsutils.core.similarities import calculate_similarity_matrix, GaussianSimilarity, LinearSimilarity
+
+model_config = {
+    "fr_model": 
+    {
+        "ITFRS": 
+        {
+            "required": {"tnorm": {"type": str, "choices": {"tnorm1", "tnorm2", "tnorm3"}}},
+            "optional": {"verbose": {"type": bool, "default": False}},
+        },
+        "OWAFRS": 
+        {
+            "required": {"tnorm": {"type": str, "choices": {"tnorm1", "tnorm2", "tnorm3"}}},
+            "optional": {"verbose": {"type": bool, "default": False}},
+        },
+        "VQRS": 
+        {
+            "required": {
+                "alpha_lower": {"type": float},
+                "beta_lower": {"type": float}
+            },
+            "optional": {"gamma": {"type": float, "default": 0.5}},
+        },
+    },
+    "hgf": {
+        "HGF1": {
+            "required": {"learning_rate": {"type": float}},
+            "optional": {"momentum": {"type": float, "default": 0.9}},
+        },
+        "HGF2": {
+            "required": {},
+            "optional": {"decay": {"type": float, "default": 0.01}},
+        },
+    }
+}
+
+# not checked
+def _validate_params(selection: str, config: dict, **kwargs):
+    if selection not in config:
+        raise ValueError(f"Invalid selection: {selection}. Must be one of {list(config)}")
+
+    conf = config[selection]
+    validated = {}
+
+    # Validate required
+    for key, spec in conf.get("required", {}).items():
+        if key not in kwargs:
+            raise ValueError(f"Missing required parameter '{key}' for selection '{selection}'")
+        val = kwargs[key]
+        if "choices" in spec and val not in spec["choices"]:
+            raise ValueError(f"Invalid value for '{key}': {val}. Must be one of {spec['choices']}")
+        validated[key] = spec["type"](val)
+
+    # Validate optional
+    for key, spec in conf.get("optional", {}).items():
+        val = kwargs.get(key, spec["default"])
+        validated[key] = spec["type"](val)
+
+    return validated
+
+
+# not checked
+def get_similarity_function(name: str, sigma):
+    if name == "linear":
+        return LinearSimilarity()
+    elif name == "gaussian":
+        return GaussianSimilarity(sigma=sigma)
+    else:
+        raise ValueError(f"Unknown similarity name: {name}")
+
+# not checked
+def get_fuzzy_rough_model_by_name(name: str, similarity_name: str, similarity_tnorm: str, **kwargs):
+    similarity = get_similarity_function(similarity_name, similarity_tnorm)
+
+    if name == "IT2FR":
+        return IT2FRModel(similarity=similarity,
+                          t_norm=kwargs.get('t_norm'),
+                          implicator=kwargs.get('implicator'))
+
+    elif name == "OWAFRS":
+        return OWAFRSModel(similarity=similarity,
+                           t_norm=kwargs.get('t_norm'),
+                           implicator=kwargs.get('implicator'),
+                           owa_weights_lower=kwargs.get('owa_weights_lower'),
+                           owa_weights_upper=kwargs.get('owa_weights_upper'))
+
+    elif name == "VQRS":
+        return VQRSModel(similarity=similarity,
+                         alpha_lower=kwargs.get('alpha_lower'),
+                         beta_lower=kwargs.get('beta_lower'),
+                         alpha_upper=kwargs.get('alpha_upper'),
+                         beta_upper=kwargs.get('beta_upper'))
+
+    else:
+        raise ValueError(f"Unknown Fuzzy Rough model: {name}")
 
 allowed_sampling_strategies = ["auto", "xxxxx"]
 
 # Inherits from BaseEstimator to integrate with scikit-learn tooling
 # (e.g., Pipeline, GridSearchCV, clone, etc.).
-class BaseSoloFuzzyRoughResampler(ABC, BaseEstimator, TransformerMixin):
+class BaseSoloFuzzyRoughResampler(ABC, BaseOverSampler):
     """Base class with FRS calculations.
        This class of resamplers just use Fuzzy-rough sets without combining with any other model
     """
     def __init__(self,
-                 fr_model : FuzzyRoughModel_Base,
-                 sampling_strategy = 'auto'):
-        self.fr_model = fr_model
+                 fr_model_name='ITFRS',
+                 similarity_name='linear',
+                 similarity_tnorm='lukasiewicz',
+                 sampling_strategy='auto',
+                 k_neighbors=5,
+                 bias_interpolation=False,
+                 random_state=None,
+                 n_jobs=None,
+                 **kwargs):
+        self.fr_model_name = fr_model_name
+        self.similarity_name = similarity_name
+        self.similarity_tnorm = similarity_tnorm
         self.sampling_strategy = sampling_strategy
+        self.k_neighbors = k_neighbors
+        self.bias_interpolation = bias_interpolation
+        self.random_state = random_state
+        self.n_jobs = n_jobs
+        self.fr_model_kwargs = kwargs
+        # TODO: kwargs!
 
         self.lower_app = self.fr_model.lower_approximation()
         self.upper_app = self.fr_model.upper_approximation()
