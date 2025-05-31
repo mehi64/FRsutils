@@ -15,17 +15,17 @@
             },
             "cwd": "${workspaceFolder}"
         },
-        {
-            "name": "Python: plot_smote",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "FRsutils.utils.plot_SMOTE",
-            "justMyCode": true,
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}"
-            },
-            "cwd": "${workspaceFolder}"
-        },
+        // {
+        //     "name": "Python: plot_smote",
+        //     "type": "debugpy",
+        //     "request": "launch",
+        //     "module": "FRsutils.utils.plot_SMOTE",
+        //     "justMyCode": true,
+        //     "env": {
+        //         "PYTHONPATH": "${workspaceFolder}"
+        //     },
+        //     "cwd": "${workspaceFolder}"
+        // },
         {
             "name": "Python: experiment_1_non_pipeline",
             "type": "debugpy",
@@ -60,7 +60,7 @@
             "cwd": "${workspaceFolder}"
         },
         {
-            "name": "Debug all FR models",
+            "name": "Dbg FR models",
             "type": "debugpy",
             "request": "launch",
             "module": "pytest",
@@ -75,7 +75,7 @@
             }
         },
         {
-            "name": "Debug builder models",
+            "name": "Dbg builder models",
             "type": "debugpy",
             "request": "launch",
             "module": "pytest",
@@ -88,7 +88,7 @@
             }
         },
         {
-            "name": "Debug all core methods",
+            "name": "Dbg core methods",
             "type": "debugpy",
             "request": "launch",
             "module": "pytest",
@@ -105,7 +105,7 @@
             }
         },
         {
-            "name": "Debug all KEEL_DS Utilities",
+            "name": "Dbg KEEL_DS Utilities",
             "type": "debugpy",
             "request": "launch",
             "module": "pytest",

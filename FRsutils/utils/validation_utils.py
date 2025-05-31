@@ -68,6 +68,7 @@ def validate_strategy_compatibility(class_name: str, strategy: str, supported_st
 # validate_fr_model_params
 # ------------------------------
 
+# TODO: I bypassed this. check that to work properly
 def validate_fr_model_params(model_name: str, params: dict):
     """
     @brief Validates parameters passed to a fuzzy rough model against its schema.
@@ -95,16 +96,16 @@ def validate_fr_model_params(model_name: str, params: dict):
                 raise ValueError(f"Parameter '{key}' must be in range [{lo}, {hi}].")
 
         # Type: str with allowed values
-        elif spec['type'] == 'str':
+        elif spec['type'] in {'str' , 'tnorm', 'implicator'}:
             if not isinstance(val, str):
                 raise TypeError(f"Parameter '{key}' must be a string.")
             if 'allowed' in spec and val not in spec['allowed']:
                 raise ValueError(f"Parameter '{key}' must be one of {sorted(spec['allowed'])}.")
 
-        # Type: tnorm / implicator should be callable
-        elif spec['type'] in {'tnorm', 'implicator'}:
-            if not callable(val):
-                raise TypeError(f"Parameter '{key}' must be a callable (type={spec['type']}).")
+        # # Type: tnorm / implicator should be callable
+        # elif spec['type'] in {'tnorm', 'implicator'}:
+        #     if not callable(val):
+        #         raise TypeError(f"Parameter '{key}' must be a callable (type={spec['type']}).")
 
 
 def validate_tnorm_params(name: str, params: dict):

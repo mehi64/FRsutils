@@ -3,19 +3,14 @@ from sklearn.utils import check_random_state
 from sklearn.neighbors import NearestNeighbors
 import warnings
 import FRsutils.utils.math_utils.math_utils as math_utils
-import FRsutils.core.preprocess.base_solo_fuzzy_rough_oversampler as bfrrs
+from FRsutils.core.preprocess.base_solo_fuzzy_rough_oversampler import BaseSoloFuzzyRoughOversampler
 from FRsutils.core.approximations import BaseFuzzyRoughModel
 
-from FRsutils.constructors.model_builders import build_fuzzy_rough_model
-from FRsutils.constructors.tnorm_builders import build_tnorm
-from FRsutils.constructors.similarity_builders import build_similarity
-from FRsutils.core.similarities import calculate_similarity_matrix
-from FRsutils.constructors.model_builders import build_fuzzy_rough_model
-from FRsutils.constructors.tnorm_builders import build_tnorm
-from FRsutils.constructors.similarity_builders import build_similarity
+from FRsutils.utils.constructor_utils.fr_model_builder import build_fuzzy_rough_model
+from FRsutils.utils.constructor_utils.tnorm_builder import build_tnorm
+from FRsutils.utils.constructor_utils.similarity_builder import build_similarity
 from FRsutils.core.similarities import calculate_similarity_matrix
 
-from FRsutils.core.preprocess.Base_solo_FR_resampler import BaseSoloFuzzyRoughResampler
 from FRsutils.utils.validation_utils import (
     validate_choice,
     validate_fr_model_params,
@@ -25,11 +20,9 @@ from FRsutils.utils.validation_utils import (
     ALLOWED_RANKING_STRATEGIES
 )
 
-
-
 # --- FRSMOTE Implementation ---
 
-class FRSMOTE(BaseSoloFuzzyRoughResampler):
+class FRSMOTE(BaseSoloFuzzyRoughOversampler):
     """
     @brief Fuzzy Rough Set based SMOTE (FRSMOTE) Oversampler.
     """
@@ -37,8 +30,8 @@ class FRSMOTE(BaseSoloFuzzyRoughResampler):
     def __init__(self,
                  fr_model_name='ITFRS',
                  similarity_name='linear',
-                 similarity_tnorm='lukasiewicz',
-                 instance_ranking_strategy='pos',
+                 similarity_tnorm_name='lukasiewicz',
+                 instance_ranking_strategy_name='pos',
                  sampling_strategy='auto',
                  k_neighbors=5,
                  bias_interpolation=False,
@@ -60,38 +53,47 @@ class FRSMOTE(BaseSoloFuzzyRoughResampler):
         @param random_state Seed or random generator.
         @param kwargs Must contain 'fr_model_params' for the selected model.
         """
-        # Extract and validate fuzzy rough model parameters
-        fr_model_params = kwargs.get('fr_model_params', {})
-        validate_fr_model_params(fr_model_name, fr_model_params)
-
-        # Validate string options
-        fr_model_name = validate_choice("fr_model_name", fr_model_name, ALLOWED_FR_MODELS)
-        similarity_name = validate_choice("similarity_name", similarity_name, ALLOWED_SIMILARITIES)
-        similarity_tnorm = validate_choice("similarity_tnorm", similarity_tnorm, ALLOWED_TNORMS)
-        instance_ranking_strategy = validate_choice("instance_ranking_strategy", instance_ranking_strategy, ALLOWED_RANKING_STRATEGIES)
-
+        super().__init__(fr_model_name=fr_model_name,
+                 similarity_name=similarity_name,
+                 similarity_tnorm_name=similarity_tnorm_name,
+                 instance_ranking_strategy_name=instance_ranking_strategy_name,
+                 sampling_strategy=sampling_strategy,
+                 k_neighbors=k_neighbors,
+                 bias_interpolation=bias_interpolation,
+                 random_state=random_state,
+                 **kwargs)
+        
+        # # Validate parameters
+        # validate_choice(fr_model_name, ALLOWED_FR_MODELS)
+        # validate_choice(similarity_name, ALLOWED_SIMILARITIES)
+        # validate_choice(similarity_tnorm, ALLOWED_TNORMS)
+        # validate_choice(instance_ranking_strategy, ALLOWED_RANKING_STRATEGIES)
+        # validate_choice(sampling_strategy, ALLOWED_SAMPLING_STRATEGIES)
+        # validate_choice(k_neighbors, ALLOWED_K_NEIGHBORS)
+        # validate_choice(random_state, ALLOWED_RANDOM_STATE)
+        # validate_fr_model_params(fr_model
         # Build core components
-        similarity_func = build_similarity(similarity_name)
-        tnorm = build_tnorm(similarity_tnorm)
-        sim_matrix = calculate_similarity_matrix(fr_model_params['X'], similarity_func, tnorm)
+        # similarity_func = build_similarity(similarity_name)
+        # sim_tnorm_obj = build_tnorm(similarity_tnorm)
+        
+               
+        # # Add to model parameters
+        # fr_model_params['similarity_matrix'] = None
+        # fr_model_params['tnorm'] = sim_tnorm_obj
+        # fr_model = build_fuzzy_rough_model(fr_model_name, fr_model_params)
 
-        # Add to model parameters
-        fr_model_params['similarity_matrix'] = sim_matrix
-        fr_model_params['tnorm'] = tnorm
-        fr_model = build_fuzzy_rough_model(fr_model_name, fr_model_params)
+        # # Assign all config to self
+        # self.fr_model_name = fr_model_name
+        # self.similarity_name = similarity_name
+        # self.similarity_tnorm = similarity_tnorm
+        # self.instance_ranking_strategy = instance_ranking_strategy
+        # self.k_neighbors = k_neighbors
+        # self.bias_interpolation = bias_interpolation
+        # self.random_state = random_state
+        # self.fr_model_params = fr_model_params
 
-        # Assign all config to self
-        self.fr_model_name = fr_model_name
-        self.similarity_name = similarity_name
-        self.similarity_tnorm = similarity_tnorm
-        self.instance_ranking_strategy = instance_ranking_strategy
-        self.k_neighbors = k_neighbors
-        self.bias_interpolation = bias_interpolation
-        self.random_state = random_state
-        self.fr_model_params = fr_model_params
-
-        # Call parent with constructed model
-        super().__init__(fr_model=fr_model, sampling_strategy=sampling_strategy)
+        # # Call parent with constructed model
+        # # super().__init__(fr_model=fr_model, sampling_strategy=sampling_strategy)
 
     def _check_params(self):
         """
@@ -233,4 +235,8 @@ class FRSMOTE(BaseSoloFuzzyRoughResampler):
         return new_samples
   
     def supported_strategies(self):
-        return  {'auto', 'balance_minority'}      
+        return  {'auto', 'balance_minority'}  
+    
+    def _build_internal_objects(self, X, y):
+        # 
+        pass    

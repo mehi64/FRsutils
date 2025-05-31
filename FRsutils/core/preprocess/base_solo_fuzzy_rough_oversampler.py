@@ -1,6 +1,6 @@
 import numpy as np
 from collections import Counter
-from imblearn.over_sampling import BaseOverSampler
+from imblearn.over_sampling.base import BaseOverSampler
 from sklearn.utils import check_X_y
 from FRsutils.core.approximations import BaseFuzzyRoughModel
 from abc import ABC, abstractmethod
@@ -14,45 +14,43 @@ from FRsutils.core.preprocess.base_allpurpose_fuzzy_rough_oversampler import Bas
 
 
 
-# not checked
-def get_similarity_function(name: str, sigma):
-    if name == "linear":
-        return LinearSimilarity()
-    elif name == "gaussian":
-        return GaussianSimilarity(sigma=sigma)
-    else:
-        raise ValueError(f"Unknown similarity name: {name}")
+# # not checked
+# def get_similarity_function(name: str, sigma):
+#     if name == "linear":
+#         return LinearSimilarity()
+#     elif name == "gaussian":
+#         return GaussianSimilarity(sigma=sigma)
+#     else:
+#         raise ValueError(f"Unknown similarity name: {name}")
 
-# not checked
-def get_fuzzy_rough_model_by_name(name: str, similarity_name: str, similarity_tnorm: str, **kwargs):
-    similarity = get_similarity_function(similarity_name, similarity_tnorm)
+# # not checked
+# def get_fuzzy_rough_model_by_name(name: str, similarity_name: str, similarity_tnorm: str, **kwargs):
+#     similarity = get_similarity_function(similarity_name, similarity_tnorm)
 
-    if name == "IT2FR":
-        return IT2FRModel(similarity=similarity,
-                          t_norm=kwargs.get('t_norm'),
-                          implicator=kwargs.get('implicator'))
+#     if name == "IT2FR":
+#         return IT2FRModel(similarity=similarity,
+#                           t_norm=kwargs.get('t_norm'),
+#                           implicator=kwargs.get('implicator'))
 
-    elif name == "OWAFRS":
-        return OWAFRSModel(similarity=similarity,
-                           t_norm=kwargs.get('t_norm'),
-                           implicator=kwargs.get('implicator'),
-                           owa_weights_lower=kwargs.get('owa_weights_lower'),
-                           owa_weights_upper=kwargs.get('owa_weights_upper'))
+#     elif name == "OWAFRS":
+#         return OWAFRSModel(similarity=similarity,
+#                            t_norm=kwargs.get('t_norm'),
+#                            implicator=kwargs.get('implicator'),
+#                            owa_weights_lower=kwargs.get('owa_weights_lower'),
+#                            owa_weights_upper=kwargs.get('owa_weights_upper'))
 
-    elif name == "VQRS":
-        return VQRSModel(similarity=similarity,
-                         alpha_lower=kwargs.get('alpha_lower'),
-                         beta_lower=kwargs.get('beta_lower'),
-                         alpha_upper=kwargs.get('alpha_upper'),
-                         beta_upper=kwargs.get('beta_upper'))
+#     elif name == "VQRS":
+#         return VQRSModel(similarity=similarity,
+#                          alpha_lower=kwargs.get('alpha_lower'),
+#                          beta_lower=kwargs.get('beta_lower'),
+#                          alpha_upper=kwargs.get('alpha_upper'),
+#                          beta_upper=kwargs.get('beta_upper'))
 
-    else:
-        raise ValueError(f"Unknown Fuzzy Rough model: {name}")
+#     else:
+#         raise ValueError(f"Unknown Fuzzy Rough model: {name}")
 
 
 
-# Inherits from BaseEstimator to integrate with scikit-learn tooling
-# (e.g., Pipeline, GridSearchCV, clone, etc.).
 class BaseSoloFuzzyRoughOversampler(BaseAllPurposeFuzzyRoughOversampler):
     """Base class with FRS calculations.
        This class of resamplers just use Fuzzy-rough sets without combining with any other model
@@ -60,8 +58,8 @@ class BaseSoloFuzzyRoughOversampler(BaseAllPurposeFuzzyRoughOversampler):
     def __init__(self,                
                  fr_model_name='ITFRS',
                  similarity_name='linear',
-                 similarity_tnorm='lukasiewicz',
-                 instance_ranking_strategy='pos',
+                 similarity_tnorm_name='minimum',
+                 instance_ranking_strategy_name='pos',
                  sampling_strategy='auto',
                  k_neighbors=5,
                  bias_interpolation=False,
@@ -70,10 +68,10 @@ class BaseSoloFuzzyRoughOversampler(BaseAllPurposeFuzzyRoughOversampler):
         
         super().__init__(fr_model_name=fr_model_name,
                  similarity_name=similarity_name,
-                 similarity_tnorm=similarity_tnorm,
-                 instance_ranking_strategy=instance_ranking_strategy,
+                 similarity_tnorm_name=similarity_tnorm_name,
+                 instance_ranking_strategy_name=instance_ranking_strategy_name,
                  sampling_strategy=sampling_strategy,
-                 kwargs=kwargs)
+                 **kwargs)
         
         self.k_neighbors = k_neighbors
         self.bias_interpolation = bias_interpolation
@@ -81,12 +79,12 @@ class BaseSoloFuzzyRoughOversampler(BaseAllPurposeFuzzyRoughOversampler):
         
         # TODO: kwargs!
 
-        self.lower_app = self.fr_model.lower_approximation()
-        self.upper_app = self.fr_model.upper_approximation()
+        # self.lower_app = self.fr_model.lower_approximation()
+        # self.upper_app = self.fr_model.upper_approximation()
 
-        # TODO: check this. Is that correct?what about all models?
-        self.positive_region = self.lower_app
-        # self.boundary_region = self.fr_model.boundary_region()
+        # # TODO: check this. Is that correct?what about all models?
+        # self.positive_region = self.lower_app
+        # # self.boundary_region = self.fr_model.boundary_region()
 
     def _compatible_dataset_with_FuzzyRough(self, X: np.ndarray, y: np.ndarray) -> None:
         """
@@ -137,8 +135,16 @@ class BaseSoloFuzzyRoughOversampler(BaseAllPurposeFuzzyRoughOversampler):
         ## All checks passed
         # print("Dataset is valid.")
 
+    @abstractmethod 
+    def _build_internal_objects(self, X, y):
+        """
+        @brief still abstract. Refer to the docstring of the parent class.
+        
+        @return None
+        """
+        pass
 
-    def fit(self, X, y):
+    def fitt(self, X, y):
         """@brief Mainly checks the correctness of dataset and FRSMOTE parameters.
             The fit function is called in fit_resample automatically.
             by the user. So, we placed the data and parameter checks here and in.
@@ -165,7 +171,7 @@ class BaseSoloFuzzyRoughOversampler(BaseAllPurposeFuzzyRoughOversampler):
 
         return X_resampled, y_resampled
     
-    def transform(self, X, y=None):
+    def transformm(self, X, y=None):
         """
         @brief Applies the resampling transformation to the dataset.
         NOTE: This is necessary to be compatible with scikit learn pipelines
