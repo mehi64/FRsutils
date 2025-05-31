@@ -2,13 +2,13 @@
 VQRS implementation.
 """
 
-from FRsutils.core.approximations import FuzzyRoughModel_Base
+from FRsutils.core.approximations import BaseFuzzyRoughModel
 import FRsutils.core.tnorms as tn
 import numpy as np
 import FRsutils.core.fuzzy_quantifiers as fq
 
 
-class VQRS(FuzzyRoughModel_Base):
+class VQRS(BaseFuzzyRoughModel):
     def __init__(self, 
                  similarity_matrix: np.ndarray, 
                  labels: np.ndarray, 

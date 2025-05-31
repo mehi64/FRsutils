@@ -5,8 +5,12 @@
 ``` $pip install frsutils```
 
 - Requirements
-  - Python
-  - Numpy 
+  - python
+  - numpy 
+  - imbalanced learn
+  - scikit learn
+  - pandas
+  - pytest (if you want to run unit tests)
 
 # Fuzzy-Rough set utilities (Under development)
 

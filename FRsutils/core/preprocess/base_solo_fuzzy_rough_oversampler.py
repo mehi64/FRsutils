@@ -2,71 +2,16 @@ import numpy as np
 from collections import Counter
 from imblearn.over_sampling import BaseOverSampler
 from sklearn.utils import check_X_y
-from FRsutils.core.approximations import FuzzyRoughModel_Base
+from FRsutils.core.approximations import BaseFuzzyRoughModel
 from abc import ABC, abstractmethod
 import warnings
 from FRsutils.core.models.itfrs import ITFRS
 from FRsutils.core.models.owafrs import OWAFRS
 from FRsutils.core.models.vqrs import VQRS
 from FRsutils.core.similarities import calculate_similarity_matrix, GaussianSimilarity, LinearSimilarity
+from FRsutils.core.preprocess.base_allpurpose_fuzzy_rough_oversampler import BaseAllPurposeFuzzyRoughOversampler
+# import imblearn.over_sampling.base.BaseOverSampler
 
-model_config = {
-    "fr_model": 
-    {
-        "ITFRS": 
-        {
-            "required": {"tnorm": {"type": str, "choices": {"tnorm1", "tnorm2", "tnorm3"}}},
-            "optional": {"verbose": {"type": bool, "default": False}},
-        },
-        "OWAFRS": 
-        {
-            "required": {"tnorm": {"type": str, "choices": {"tnorm1", "tnorm2", "tnorm3"}}},
-            "optional": {"verbose": {"type": bool, "default": False}},
-        },
-        "VQRS": 
-        {
-            "required": {
-                "alpha_lower": {"type": float},
-                "beta_lower": {"type": float}
-            },
-            "optional": {"gamma": {"type": float, "default": 0.5}},
-        },
-    },
-    "hgf": {
-        "HGF1": {
-            "required": {"learning_rate": {"type": float}},
-            "optional": {"momentum": {"type": float, "default": 0.9}},
-        },
-        "HGF2": {
-            "required": {},
-            "optional": {"decay": {"type": float, "default": 0.01}},
-        },
-    }
-}
-
-# not checked
-def _validate_params(selection: str, config: dict, **kwargs):
-    if selection not in config:
-        raise ValueError(f"Invalid selection: {selection}. Must be one of {list(config)}")
-
-    conf = config[selection]
-    validated = {}
-
-    # Validate required
-    for key, spec in conf.get("required", {}).items():
-        if key not in kwargs:
-            raise ValueError(f"Missing required parameter '{key}' for selection '{selection}'")
-        val = kwargs[key]
-        if "choices" in spec and val not in spec["choices"]:
-            raise ValueError(f"Invalid value for '{key}': {val}. Must be one of {spec['choices']}")
-        validated[key] = spec["type"](val)
-
-    # Validate optional
-    for key, spec in conf.get("optional", {}).items():
-        val = kwargs.get(key, spec["default"])
-        validated[key] = spec["type"](val)
-
-    return validated
 
 
 # not checked
@@ -104,33 +49,36 @@ def get_fuzzy_rough_model_by_name(name: str, similarity_name: str, similarity_tn
     else:
         raise ValueError(f"Unknown Fuzzy Rough model: {name}")
 
-allowed_sampling_strategies = ["auto", "xxxxx"]
+
 
 # Inherits from BaseEstimator to integrate with scikit-learn tooling
 # (e.g., Pipeline, GridSearchCV, clone, etc.).
-class BaseSoloFuzzyRoughResampler(ABC, BaseOverSampler):
+class BaseSoloFuzzyRoughOversampler(BaseAllPurposeFuzzyRoughOversampler):
     """Base class with FRS calculations.
        This class of resamplers just use Fuzzy-rough sets without combining with any other model
     """
-    def __init__(self,
+    def __init__(self,                
                  fr_model_name='ITFRS',
                  similarity_name='linear',
                  similarity_tnorm='lukasiewicz',
+                 instance_ranking_strategy='pos',
                  sampling_strategy='auto',
                  k_neighbors=5,
                  bias_interpolation=False,
                  random_state=None,
-                 n_jobs=None,
                  **kwargs):
-        self.fr_model_name = fr_model_name
-        self.similarity_name = similarity_name
-        self.similarity_tnorm = similarity_tnorm
-        self.sampling_strategy = sampling_strategy
+        
+        super().__init__(fr_model_name=fr_model_name,
+                 similarity_name=similarity_name,
+                 similarity_tnorm=similarity_tnorm,
+                 instance_ranking_strategy=instance_ranking_strategy,
+                 sampling_strategy=sampling_strategy,
+                 kwargs=kwargs)
+        
         self.k_neighbors = k_neighbors
         self.bias_interpolation = bias_interpolation
         self.random_state = random_state
-        self.n_jobs = n_jobs
-        self.fr_model_kwargs = kwargs
+        
         # TODO: kwargs!
 
         self.lower_app = self.fr_model.lower_approximation()
@@ -241,26 +189,26 @@ class BaseSoloFuzzyRoughResampler(ABC, BaseOverSampler):
     def _get_target_classes(self):
         """Determine which classes to oversample based on sampling_strategy."""
         
-        if self.sampling_strategy == 'auto':
+        if self.instance_ranking_strategy == 'auto':
             majority_class = max(self.target_stats_, key=self.target_stats_.get)
             return [cls for cls in self.classes_ if cls != majority_class]
-        elif isinstance(self.sampling_strategy, dict):
-            return list(self.sampling_strategy.keys())
+        elif isinstance(self.instance_ranking_strategy, dict):
+            return list(self.instance_ranking_strategy.keys())
         # Add more strategy handling if needed (float, list, callable)
         else:
-            warnings.warn(f"Unsupported sampling_strategy: {self.sampling_strategy}. Using 'auto'.")
+            warnings.warn(f"Unsupported sampling_strategy: {self.instance_ranking_strategy}. Using 'auto'.")
             return [cls for cls in self.classes_ if cls != max(self.target_stats_, key=self.target_stats_.get)]
 
     def _get_num_samples(self, class_label):
         """Determine number of samples to generate for a class."""
-        if self.sampling_strategy == 'auto':
+        if self.instance_ranking_strategy == 'auto':
             majority_class = max(self.target_stats_, key=self.target_stats_.get)
             target_count = self.target_stats_[majority_class]
-        elif isinstance(self.sampling_strategy, dict):
+        elif isinstance(self.instance_ranking_strategy, dict):
             # Ensure target count is not less than current count
-            target_count = max(self.target_stats_[class_label], self.sampling_strategy[class_label])
+            target_count = max(self.target_stats_[class_label], self.instance_ranking_strategy[class_label])
         else: # Default to balancing against majority if strategy is unclear
-             warnings.warn(f"Interpreting sampling_strategy '{self.sampling_strategy}' as 'auto'.")
+             warnings.warn(f"Interpreting sampling_strategy '{self.instance_ranking_strategy}' as 'auto'.")
              majority_class = max(self.target_stats_, key=self.target_stats_.get)
              target_count = self.target_stats_[majority_class]
 
@@ -273,8 +221,8 @@ class BaseSoloFuzzyRoughResampler(ABC, BaseOverSampler):
         checks correctness of parameters specific to this object.
         Each derived class must implements its own
         """
-        if self.sampling_strategy not in allowed_sampling_strategies:
-            raise ValueError(f"Invalid strategy '{self.sampling_strategy}'. Allowed values are: {allowed_sampling_strategies}")
+        if self.instance_ranking_strategy not in allowed_sampling_strategies:
+            raise ValueError(f"Invalid strategy '{self.instance_ranking_strategy}'. Allowed values are: {allowed_sampling_strategies}")
 
     @abstractmethod
     def _fit_resample(self, X, y):

@@ -75,6 +75,19 @@
             }
         },
         {
+            "name": "Debug builder models",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": ["tests/utils_tests/constructor_utils_tests/test_tnorm_builders.py", "tests/utils_tests/constructor_utils_tests/test_similarity_builder.py"],
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+              "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
             "name": "Debug all core methods",
             "type": "debugpy",
             "request": "launch",

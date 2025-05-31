@@ -1,6 +1,6 @@
 import numpy as np
 
-def fuzzy_quantifier1(p, alpha, beta, increasing=True):
+def fuzzy_quantifier_linear(p, alpha, beta, increasing=True):
     """
     Compute the degree of membership to a fuzzy quantifier.
 
