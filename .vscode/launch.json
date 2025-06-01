@@ -15,6 +15,17 @@
             },
             "cwd": "${workspaceFolder}"
         },
+        {
+            "name": "Python: test imbalanced learn with FRSMOTE",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "FRsutils.sandbox.test_imblearn_pipeline",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}"
+        },
         // {
         //     "name": "Python: plot_smote",
         //     "type": "debugpy",
@@ -111,6 +122,19 @@
             "module": "pytest",
             "args": ["tests/dataset_utils_tests/test_KEEL_DS_loader_Utility.py",
                      "tests/dataset_utils_tests/test_KEEL_CV_Utility.py"],
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+              "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "Tst Dbg validation Utils",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": ["tests/utils_tests/validation_utils_tests/test_validation_utils.py"],
             "console": "integratedTerminal",
             "justMyCode": true,
             "cwd": "${workspaceFolder}",

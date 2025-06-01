@@ -12,7 +12,7 @@ from FRsutils.utils.constructor_utils.similarity_builder import build_similarity
 from FRsutils.core.similarities import calculate_similarity_matrix
 
 from FRsutils.utils.validation_utils import (
-    validate_choice,
+    _validate_string_param_choice,
     validate_fr_model_params,
     ALLOWED_FR_MODELS,
     ALLOWED_SIMILARITIES,
@@ -63,37 +63,7 @@ class FRSMOTE(BaseSoloFuzzyRoughOversampler):
                  random_state=random_state,
                  **kwargs)
         
-        # # Validate parameters
-        # validate_choice(fr_model_name, ALLOWED_FR_MODELS)
-        # validate_choice(similarity_name, ALLOWED_SIMILARITIES)
-        # validate_choice(similarity_tnorm, ALLOWED_TNORMS)
-        # validate_choice(instance_ranking_strategy, ALLOWED_RANKING_STRATEGIES)
-        # validate_choice(sampling_strategy, ALLOWED_SAMPLING_STRATEGIES)
-        # validate_choice(k_neighbors, ALLOWED_K_NEIGHBORS)
-        # validate_choice(random_state, ALLOWED_RANDOM_STATE)
-        # validate_fr_model_params(fr_model
-        # Build core components
-        # similarity_func = build_similarity(similarity_name)
-        # sim_tnorm_obj = build_tnorm(similarity_tnorm)
-        
-               
-        # # Add to model parameters
-        # fr_model_params['similarity_matrix'] = None
-        # fr_model_params['tnorm'] = sim_tnorm_obj
-        # fr_model = build_fuzzy_rough_model(fr_model_name, fr_model_params)
-
-        # # Assign all config to self
-        # self.fr_model_name = fr_model_name
-        # self.similarity_name = similarity_name
-        # self.similarity_tnorm = similarity_tnorm
-        # self.instance_ranking_strategy = instance_ranking_strategy
-        # self.k_neighbors = k_neighbors
-        # self.bias_interpolation = bias_interpolation
-        # self.random_state = random_state
-        # self.fr_model_params = fr_model_params
-
-        # # Call parent with constructed model
-        # # super().__init__(fr_model=fr_model, sampling_strategy=sampling_strategy)
+              
 
     def _check_params(self):
         """
@@ -237,6 +207,51 @@ class FRSMOTE(BaseSoloFuzzyRoughOversampler):
     def supported_strategies(self):
         return  {'auto', 'balance_minority'}  
     
-    def _build_internal_objects(self, X, y):
-        # 
-        pass    
+    def get_params(self, deep=True):
+        """
+        @brief Returns all parameters including nested fuzzy rough model parameters.
+
+        @param deep If True, will return parameters of nested objects.
+
+        @return Dictionary of parameter names and values.
+        """
+        # Start with known top-level parameters
+        params = {
+            'fr_model_name': self.fr_model_name,
+            'similarity_name': self.similarity_name,
+            'similarity_tnorm_name': self.similarity_tnorm_name,
+            'instance_ranking_strategy_name': self.instance_ranking_strategy_name,
+            'sampling_strategy': self.sampling_strategy,
+            'k_neighbors': self.k_neighbors,
+            'bias_interpolation': self.bias_interpolation,
+            'random_state': self.random_state,
+            'fr_model_params': self.fr_model_params
+        }
+
+        # Add fuzzy rough model parameters (those passed via **kwargs in init)
+        if hasattr(self, 'fr_model_params'):
+            for k, v in self.fr_model_params.items():
+                params[f'{k}'] = v
+
+        return params
+    
+    def set_params(self, **params):
+        """
+        @brief Sets the parameters including nested fuzzy rough model parameters.
+
+        @param params Dictionary of parameters to set.
+
+        @return self
+        """
+        # Separate top-level and nested fuzzy rough parameters
+        fr_model_params = self.fr_model_params.copy() if hasattr(self, 'fr_model_params') else {}
+
+        for key, value in params.items():
+            if key.startswith("fr_model_params__"):
+                inner_key = key[len("fr_model_params__"):]
+                fr_model_params[inner_key] = value
+            else:
+                setattr(self, key, value)
+
+        self.fr_model_params = fr_model_params
+        return self

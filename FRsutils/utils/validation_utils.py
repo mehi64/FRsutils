@@ -15,17 +15,17 @@
 ALLOWED_FR_MODELS = {'ITFRS', 'VQRS', 'OWAFRS'}
 ALLOWED_SIMILARITIES = {'linear', 'gaussian'}
 ALLOWED_TNORMS = {'lukasiewicz', 'product', 'minimum'}
-ALLOWED_IMPLICATORS = {'goedel', 'kleene_dienes', 'lukasiewicz', 'reichenbach'}
-ALLOWED_FUZZY_QUANTIFIERS = {'linear', 'quad'}
-ALLOWED_OWA_WEIGHTING_STRATEGIES = {'linear_sup', 'linear_inf'}
+ALLOWED_IMPLICATORS = {'gaines', 'goedel', 'kleene_dienes', 'lukasiewicz', 'reichenbach'}
+ALLOWED_FUZZY_QUANTIFIERS = {'linear', 'quadratic'}
 
+ALLOWED_OWA_WEIGHTING_STRATEGIES = {'linear_sup', 'linear_inf'}
 ALLOWED_RANKING_STRATEGIES = {'pos', 'lower', 'upper'}
 
 # ------------------------------
 # validate_choice
 # ------------------------------
 
-def validate_choice(name: str, value: str, allowed: set[str]) -> str:
+def _validate_string_param_choice(param_name: str, param_value: str, allowed: set[str]) -> str:
     """
     @brief Validates a string parameter against allowed values.
 
@@ -37,17 +37,18 @@ def validate_choice(name: str, value: str, allowed: set[str]) -> str:
 
     @throws ValueError If value is not allowed.
     """
-    if value not in allowed:
+    if param_value not in allowed:
         raise ValueError(
-            f"Invalid value '{value}' for parameter '{name}'. "
+            f"Invalid value '{param_value}' for parameter '{param_name}'. "
             f"Allowed values are: {sorted(allowed)}."
         )
-    return value
+    return param_value
 
 # ------------------------------
 # validate_strategy_compatibility
 # ------------------------------
 
+# TODO: check me! Am I correct?
 def validate_strategy_compatibility(class_name: str, strategy: str, supported_strategies: set[str]):
     """
     @brief Validates whether a sampling strategy is compatible with a class.
@@ -60,7 +61,7 @@ def validate_strategy_compatibility(class_name: str, strategy: str, supported_st
     """
     if strategy not in supported_strategies:
         raise ValueError(
-            f"Sampling strategy '{strategy}' is not supported by '{class_name}'. "
+            f"Instance ranking strategy '{strategy}' is not supported by '{class_name}'. "
             f"Supported strategies are: {sorted(supported_strategies)}."
         )
 
@@ -68,46 +69,51 @@ def validate_strategy_compatibility(class_name: str, strategy: str, supported_st
 # validate_fr_model_params
 # ------------------------------
 
-# TODO: I bypassed this. check that to work properly
+# TODO: check me! Am I correct?
 def validate_fr_model_params(model_name: str, params: dict):
     """
     @brief Validates parameters passed to a fuzzy rough model against its schema.
+
+    @details All parameters (including tnorm, implicator) are passed in as strings,
+             and are validated for presence, type, and range (for floats).
 
     @param model_name Name of the fuzzy rough model.
     @param params Dictionary of user-provided parameters.
 
     @throws ValueError or TypeError If keys are missing, types are incorrect, or values are invalid.
     """
-    schema = _get_fr_model_param_schema(model_name)
+    schema = get_fr_model_param_schema(model_name)
 
     for key, spec in schema.items():
-        # Check presence
+        # spec.get('required', False) → Checks if the parameter is marked as
+        # required in the schema (returns True if required, otherwise False)
+
+        # key not in params
+        # → Checks if the parameter is missing from the user-supplied params
+
         if spec.get('required', False) and key not in params:
             raise ValueError(f"{model_name} requires parameter '{key}'.")
 
         val = params.get(key)
 
-        # Type: float
-        if spec['type'] == 'float':
+        expected_type = spec['type']
+
+        # Check float values
+        if expected_type == 'float':
             if not isinstance(val, float):
                 raise TypeError(f"Parameter '{key}' must be a float.")
             lo, hi = spec.get('range', (None, None))
             if lo is not None and (val < lo or val > hi):
                 raise ValueError(f"Parameter '{key}' must be in range [{lo}, {hi}].")
 
-        # Type: str with allowed values
-        elif spec['type'] in {'str' , 'tnorm', 'implicator'}:
+        # All other values (str, tnorm, implicator) must be strings and validated against allowed
+        elif expected_type in {'str', 'tnorm', 'implicator'}:
             if not isinstance(val, str):
                 raise TypeError(f"Parameter '{key}' must be a string.")
             if 'allowed' in spec and val not in spec['allowed']:
                 raise ValueError(f"Parameter '{key}' must be one of {sorted(spec['allowed'])}.")
 
-        # # Type: tnorm / implicator should be callable
-        # elif spec['type'] in {'tnorm', 'implicator'}:
-        #     if not callable(val):
-        #         raise TypeError(f"Parameter '{key}' must be a callable (type={spec['type']}).")
-
-
+# TODO: check me! Am I correct?
 def validate_tnorm_params(name: str, params: dict):
     """
     @brief Validates parameters provided for a named T-norm.
@@ -117,9 +123,15 @@ def validate_tnorm_params(name: str, params: dict):
 
     @throws ValueError or TypeError for missing or invalid values.
     """
-    schema = _get_tnorm_param_schema(name)
+    schema = get_tnorm_param_schema(name)
 
     for key, spec in schema.items():
+        # spec.get('required', False) → Checks if the parameter is marked as
+        # required in the schema (returns True if required, otherwise False)
+
+        # key not in params
+        # → Checks if the parameter is missing from the user-supplied params
+
         if spec.get('required', False) and key not in params:
             raise ValueError(f"T-norm '{name}' requires parameter '{key}'.")
 
@@ -142,7 +154,7 @@ def validate_similarity_choice(name: str) -> str:
 
     @throws ValueError If not in ALLOWED_SIMILARITIES.
     """
-    return validate_choice("similarity_name", name, ALLOWED_SIMILARITIES)
+    return _validate_string_param_choice("similarity_name", name, ALLOWED_SIMILARITIES)
 
 
 def validate_implicator_choice(name: str) -> str:
@@ -154,7 +166,7 @@ def validate_implicator_choice(name: str) -> str:
 
     @throws ValueError If not in ALLOWED_IMPLICATORS.
     """
-    return validate_choice("implicator", name, ALLOWED_IMPLICATORS)
+    return _validate_string_param_choice("implicator", name, ALLOWED_IMPLICATORS)
 
 
 def validate_quantifier_choice(name: str) -> str:
@@ -166,7 +178,7 @@ def validate_quantifier_choice(name: str) -> str:
 
     @throws ValueError If not in ALLOWED_FUZZY_QUANTIFIERS.
     """
-    return validate_choice("fuzzy_quantifier", name, ALLOWED_FUZZY_QUANTIFIERS)
+    return _validate_string_param_choice("fuzzy_quantifier", name, ALLOWED_FUZZY_QUANTIFIERS)
 
 
 def validate_owa_strategy_choice(name: str) -> str:
@@ -178,7 +190,7 @@ def validate_owa_strategy_choice(name: str) -> str:
 
     @throws ValueError If not in ALLOWED_OWA_WEIGHTING_STRATEGIES.
     """
-    return validate_choice("owa_weighting_strategy", name, ALLOWED_OWA_WEIGHTING_STRATEGIES)
+    return _validate_string_param_choice("owa_weighting_strategy", name, ALLOWED_OWA_WEIGHTING_STRATEGIES)
 
 ##############################################################################
 
@@ -187,7 +199,7 @@ def validate_owa_strategy_choice(name: str) -> str:
 # get_fr_model_param_schema
 # ------------------------------
 
-def _get_fr_model_param_schema(model_name: str) -> dict:
+def get_fr_model_param_schema(model_name: str) -> dict:
     """
     @brief Returns a schema defining the parameters required for a fuzzy rough model.
 
@@ -207,7 +219,7 @@ def _get_fr_model_param_schema(model_name: str) -> dict:
             'lb_tnorm': {'type': 'tnorm', 'required': True},
             'ub_implicator': {'type': 'implicator', 'required': True},
             'owa_weighting_strategy': {
-                'type': 'str', 'required': True, 'allowed': {'linear', 'quad'}
+                'type': 'str', 'required': True, 'allowed': ALLOWED_OWA_WEIGHTING_STRATEGIES
             }
         }
     elif model_name == 'VQRS':
@@ -225,7 +237,7 @@ def _get_fr_model_param_schema(model_name: str) -> dict:
 # T-norm Parameter Schema
 # ------------------------------
 
-def _get_tnorm_param_schema(name: str) -> dict:
+def get_tnorm_param_schema(name: str) -> dict:
     """
     @brief Returns the expected parameter schema for the given T-norm.
 
@@ -237,13 +249,13 @@ def _get_tnorm_param_schema(name: str) -> dict:
     """
     name = name.lower()
 
-    if name in {'minimum', 'product', 'lukasiewicz'}:
+    if name in ('lukasiewicz', 'product', 'minimum'):
         return {}  # No parameters required
 
-    # elif name == 'yager':
-    #     return {
-    #         'p': {'type': 'float', 'required': True, 'range': (1.0, float('inf'))}
-    #     }
+    elif name == 'yager':
+        return {
+            'p': {'type': 'float', 'required': True, 'range': (1.0, float('inf'))}
+        }
 
     else:
         raise ValueError(f"Unknown or unsupported T-norm: '{name}'")
@@ -252,7 +264,7 @@ def _get_tnorm_param_schema(name: str) -> dict:
 # implicator Parameter Schema
 # ------------------------------
 
-def _get_implicator_param_schema(name: str) -> dict:
+def get_implicator_param_schema(name: str) -> dict:
     """
     @brief Returns the parameter schema for a named fuzzy implicator.
 
@@ -263,7 +275,7 @@ def _get_implicator_param_schema(name: str) -> dict:
     """
     name = name.lower()
 
-    if name in {'goedel', 'kleene_dienes', 'lukasiewicz', 'reichenbach'}:
+    if name in ALLOWED_IMPLICATORS:
         return {}  # All current implicators are parameterless
 
     # Future support for parameterized implicators can go here
@@ -274,7 +286,7 @@ def _get_implicator_param_schema(name: str) -> dict:
 # similarity Parameter Schema
 # ------------------------------
 
-def _get_similarity_param_schema(name: str) -> dict:
+def get_similarity_param_schema(name: str) -> dict:
     """
     @brief Returns the parameter schema for a similarity function.
 
@@ -289,7 +301,7 @@ def _get_similarity_param_schema(name: str) -> dict:
         return {}
     elif name == 'gaussian':
         return {
-            'sigma': {'type': 'float', 'required': True, 'range': (0.0, float('inf'))}
+            'sigma': {'type': 'float', 'required': True, 'range': (0.0, 0.5)}
         }
     else:
         raise ValueError(f"Unknown similarity function: '{name}'")
@@ -298,7 +310,7 @@ def _get_similarity_param_schema(name: str) -> dict:
 # OWA weights Parameter Schema
 # ------------------------------
 
-def _get_owa_weight_param_schema(name: str) -> dict:
+def get_owa_weight_param_schema(name: str) -> dict:
     """
     @brief Returns the parameter schema for an OWA weighting strategy.
 
@@ -309,7 +321,7 @@ def _get_owa_weight_param_schema(name: str) -> dict:
     @throws ValueError If strategy name is unknown.
     """
     name = name.lower()
-    if name in {'linear_sup', 'linear_inf'}:
+    if name in ALLOWED_OWA_WEIGHTING_STRATEGIES:
         return {
             'n': {'type': 'int', 'required': True, 'range': (1, float('inf'))}
         }
@@ -320,28 +332,29 @@ def _get_owa_weight_param_schema(name: str) -> dict:
 # Fuzzy Quantifier Parameter Schema
 # ------------------------------
 
-def _get_fuzzy_quantifier_param_schema(name: str) -> dict:
+def get_fuzzy_quantifier_param_schema(name: str) -> dict:
     """
     @brief Returns the parameter schema for a fuzzy quantifier.
 
-    @param name Name of the quantifier ('linear', 'quad').
+    @param name Name of the quantifier ('linear', 'quadratic').
 
     @return Dictionary with parameter specs.
 
     @throws ValueError If the quantifier name is not recognized.
     """
     name = name.lower()
-    if name == 'linear':
-        return {
-            'alpha': {'type': 'float', 'required': True, 'range': (0.0, 1.0)},
-            'beta':  {'type': 'float', 'required': True, 'range': (0.0, 1.0)},
-            'increasing': {'type': 'bool', 'required': False}
-        }
-    elif name == 'quad':
+    if name == 'quadratic':
         return {
             'alpha': {'type': 'float', 'required': True, 'range': (0.0, 1.0)},
             'beta':  {'type': 'float', 'required': True, 'range': (0.0, 1.0)}
         }
+    # elif name == 'linear':
+    #     return {
+    #         'alpha': {'type': 'float', 'required': True, 'range': (0.0, 1.0)},
+    #         'beta':  {'type': 'float', 'required': True, 'range': (0.0, 1.0)},
+    #         'increasing': {'type': 'bool', 'required': False}
+    #     }
+    
     else:
         raise ValueError(f"Unknown fuzzy quantifier: '{name}'")
 
@@ -364,16 +377,16 @@ def get_param_schema(component_type: str, name: str) -> dict:
     component_type = component_type.lower()
 
     if component_type == 'fr_model':
-        return _get_fr_model_param_schema(name)
+        return get_fr_model_param_schema(name)
     elif component_type == 'tnorm':
-        return _get_tnorm_param_schema(name)
+        return get_tnorm_param_schema(name)
     elif component_type == 'implicator':
-        return _get_implicator_param_schema(name)
+        return get_implicator_param_schema(name)
     elif component_type == 'similarity':
-        return _get_similarity_param_schema(name)
+        return get_similarity_param_schema(name)
     elif component_type == 'owa_weight':
-        return _get_owa_weight_param_schema(name)
+        return get_owa_weight_param_schema(name)
     elif component_type == 'fuzzy_quantifier':
-        return _get_fuzzy_quantifier_param_schema(name)
+        return get_fuzzy_quantifier_param_schema(name)
     else:
         raise ValueError(f"Unsupported component_type '{component_type}'.")

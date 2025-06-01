@@ -4,7 +4,7 @@
 """
 
 from FRsutils.core.implicators import imp_goedel, imp_kleene_dienes, imp_lukasiewicz, imp_reichenbach
-from FRsutils.core.fuzzy_quantifiers import fuzzy_quantifier_linear, fuzzy_quantifier_quad
+from FRsutils.core.fuzzy_quantifiers import fuzzy_quantifier_linear, fuzzy_quantifier_quadratic
 from FRsutils.core.owa_weights import owa_suprimum_weights_linear, owa_infimum_weights_linear
 
 # ------------------------------
@@ -22,7 +22,7 @@ IMPLICATOR_REGISTRY = {
 # ------------------------------
 FUZZY_QUANTIFIER_REGISTRY = {
     'linear': fuzzy_quantifier_linear,
-    'quad': fuzzy_quantifier_quad,
+    'quad': fuzzy_quantifier_quadratic,
 }
 
 # ------------------------------

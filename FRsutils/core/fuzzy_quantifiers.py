@@ -18,21 +18,22 @@ def fuzzy_quantifier_linear(p, alpha, beta, increasing=True):
     - float or np.array
         Degree(s) of truth for the fuzzy quantifier.
     """
-    p = np.asarray(p)
+    raise ValueError("This function is not implemented yet.")
+    # p = np.asarray(p)
 
-    if increasing:
-        # For quantifiers like "most"
-        return np.where(p <= alpha, 0,
-               np.where(p >= beta, 1,
-                        (p - alpha) / (beta - alpha)))
-    else:
-        # For quantifiers like "few"
-        return np.where(p <= alpha, 1,
-               np.where(p >= beta, 0,
-                        (beta - p) / (beta - alpha)))
+    # if increasing:
+    #     # For quantifiers like "most"
+    #     return np.where(p <= alpha, 0,
+    #            np.where(p >= beta, 1,
+    #                     (p - alpha) / (beta - alpha)))
+    # else:
+    #     # For quantifiers like "few"
+    #     return np.where(p <= alpha, 1,
+    #            np.where(p >= beta, 0,
+    #                     (beta - p) / (beta - alpha)))
 
 
-def fuzzy_quantifier_quad(x, alpha, beta):
+def fuzzy_quantifier_quadratic(x, alpha, beta):
     """
     Smooth parameterized fuzzy quantifier using quadratic transition.
 

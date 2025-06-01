@@ -1,18 +1,17 @@
+import warnings
 from imblearn.over_sampling.base import BaseOverSampler
 from abc import ABC, abstractmethod
 from FRsutils.utils.init_helpers import assign_allowed_kwargs
-from FRsutils.utils.validation_utils import _get_fr_model_param_schema
+from FRsutils.utils.validation_utils import get_fr_model_param_schema
+from FRsutils.utils.constructor_utils.fuzzy_rough_lazy_buildable_mixin import FuzzyRoughLazyBuildableMixin
 
 from FRsutils.utils.validation_utils import (
-    validate_choice,
+    _validate_string_param_choice,
     validate_fr_model_params,
-    ALLOWED_FR_MODELS,
-    ALLOWED_SIMILARITIES,
-    ALLOWED_TNORMS,
     ALLOWED_RANKING_STRATEGIES
 )
 
-class BaseAllPurposeFuzzyRoughOversampler(ABC, BaseOverSampler):
+class BaseAllPurposeFuzzyRoughOversampler(FuzzyRoughLazyBuildableMixin, ABC, BaseOverSampler):
     """
     @brief Abstract base class for oversampling using Fuzzy Rough Sets.
 
@@ -20,16 +19,12 @@ class BaseAllPurposeFuzzyRoughOversampler(ABC, BaseOverSampler):
      - Use fuzzy-rough set theory directly for ranking or selecting instances.
      - Combine fuzzy-rough logic with generative models (e.g., VAE, GAN).
      - Use fuzzy-rough sets as a preprocessing step for other resamplers.
-     - The class is designed to be flexible and can be extended to support different
-    types of fuzzy-rough sets and oversampling strategies.
 
     It should not be used directly.
 
     @warning Do not instantiate or use this class directly. Use one of its concrete subclasses instead.
-
-    @inherits BaseOverSampler
-    @inherits ABC
     """
+
     def __init__(self,
                  fr_model_name='ITFRS',
                  similarity_name='linear',
@@ -37,42 +32,63 @@ class BaseAllPurposeFuzzyRoughOversampler(ABC, BaseOverSampler):
                  instance_ranking_strategy_name='pos',
                  sampling_strategy='auto',
                  **kwargs):
-        
+
         super().__init__(sampling_strategy=sampling_strategy)
-        
+
+        # Validate and store fuzzy rough config parameters
         validate_fr_model_params(fr_model_name, kwargs)
-
-        fr_model_schema = _get_fr_model_param_schema(fr_model_name)
+        fr_model_schema = get_fr_model_param_schema(fr_model_name)
         assign_allowed_kwargs(self, kwargs, fr_model_schema)
-        
 
-        
-        # Validate string options and assign to class attributes
-        fr_model_name = validate_choice("fr_model_name", fr_model_name, ALLOWED_FR_MODELS)
-        self.fr_model_name = fr_model_name
-        
-        similarity_name = validate_choice("similarity_name", similarity_name, ALLOWED_SIMILARITIES)
-        self.similarity_name = similarity_name
-        
-        similarity_tnorm_name = validate_choice("similarity_tnorm", similarity_tnorm_name, ALLOWED_TNORMS)
-        self.similarity_tnorm_name = similarity_tnorm_name
-        
-        
-        instance_ranking_strategy_name = validate_choice("instance_ranking_strategy", instance_ranking_strategy_name, ALLOWED_RANKING_STRATEGIES)
-        self.instance_ranking_strategy_name = instance_ranking_strategy_name
+        self._initialize_fr_config(
+            fr_model_name=fr_model_name,
+            similarity_name=similarity_name,
+            similarity_tnorm_name=similarity_tnorm_name,
+            fr_model_params=kwargs
+        )
 
+        self.instance_ranking_strategy_name = _validate_string_param_choice(
+            "instance_ranking_strategy", instance_ranking_strategy_name, ALLOWED_RANKING_STRATEGIES)
 
+# _get_target_classes and _get_num_samples remain the same as in FRSMOTE
+    def _get_target_classes(self):
+        """Determine which classes to oversample based on sampling_strategy."""
+        
+        if self.instance_ranking_strategy_name == 'pos':
+            majority_class = max(self.target_stats_, key=self.target_stats_.get)
+            return [cls for cls in self.classes_ if cls != majority_class]
+        elif isinstance(self.instance_ranking_strategy_name, dict):
+            return list(self.instance_ranking_strategy_name.keys())
+        # Add more strategy handling if needed (float, list, callable)
+        else:
+            warnings.warn(f"Unsupported sampling_strategy: {self.instance_ranking_strategy}. Using 'auto'.")
+            return [cls for cls in self.classes_ if cls != max(self.target_stats_, key=self.target_stats_.get)]
+
+    def _get_num_samples(self, class_label):
+        """Determine number of samples to generate for a class."""
+        if self.instance_ranking_strategy_name == 'auto':
+            majority_class = max(self.target_stats_, key=self.target_stats_.get)
+            target_count = self.target_stats_[majority_class]
+        elif isinstance(self.instance_ranking_strategy_name, dict):
+            # Ensure target count is not less than current count
+            target_count = max(self.target_stats_[class_label], self.instance_ranking_strategy_name[class_label])
+        else: # Default to balancing against majority if strategy is unclear
+             warnings.warn(f"Interpreting sampling_strategy '{self.instance_ranking_strategy_name}' as 'auto'.")
+             majority_class = max(self.target_stats_, key=self.target_stats_.get)
+             target_count = self.target_stats_[majority_class]
+
+        current_count = self.target_stats_[class_label]
+        return max(0, target_count - current_count)
     
-    @abstractmethod 
-    def _build_internal_objects(self, X, y):
-        """
-        @brief creates the internal objects of the resampler.
-        all classes should implement this method
         
-        @return None
+    @abstractmethod
+    def _check_params(self):
         """
-        pass
-    
+        checks correctness of parameters specific to this object.
+        Each derived class must implements its own
+        """
+        raise NotImplementedError("Subclasses must implement _check_params.")
+        
     @abstractmethod 
     def fit_resample(self, X, y):
         """
@@ -83,5 +99,5 @@ class BaseAllPurposeFuzzyRoughOversampler(ABC, BaseOverSampler):
         @param y The target labels.
         @return A tuple of the resampled data and labels.
         """
-        pass
+        raise NotImplementedError("Subclasses must implement fit_resample.")
  

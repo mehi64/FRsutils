@@ -1,172 +1,131 @@
+# TODO: check this file thoroughly
+
 import pytest
+
 from FRsutils.utils.validation_utils import (
-    validate_choice,
+    _validate_string_param_choice,
     validate_strategy_compatibility,
     validate_fr_model_params,
-    ALLOWED_FR_MODELS,
-    ALLOWED_SIMILARITIES,
-    ALLOWED_TNORMS,
-    ALLOWED_RANKING_STRATEGIES
+    validate_tnorm_params,
+    validate_similarity_choice,
+    validate_implicator_choice,
+    validate_quantifier_choice,
+    validate_owa_strategy_choice,
+    get_param_schema
 )
 
-# ------------------------------
-# validate_choice
-# ------------------------------
+# ---------------------------------------------
+# _validate_string_param_choice
+# ---------------------------------------------
+def test_validate_string_param_choice_valid():
+    assert _validate_string_param_choice("similarity_name", "linear", {"linear", "gaussian"}) == "linear"
 
-def test_validate_choice_valid():
-    """
-    @brief Tests that validate_choice returns the value when it's valid.
-    """
-    assert validate_choice("fr_model_name", "ITFRS", ALLOWED_FR_MODELS) == "ITFRS"
-
-def test_validate_choice_invalid():
-    """
-    @brief Tests that validate_choice raises ValueError for invalid values.
-    """
+def test_validate_string_param_choice_invalid():
     with pytest.raises(ValueError):
-        validate_choice("similarity_name", "weird_sim", ALLOWED_SIMILARITIES)
+        _validate_string_param_choice("similarity_name", "bad", {"linear", "gaussian"})
 
-# ------------------------------
+# ---------------------------------------------
 # validate_strategy_compatibility
-# ------------------------------
+# ---------------------------------------------
+def test_validate_strategy_compatibility_valid():
+    validate_strategy_compatibility("MyClass", "pos", {"pos", "upper"})
 
-def test_strategy_compatibility_valid():
-    """
-    @brief Tests that valid sampling strategies are accepted.
-    """
-    validate_strategy_compatibility("MySampler", "auto", {"auto", "balanced"})
-
-def test_strategy_compatibility_invalid():
-    """
-    @brief Tests that an invalid strategy raises a ValueError.
-    """
+def test_validate_strategy_compatibility_invalid():
     with pytest.raises(ValueError):
-        validate_strategy_compatibility("MySampler", "random", {"auto", "balanced"})
+        validate_strategy_compatibility("MyClass", "bad", {"pos", "upper"})
 
-# ------------------------------
-# ITFRS
-# ------------------------------
+# ---------------------------------------------
+# validate_fr_model_params
+# ---------------------------------------------
+def test_validate_fr_model_params_valid():
+    validate_fr_model_params("ITFRS", {"lb_tnorm": "minimum", "ub_implicator": "goedel"})
 
-def test_itfrs_valid():
-    """
-    @brief Tests correct ITFRS parameter configuration.
-    """
-    validate_fr_model_params("ITFRS", {
-        "lb_tnorm": lambda a, b: a * b,
-        "ub_implicator": lambda a, b: max(1 - a, b)
-    })
-
-def test_itfrs_missing_param():
-    """
-    @brief Tests that missing required ITFRS parameters raise an error.
-    """
+def test_validate_fr_model_params_missing_key():
     with pytest.raises(ValueError):
-        validate_fr_model_params("ITFRS", {
-            "lb_tnorm": lambda a, b: a * b
-        })
+        validate_fr_model_params("ITFRS", {"lb_tnorm": "minimum"})
 
-def test_itfrs_invalid_type():
-    """
-    @brief Tests that non-callable ITFRS parameters raise a TypeError.
-    """
-    with pytest.raises(TypeError):
-        validate_fr_model_params("ITFRS", {
-            "lb_tnorm": None,
-            "ub_implicator": 123
-        })
-
-# ------------------------------
-# OWAFRS
-# ------------------------------
-
-def test_owafrs_valid():
-    """
-    @brief Tests valid OWAFRS parameter configuration.
-    """
-    validate_fr_model_params("OWAFRS", {
-        "lb_tnorm": lambda a, b: a * b,
-        "ub_implicator": lambda a, b: max(1 - a, b),
-        "owa_weighting_strategy": "linear"
-    })
-
-def test_owafrs_invalid_strategy_string():
-    """
-    @brief Tests that an invalid owa_weighting_strategy raises ValueError.
-    """
-    with pytest.raises(ValueError):
-        validate_fr_model_params("OWAFRS", {
-            "lb_tnorm": lambda a, b: a * b,
-            "ub_implicator": lambda a, b: max(1 - a, b),
-            "owa_weighting_strategy": "custom"
-        })
-
-def test_owafrs_missing_strategy():
-    """
-    @brief Tests that missing 'owa_weighting_strategy' raises an error.
-    """
-    with pytest.raises(ValueError):
-        validate_fr_model_params("OWAFRS", {
-            "lb_tnorm": lambda a, b: a * b,
-            "ub_implicator": lambda a, b: max(1 - a, b)
-        })
-
-# ------------------------------
-# VQRS
-# ------------------------------
-
-def test_vqrs_valid():
-    """
-    @brief Tests valid float parameter configuration for VQRS.
-    """
-    validate_fr_model_params("VQRS", {
-        "alpha_Q_lower": 0.1,
-        "beta_Q_lower": 0.4,
-        "alpha_Q_upper": 0.6,
-        "beta_Q_upper": 0.9
-    })
-
-def test_vqrs_missing_param():
-    """
-    @brief Tests that missing float parameters raise ValueError.
-    """
-    with pytest.raises(ValueError):
-        validate_fr_model_params("VQRS", {
-            "alpha_Q_lower": 0.1,
-            "beta_Q_lower": 0.4,
-            "alpha_Q_upper": 0.6
-        })
-
-def test_vqrs_type_error():
-    """
-    @brief Tests that non-float types raise TypeError for VQRS.
-    """
+def test_validate_fr_model_params_invalid_type():
     with pytest.raises(TypeError):
         validate_fr_model_params("VQRS", {
-            "alpha_Q_lower": "0.1",
-            "beta_Q_lower": 0.4,
+            "alpha_Q_lower": "wrong",
+            "beta_Q_lower": 0.5,
             "alpha_Q_upper": 0.6,
-            "beta_Q_upper": 0.9
+            "beta_Q_upper": 0.7
         })
 
-def test_vqrs_range_error():
-    """
-    @brief Tests that out-of-range float values raise ValueError.
-    """
+def test_validate_fr_model_params_out_of_range():
     with pytest.raises(ValueError):
         validate_fr_model_params("VQRS", {
-            "alpha_Q_lower": -0.2,
-            "beta_Q_lower": 1.5,
+            "alpha_Q_lower": -0.1,
+            "beta_Q_lower": 0.5,
             "alpha_Q_upper": 0.6,
-            "beta_Q_upper": 0.9
+            "beta_Q_upper": 0.7
         })
 
-# ------------------------------
-# Unknown model
-# ------------------------------
+# ---------------------------------------------
+# validate_tnorm_params
+# ---------------------------------------------
+def test_validate_tnorm_params_valid():
+    validate_tnorm_params("yager", {"p": 2.0})
 
-def test_unknown_model():
-    """
-    @brief Tests that an unknown model name raises ValueError.
-    """
+def test_validate_tnorm_params_missing():
     with pytest.raises(ValueError):
-        validate_fr_model_params("NotARealModel", {})
+        validate_tnorm_params("yager", {})
+
+def test_validate_tnorm_params_type_error():
+    with pytest.raises(TypeError):
+        validate_tnorm_params("yager", {"p": "wrong"})
+
+def test_validate_tnorm_params_range_error():
+    with pytest.raises(ValueError):
+        validate_tnorm_params("yager", {"p": 0.5})
+
+# ---------------------------------------------
+# validate_X_choice functions
+# ---------------------------------------------
+def test_validate_similarity_choice():
+    assert validate_similarity_choice("linear") == "linear"
+
+def test_validate_similarity_choice_invalid():
+    with pytest.raises(ValueError):
+        validate_similarity_choice("bad")
+
+def test_validate_implicator_choice():
+    assert validate_implicator_choice("goedel") == "goedel"
+
+def test_validate_implicator_choice_invalid():
+    with pytest.raises(ValueError):
+        validate_implicator_choice("bad")
+
+def test_validate_quantifier_choice():
+    assert validate_quantifier_choice("quadratic") == "quadratic"
+
+def test_validate_quantifier_choice_invalid():
+    with pytest.raises(ValueError):
+        validate_quantifier_choice("bad")
+
+def test_validate_owa_strategy_choice():
+    assert validate_owa_strategy_choice("linear_sup") == "linear_sup"
+
+def test_validate_owa_strategy_choice_invalid():
+    with pytest.raises(ValueError):
+        validate_owa_strategy_choice("bad")
+
+# ---------------------------------------------
+# get_param_schema
+# ---------------------------------------------
+def test_get_param_schema_fr_model():
+    schema = get_param_schema("fr_model", "ITFRS")
+    assert "lb_tnorm" in schema
+
+def test_get_param_schema_tnorm():
+    schema = get_param_schema("tnorm", "minimum")
+    assert schema == {}
+
+def test_get_param_schema_invalid_type():
+    with pytest.raises(ValueError):
+        get_param_schema("unknown_type", "ITFRS")
+
+def test_get_param_schema_invalid_name():
+    with pytest.raises(ValueError):
+        get_param_schema("tnorm", "not-a-tnorm")

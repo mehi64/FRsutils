@@ -10,8 +10,10 @@ from FRsutils.core.models.itfrs import ITFRS
 from FRsutils.core.models.owafrs import OWAFRS
 from FRsutils.core.models.vqrs import VQRS
 from FRsutils.core.approximations import BaseFuzzyRoughModel
+from FRsutils.utils.constructor_utils.tnorm_builder import build_tnorm
+from FRsutils.utils.constructor_utils.function_registry import IMPLICATOR_REGISTRY
 
-def build_fuzzy_rough_model(model_name: str, fr_model_params: dict) -> BaseFuzzyRoughModel:
+def build_fuzzy_rough_model(model_name: str, similarity_matrix, labels, fr_model_params: dict) -> BaseFuzzyRoughModel:
     """
     @brief Factory to instantiate a fuzzy-rough model from its name and validated parameters.
 
@@ -25,16 +27,16 @@ def build_fuzzy_rough_model(model_name: str, fr_model_params: dict) -> BaseFuzzy
     """
     if model_name == 'ITFRS':
         return ITFRS(
-            similarity_matrix=fr_model_params['similarity_matrix'],
-            labels=fr_model_params['labels'],
-            tnorm=fr_model_params['lb_tnorm'],
-            implicator=fr_model_params['ub_implicator']
+            similarity_matrix=similarity_matrix,
+            labels=labels,
+            tnorm=build_tnorm(fr_model_params['lb_tnorm']),
+            implicator=IMPLICATOR_REGISTRY[fr_model_params['ub_implicator']]
         )
     
     elif model_name == 'OWAFRS':
         return OWAFRS(
-            similarity_matrix=fr_model_params['similarity_matrix'],
-            labels=fr_model_params['labels'],
+            similarity_matrix=similarity_matrix,
+            labels=labels,
             tnorm=fr_model_params['lb_tnorm'],
             implicator=fr_model_params['ub_implicator'],
             owa_weighting_strategy=fr_model_params['owa_weighting_strategy']
@@ -42,8 +44,8 @@ def build_fuzzy_rough_model(model_name: str, fr_model_params: dict) -> BaseFuzzy
     
     elif model_name == 'VQRS':
         return VQRS(
-            similarity_matrix=fr_model_params['similarity_matrix'],
-            labels=fr_model_params['labels'],
+            similarity_matrix=similarity_matrix,
+            labels=labels,
             alpha_Q_lower=fr_model_params['alpha_Q_lower'],
             beta_Q_lower=fr_model_params['beta_Q_lower'],
             alpha_Q_upper=fr_model_params['alpha_Q_upper'],

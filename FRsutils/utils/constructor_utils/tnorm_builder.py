@@ -5,7 +5,7 @@
 
 from FRsutils.core.tnorms import MinTNorm, ProductTNorm, LukasiewiczTNorm, TNorm
 from FRsutils.utils.validation_utils import (
-    validate_choice,
+    _validate_string_param_choice,
     ALLOWED_TNORMS
 )
 
@@ -19,7 +19,7 @@ def build_tnorm(name: str) -> TNorm:
 
     @throws ValueError If the name is not recognized.
     """
-    name = validate_choice("tnorm", name, ALLOWED_TNORMS)
+    name = _validate_string_param_choice("tnorm", name, ALLOWED_TNORMS)
 
     if name == 'minimum':
         return MinTNorm()

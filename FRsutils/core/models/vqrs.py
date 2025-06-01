@@ -45,7 +45,7 @@ class VQRS(BaseFuzzyRoughModel):
 
     def lower_approximation(self):
         result = self._interim_calculations()
-        result = fq.fuzzy_quantifier_quad(result,
+        result = fq.fuzzy_quantifier_quadratic(result,
                                           self.alpha_lower,
                                           self.beta_lower)
 
@@ -53,7 +53,7 @@ class VQRS(BaseFuzzyRoughModel):
 
     def upper_approximation(self):
         result = self._interim_calculations()
-        result = fq.fuzzy_quantifier_quad(result,
+        result = fq.fuzzy_quantifier_quadratic(result,
                                           self.alpha_upper,
                                           self.beta_upper)
 

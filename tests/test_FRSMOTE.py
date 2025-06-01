@@ -57,7 +57,7 @@ def test1():
                                     lb_tnorm='minimum',
                                     ub_implicator='reichenbach')
     
-    pp = frsmote.get_params()
+    pp = frsmote.set_params()
     X_res_smote, y_res_smote = frsmote.fit_resample(X_norm, y)
     # t_smote_end = time.time()
     print("Resampled dataset shape (FRSMOTE) %s" % Counter(y_res_smote))
