@@ -16,6 +16,17 @@
             "cwd": "${workspaceFolder}"
         },
         {
+            "name": "Python: logger test",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "tests.utils_tests.logger_tests.logger_test",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}"
+        },
+        {
             "name": "Python: test imbalanced learn with FRSMOTE",
             "type": "debugpy",
             "request": "launch",

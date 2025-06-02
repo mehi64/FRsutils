@@ -10,6 +10,7 @@
   - imbalanced learn
   - scikit learn
   - pandas
+  - colorlog
   - pytest (if you want to run unit tests)
 
 # Fuzzy-Rough set utilities (Under development)
