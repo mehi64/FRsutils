@@ -20,7 +20,7 @@
             "type": "debugpy",
             "request": "launch",
             "module": "tests.utils_tests.logger_tests.logger_test",
-            "justMyCode": true,
+            "justMyCode": false,
             "env": {
                 "PYTHONPATH": "${workspaceFolder}"
             },
