@@ -21,11 +21,11 @@ logger = MLLogger(
     experiment_name="my_project"
 )
 
-logger.set_run(run_id="run_20250602")
+logger.set_run(run_id="run_20250602") # this is optional
 logger.info("Training started")
-with logger.log_time("training step"):
-    train_model()
-logger.log_metric("accuracy", 0.93, step=1)
+logger.error("Division by zero in evaluation.")
+logger.critical("Critical error in evaluation.")
+logger.warning("Validation data is imbalanced.")
 """
 
 import logging
@@ -134,7 +134,7 @@ class TinyLogger:
         # If this is the case, then we do not want to log the message.
         # This is done to avoid logging messages that are less important than the logger's level.
         message_level_value = logging.getLevelName(level_name)
-        if (message_level_value < self.logger.level):
+        if (message_level_value <= self.logger.level):
             return
 
 
