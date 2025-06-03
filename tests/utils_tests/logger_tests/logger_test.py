@@ -1,27 +1,40 @@
-from FRsutils.utils.logger.logger_util import MLLogger
+from FRsutils.utils.logger.logger_util import TinyLogger
 import logging
 
-logger = MLLogger(
-    log_to_console=True,
-    log_to_file=False,
-    structured_output="csv",  # or "json" or None
-    file_path="log_output.csv",
+logger = TinyLogger(
+    log_to_console=False,
+    log_to_file=True,
+    log_file_extension='csv',  # or "json" or None
+    file_path="log_output.json",
     level=logging.DEBUG
 )
+
+logger.attach_exception_hook()
+
+
+def crash():
+    return 1 / 0  # Uncaught ZeroDivisionError
+
+def evaluate_model2():
+
+    try:
+        1 / 0
+    except ZeroDivisionError:
+        
+        logger.error("Division by zero in evaluation.")
+        logger.critical("Critical error in evaluation.")
+ 
 
 def evaluate_model():
     logger.info("Evaluating model...")
     logger.warning("Validation data is imbalanced.")
-    # try:
-    #     1 / 0
-    # except ZeroDivisionError:
-        
-    #     logger.error("Division by zero in evaluation.")
-    #     logger.critical("Critical error in evaluation.")
-    #     logger.log_git_info()
-    #     logger.log_system_info()
-    #     logger.attach_exception_hook()
+
 
 evaluate_model()
 # for i in range(100):
 #     evaluate_model()
+evaluate_model2()
+
+
+
+# crash()
