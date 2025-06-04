@@ -152,7 +152,7 @@ These are two ways:
 - If you want to run tests in debug mode, find and run the file experimental_tests.py (Make sure all functions in test files are called in this file. Maybe some are forgotten)
 
 ## Technical decisions justification
-- 
+- Since data checking slows down the running of experiments, we don't check if data is in the correct range in each function.
 
 ## TODO:
 - Add tests for tnorms with non-binary masks

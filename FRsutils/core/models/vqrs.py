@@ -17,6 +17,10 @@ class VQRS(BaseFuzzyRoughModel):
                  alpha_upper: float,
                  beta_upper: float):
         super().__init__(similarity_matrix, labels)
+        
+        if(alpha_lower > beta_lower) or (alpha_upper > beta_upper):
+            raise ValueError("alpha_lower and beta_lower should be smaller than alpha_upper and beta_upper")
+        
         self.alpha_lower = alpha_lower
         self.beta_lower = beta_lower
         self.alpha_upper = alpha_upper

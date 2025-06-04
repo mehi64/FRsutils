@@ -37,17 +37,17 @@
             },
             "cwd": "${workspaceFolder}"
         },
-        // {
-        //     "name": "Python: plot_smote",
-        //     "type": "debugpy",
-        //     "request": "launch",
-        //     "module": "FRsutils.utils.plot_SMOTE",
-        //     "justMyCode": true,
-        //     "env": {
-        //         "PYTHONPATH": "${workspaceFolder}"
-        //     },
-        //     "cwd": "${workspaceFolder}"
-        // },
+        {
+            "name": "Python: All plots",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "FRsutils.sandbox.plots.plot_fuzzy_quantifiers.py",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}"
+        },
         {
             "name": "Python: experiment_1_non_pipeline",
             "type": "debugpy",

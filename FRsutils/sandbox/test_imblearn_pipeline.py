@@ -24,8 +24,8 @@ X, y = make_classification(
 # FRSMOTE config
 # -----------------------------
 fr_model_params = {
-    'lb_tnorm': 'minimum',
-    'ub_implicator': 'lukasiewicz',
+    'ub_tnorm': 'minimum',
+    'lb_implicator': 'lukasiewicz'
 }
 
 frsmote = FRSMOTE(

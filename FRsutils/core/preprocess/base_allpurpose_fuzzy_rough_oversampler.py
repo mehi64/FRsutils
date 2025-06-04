@@ -8,6 +8,7 @@ from FRsutils.utils.constructor_utils.fuzzy_rough_lazy_buildable_mixin import Fu
 from FRsutils.utils.validation_utils import (
     _validate_string_param_choice,
     validate_fr_model_params,
+    get_similarity_param_schema,
     ALLOWED_RANKING_STRATEGIES
 )
 
@@ -39,6 +40,9 @@ class BaseAllPurposeFuzzyRoughOversampler(FuzzyRoughLazyBuildableMixin, ABC, Bas
         validate_fr_model_params(fr_model_name, kwargs)
         fr_model_schema = get_fr_model_param_schema(fr_model_name)
         assign_allowed_kwargs(self, kwargs, fr_model_schema)
+        
+        # similarity_name_schema = get_similarity_param_schema(similarity_name)
+        # assign_allowed_kwargs(self, kwargs, similarity_name_schema)
 
         self._initialize_fr_config(
             fr_model_name=fr_model_name,

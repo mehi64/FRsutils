@@ -4,10 +4,7 @@
 """
 
 from FRsutils.core.tnorms import MinTNorm, ProductTNorm, LukasiewiczTNorm, TNorm
-from FRsutils.utils.validation_utils import (
-    _validate_string_param_choice,
-    ALLOWED_TNORMS
-)
+from FRsutils.utils.validation_utils import validate_tnorm_params
 
 def build_tnorm(name: str) -> TNorm:
     """
@@ -19,13 +16,16 @@ def build_tnorm(name: str) -> TNorm:
 
     @throws ValueError If the name is not recognized.
     """
-    name = _validate_string_param_choice("tnorm", name, ALLOWED_TNORMS)
+    name = validate_tnorm_params(name)
 
     if name == 'minimum':
         return MinTNorm()
-    elif name == 'product':
+    elif name == 'product': 
         return ProductTNorm()
     elif name == 'lukasiewicz':
         return LukasiewiczTNorm()
+    elif name == 'yager':
+        # return YagerTNorm()
+        raise ValueError("Not implemented yet. Check Yager Tnorm implementation")
     else:
         raise ValueError(f"Unknown T-norm: {name}")

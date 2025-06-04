@@ -8,6 +8,8 @@
 - Schema-based validation for fuzzy rough model parameters.
 """
 
+import numpy as np
+
 # ------------------------------
 # Allowed values for string parameters
 # ------------------------------
@@ -25,7 +27,9 @@ ALLOWED_RANKING_STRATEGIES = {'pos', 'lower', 'upper'}
 # validate_choice
 # ------------------------------
 
-def _validate_string_param_choice(param_name: str, param_value: str, allowed: set[str]) -> str:
+def _validate_string_param_choice(param_name: str, 
+                                  param_value: str, 
+                                  allowed: set[str]) -> str:
     """
     @brief Validates a string parameter against allowed values.
 
@@ -49,7 +53,9 @@ def _validate_string_param_choice(param_name: str, param_value: str, allowed: se
 # ------------------------------
 
 # TODO: check me! Am I correct?
-def validate_strategy_compatibility(class_name: str, strategy: str, supported_strategies: set[str]):
+def validate_strategy_compatibility(class_name: str, 
+                                    strategy: str, 
+                                    supported_strategies: set[str]):
     """
     @brief Validates whether a sampling strategy is compatible with a class.
 
@@ -70,7 +76,8 @@ def validate_strategy_compatibility(class_name: str, strategy: str, supported_st
 # ------------------------------
 
 # TODO: check me! Am I correct?
-def validate_fr_model_params(model_name: str, params: dict):
+def validate_fr_model_params(model_name: str, 
+                             params: dict):
     """
     @brief Validates parameters passed to a fuzzy rough model against its schema.
 
@@ -114,7 +121,8 @@ def validate_fr_model_params(model_name: str, params: dict):
                 raise ValueError(f"Parameter '{key}' must be one of {sorted(spec['allowed'])}.")
 
 # TODO: check me! Am I correct?
-def validate_tnorm_params(name: str, params: dict):
+def validate_tnorm_params(name: str, 
+                          params: dict):
     """
     @brief Validates parameters provided for a named T-norm.
 
@@ -154,7 +162,9 @@ def validate_similarity_choice(name: str) -> str:
 
     @throws ValueError If not in ALLOWED_SIMILARITIES.
     """
-    return _validate_string_param_choice("similarity_name", name, ALLOWED_SIMILARITIES)
+    return _validate_string_param_choice("similarity_name", 
+                                         name, 
+                                         ALLOWED_SIMILARITIES)
 
 
 def validate_implicator_choice(name: str) -> str:
@@ -166,7 +176,9 @@ def validate_implicator_choice(name: str) -> str:
 
     @throws ValueError If not in ALLOWED_IMPLICATORS.
     """
-    return _validate_string_param_choice("implicator", name, ALLOWED_IMPLICATORS)
+    return _validate_string_param_choice("implicator", 
+                                         name, 
+                                         ALLOWED_IMPLICATORS)
 
 
 def validate_quantifier_choice(name: str) -> str:
@@ -178,7 +190,9 @@ def validate_quantifier_choice(name: str) -> str:
 
     @throws ValueError If not in ALLOWED_FUZZY_QUANTIFIERS.
     """
-    return _validate_string_param_choice("fuzzy_quantifier", name, ALLOWED_FUZZY_QUANTIFIERS)
+    return _validate_string_param_choice("fuzzy_quantifier", 
+                                         name, 
+                                         ALLOWED_FUZZY_QUANTIFIERS)
 
 
 def validate_owa_strategy_choice(name: str) -> str:
@@ -190,7 +204,31 @@ def validate_owa_strategy_choice(name: str) -> str:
 
     @throws ValueError If not in ALLOWED_OWA_WEIGHTING_STRATEGIES.
     """
-    return _validate_string_param_choice("owa_weighting_strategy", name, ALLOWED_OWA_WEIGHTING_STRATEGIES)
+    return _validate_string_param_choice("owa_weighting_strategy", 
+                                        name, 
+                                        ALLOWED_OWA_WEIGHTING_STRATEGIES)
+
+
+def validate_range_0_1(x, name="value"):
+    """
+    @brief Validates that a float or NumPy array contains only values in [0.0, 1.0].
+
+    @param x A float or np.ndarray to validate.
+    @param name Optional name for the variable used in error messages.
+
+    @throws TypeError If the input is not a float or NumPy array.
+    @throws ValueError If any value is outside the range [0.0, 1.0].
+    """
+    if isinstance(x, float):
+        if not (0.0 <= x <= 1.0):
+            raise ValueError(f"{name} must be in range [0.0, 1.0], but got {x}")
+    elif isinstance(x, np.ndarray):
+        if not np.issubdtype(x.dtype, np.floating):
+            raise TypeError(f"{name} must be an array of floats")
+        if np.any(x < 0.0) or np.any(x > 1.0):
+            raise ValueError(f"All elements of {name} must be in range [0.0, 1.0]")
+    else:
+        raise TypeError(f"{name} must be a float or a numpy.ndarray, but got {type(x).__name__}")
 
 ##############################################################################
 
@@ -211,13 +249,13 @@ def get_fr_model_param_schema(model_name: str) -> dict:
     """
     if model_name == 'ITFRS':
         return {
-            'lb_tnorm': {'type': 'tnorm', 'required': True},
-            'ub_implicator': {'type': 'implicator', 'required': True}
+            'ub_tnorm': {'type': 'tnorm', 'required': True},
+            'lb_implicator': {'type': 'implicator', 'required': True}
         }
     elif model_name == 'OWAFRS':
         return {
-            'lb_tnorm': {'type': 'tnorm', 'required': True},
-            'ub_implicator': {'type': 'implicator', 'required': True},
+            'ub_tnorm': {'type': 'tnorm', 'required': True},
+            'lb_implicator': {'type': 'implicator', 'required': True},
             'owa_weighting_strategy': {
                 'type': 'str', 'required': True, 'allowed': ALLOWED_OWA_WEIGHTING_STRATEGIES
             }
@@ -348,13 +386,11 @@ def get_fuzzy_quantifier_param_schema(name: str) -> dict:
             'alpha': {'type': 'float', 'required': True, 'range': (0.0, 1.0)},
             'beta':  {'type': 'float', 'required': True, 'range': (0.0, 1.0)}
         }
-    # elif name == 'linear':
-    #     return {
-    #         'alpha': {'type': 'float', 'required': True, 'range': (0.0, 1.0)},
-    #         'beta':  {'type': 'float', 'required': True, 'range': (0.0, 1.0)},
-    #         'increasing': {'type': 'bool', 'required': False}
-    #     }
-    
+    elif name == 'linear':
+        return {
+            'alpha': {'type': 'float', 'required': True, 'range': (0.0, 1.0)},
+            'beta':  {'type': 'float', 'required': True, 'range': (0.0, 1.0)}
+        }
     else:
         raise ValueError(f"Unknown fuzzy quantifier: '{name}'")
 
