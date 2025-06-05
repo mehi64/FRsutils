@@ -2,6 +2,11 @@
 @file logger_util.py
 @brief A tiny logger for writing in console and file.
 
+
+This module provides a single logger instance via `get_logger()`.
+Do not instantiate `_TinyLogger` directly.
+
+
 Provides:
 - Colorized terminal logging
 - Structured CSV/JSON logging to a separate file (JSON is not tested)
@@ -28,6 +33,10 @@ logger.critical("Critical error in evaluation.")
 logger.warning("Validation data is imbalanced.")
 """
 
+# only get_logger is available for import, not _TinyLogger.
+__all__ = ["get_logger"]
+
+import inspect
 import logging
 import os
 import sys
@@ -45,7 +54,7 @@ except ImportError:
     raise ImportError("Please install colorlog: pip install colorlog")
 
 
-class TinyLogger:
+class _TinyLogger:
     """
     @class TinyLogger
     @brief tiny logger
@@ -76,6 +85,15 @@ class TinyLogger:
         @param run_id Unique identifier for this experiment run. Uses current timestamp to generate unique run ids.
         @param experiment_name Optional experiment group label.
         """
+        
+        # find out who is calling this __init__function
+        # Look 2 frames up the call stack
+        stack = inspect.stack()
+        caller = stack[1].function
+
+        if caller != 'get_logger':
+            raise RuntimeError("Direct instantiation is not allowed. Use get_logger() instead.")
+        
         self.logger = logging.getLogger(name)
         self.logger.setLevel(level)
         self.logger.propagate = False
@@ -293,3 +311,23 @@ class TinyLogger:
     #                 self.info(f"[STEP] Finished: {step_name} in {duration:.2f}s")
     #         return wrapper
     #     return decorator
+
+
+def detect_env():
+    """Auto-detect if we're in testing, debugging, or runtime mode."""
+
+    if "PYTEST_CURRENT_TEST" in os.environ:
+        return "test"
+    elif sys.gettrace() is not None:
+        return "debug"
+    return "runtime"
+
+def get_logger(env=None):
+    env = env or detect_env()
+    if env == "test":
+        return _TinyLogger(name="test_logger", log_to_console=False, log_to_file=False)
+    elif env == "debug":
+        return _TinyLogger(name="debug_logger", log_to_console=True, log_to_file=False, level=logging.DEBUG)
+    elif env == "runtime":
+        return _TinyLogger(name="runtime_logger", log_to_console=True, log_to_file=True, file_path="run.log", log_file_extension="json")
+    raise ValueError(f"Unknown environment: {env}")

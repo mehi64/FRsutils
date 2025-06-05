@@ -1,13 +1,14 @@
-from FRsutils.utils.logger.logger_util import TinyLogger
+from FRsutils.utils.logger.logger_util import get_logger, _TinyLogger
 import logging
 
-logger = TinyLogger(
-    log_to_console=False,
-    log_to_file=True,
-    log_file_extension='csv',  # or "json" or None
-    file_path="log_output.json",
-    level=logging.DEBUG
-)
+# logger = _TinyLogger(
+#     log_to_console=False,
+#     log_to_file=True,
+#     log_file_extension='csv',  # or "json" or None
+#     file_path="log_output.json",
+#     level=logging.DEBUG
+# )
+logger = get_logger()
 
 logger.attach_exception_hook()
 
