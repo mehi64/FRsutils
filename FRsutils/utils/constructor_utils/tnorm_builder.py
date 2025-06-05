@@ -24,8 +24,5 @@ def build_tnorm(name: str) -> TNorm:
         return ProductTNorm()
     elif name == 'lukasiewicz':
         return LukasiewiczTNorm()
-    elif name == 'yager':
-        # return YagerTNorm()
-        raise ValueError("Not implemented yet. Check Yager Tnorm implementation")
     else:
         raise ValueError(f"Unknown T-norm: {name}")

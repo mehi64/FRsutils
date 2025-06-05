@@ -5,11 +5,7 @@
 """
 
 from abc import ABC
-from FRsutils.utils.validation_utils import (
-    validate_fr_model_params,
-    _validate_string_param_choice,
-    ALLOWED_FR_MODELS, ALLOWED_SIMILARITIES, ALLOWED_TNORMS
-)
+import FRsutils.utils.validation_utils as vutils
 from FRsutils.utils.constructor_utils.tnorm_builder import build_tnorm
 from FRsutils.utils.constructor_utils.similarity_builder import build_similarity
 from FRsutils.utils.constructor_utils.fr_model_builder import build_fuzzy_rough_model
@@ -25,25 +21,45 @@ class FuzzyRoughLazyBuildableMixin(ABC):
      - Lazily building the fuzzy-rough model and similarity matrix only when needed
     """
 
-    def _initialize_fr_config(self,
-                              fr_model_name,
-                              similarity_name,
-                              similarity_tnorm_name,
-                              fr_model_params):
-        """
-        @brief Initializes and validates fuzzy rough configuration.
+    def _initialize_fr_config(  self,
+                                fr_model_type='ITFRS',
+                                lb_implicator_type='reichenbach',
+                                ub_tnorm_type='product',
+                                owa_weighting_strategy_type='linear',
+                                fuzzy_quantifier_type='quadratic',
+                                alpha_lower=0.1,
+                                beta_lower=0.6,
+                                alpha_upper=0.2,
+                                beta_upper=1.0,
+                                similarity_type='gaussian',
+                                gaussian_similarity_sigma=0.2,
+                                similarity_tnorm_type='minimum'):
+        
+        self.fr_model_type = vutils.validate_fr_model_choice(fr_model_type)
+        self.lb_implicator_type = vutils.validate_implicator_choice(lb_implicator_type)
+        self.ub_tnorm_type = vutils.validate_tnorm_choice(ub_tnorm_type)
+        
+        self.owa_weighting_strategy_type = vutils.validate_owa_weighting_strategy_choice(owa_weighting_strategy_type)
+        self.fuzzy_quantifier_type = vutils.validate_fuzzy_quantifier_choice(fuzzy_quantifier_type)
+        
+        self.ahpha_lower = vutils.validate_range_0_1(alpha_lower, name='alpha_lower')
+        self.beta_lower = vutils.validate_range_0_1(beta_lower, name='beta_lower')
 
-        @param fr_model_name Name of fuzzy rough model.
-        @param similarity_name Name of similarity function.
-        @param similarity_tnorm_name Name of t-norm.
-        @param fr_model_params Dict of model parameters.
-        """
-        self.fr_model_name = _validate_string_param_choice("fr_model_name", fr_model_name, ALLOWED_FR_MODELS)
-        self.similarity_name = _validate_string_param_choice("similarity_name", similarity_name, ALLOWED_SIMILARITIES)
-        self.similarity_tnorm_name = _validate_string_param_choice("similarity_tnorm", similarity_tnorm_name, ALLOWED_TNORMS)
-
-        validate_fr_model_params(self.fr_model_name, fr_model_params)
-        self.fr_model_params = fr_model_params
+        self.ahpha_upper = vutils.validate_range_0_1(alpha_upper, name='alpha_upper')
+        self.beta_upper = vutils.validate_range_0_1(beta_upper, name='beta_upper')
+        
+        if (alpha_lower >= beta_lower):
+            raise ValueError("alpha_lower must be < beta_lower")
+       
+        if (alpha_upper >= beta_upper):
+            raise ValueError("alpha_upper must be < beta_upper")
+       
+        self.similarity_type = vutils.validate_similarity_choice(similarity_type)
+        self.similarity_tnorm_type = vutils.validate_tnorm_choice(similarity_tnorm_type)
+        self.gaussian_similarity_sigma = vutils.validate_range_0_1(alpha_upper, name='gaussian_similarity_sigma')
+        if (gaussian_similarity_sigma > 0.5):
+            raise ValueError("gaussian_similarity_sigma is in range [0, 0.5]")
+       
         self._is_built = False
 
     def _build_internal_objects(self, X, y):
@@ -53,15 +69,22 @@ class FuzzyRoughLazyBuildableMixin(ABC):
 
         @details Should be called before using self.fr_model. Sets _is_built = True.
         """
-        similarity_func = build_similarity(self.similarity_name)
-        similarity_tnorm = build_tnorm(self.similarity_tnorm_name)
+        similarity_func = build_similarity(self.similarity_type, self.gaussian_similarity_sigma)
+        similarity_tnorm = build_tnorm(self.similarity_tnorm_type)
 
         self.similarity_matrix = calculate_similarity_matrix(X, similarity_func, similarity_tnorm)
 
-        self.fr_model = build_fuzzy_rough_model(model_name=self.fr_model_name,
-                                                similarity_matrix=self.similarity_matrix,
-                                                labels=y,
-                                                fr_model_params= self.fr_model_params)
+        self.fr_model = build_fuzzy_rough_model(fr_model_type=self.fr_model_type,
+                                                lb_implicator_type=self.lb_implicator_type,
+                                                ub_tnorm_type=self.ub_tnorm_type,
+                                                owa_weighting_strategy_type=self.owa_weighting_strategy_type,
+                                                fuzzy_quantifier_type=None,
+                                                alpha_lower=None,
+                                                beta_lower=None,
+                                                alpha_upper=None,
+                                                beta_upper=None,
+                                                similarity_matrix=self.similarity_matrix, 
+                                                labels=y)
 
         self.lower_app = self.fr_model.lower_approximation()
         self.upper_app = self.fr_model.upper_approximation()

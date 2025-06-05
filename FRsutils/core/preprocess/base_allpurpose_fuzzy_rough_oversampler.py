@@ -5,12 +5,7 @@ from FRsutils.utils.init_helpers import assign_allowed_kwargs
 from FRsutils.utils.validation_utils import get_fr_model_param_schema
 from FRsutils.utils.constructor_utils.fuzzy_rough_lazy_buildable_mixin import FuzzyRoughLazyBuildableMixin
 
-from FRsutils.utils.validation_utils import (
-    _validate_string_param_choice,
-    validate_fr_model_params,
-    get_similarity_param_schema,
-    ALLOWED_RANKING_STRATEGIES
-)
+import FRsutils.utils.validation_utils as vutil 
 
 class BaseAllPurposeFuzzyRoughOversampler(FuzzyRoughLazyBuildableMixin, ABC, BaseOverSampler):
     """
@@ -27,33 +22,40 @@ class BaseAllPurposeFuzzyRoughOversampler(FuzzyRoughLazyBuildableMixin, ABC, Bas
     """
 
     def __init__(self,
-                 fr_model_name='ITFRS',
-                 similarity_name='linear',
-                 similarity_tnorm_name='minimum',
-                 instance_ranking_strategy_name='pos',
-                 sampling_strategy='auto',
-                 **kwargs):
+                 fr_model_type='ITFRS',
+                 lb_implicator_type='reichenbach',
+                 ub_tnorm_type='product',
+                 owa_weighting_strategy_type='linear',
+                 fuzzy_quantifier_type='quadratic',
+                 alpha_lower=0.1,
+                 beta_lower=0.6,
+                 alpha_upper=0.2,
+                 beta_upper=1.0,
+                 similarity_type='gaussian',
+                 gaussian_similarity_sigma=0.2,
+                 similarity_tnorm_type='minimum',
+                 instance_ranking_strategy='pos',
+                 sampling_strategy='auto'):
 
         super().__init__(sampling_strategy=sampling_strategy)
 
-        # Validate and store fuzzy rough config parameters
-        validate_fr_model_params(fr_model_name, kwargs)
-        fr_model_schema = get_fr_model_param_schema(fr_model_name)
-        assign_allowed_kwargs(self, kwargs, fr_model_schema)
         
-        # similarity_name_schema = get_similarity_param_schema(similarity_name)
-        # assign_allowed_kwargs(self, kwargs, similarity_name_schema)
+        self._initialize_fr_config(fr_model_type=fr_model_type,
+                                    lb_implicator_type=lb_implicator_type,
+                                    ub_tnorm_type=ub_tnorm_type,
+                                    owa_weighting_strategy_type=owa_weighting_strategy_type,
+                                    fuzzy_quantifier_type=fuzzy_quantifier_type,
+                                    alpha_lower=alpha_lower,
+                                    beta_lower=beta_lower,
+                                    alpha_upper=alpha_upper,
+                                    beta_upper=beta_upper,
+                                    similarity_type=similarity_type,
+                                    gaussian_similarity_sigma=gaussian_similarity_sigma,
+                                    similarity_tnorm_type=similarity_tnorm_type)
 
-        self._initialize_fr_config(
-            fr_model_name=fr_model_name,
-            similarity_name=similarity_name,
-            similarity_tnorm_name=similarity_tnorm_name,
-            fr_model_params=kwargs
-        )
-
-        self.instance_ranking_strategy_name = _validate_string_param_choice(
-            "instance_ranking_strategy", instance_ranking_strategy_name, ALLOWED_RANKING_STRATEGIES)
-
+        self.instance_ranking_strategy = vutil.validate_ranking_strategy_choice(instance_ranking_strategy)
+        
+        
 # _get_target_classes and _get_num_samples remain the same as in FRSMOTE
     def _get_target_classes(self):
         """Determine which classes to oversample based on sampling_strategy."""

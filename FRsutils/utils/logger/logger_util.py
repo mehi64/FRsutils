@@ -313,21 +313,42 @@ class _TinyLogger:
     #     return decorator
 
 
-def detect_env():
+def _detect_env():
     """Auto-detect if we're in testing, debugging, or runtime mode."""
 
     if "PYTEST_CURRENT_TEST" in os.environ:
         return "test"
-    elif sys.gettrace() is not None:
-        return "debug"
+    try:
+        # sys.gettrace is None when no debugger is attached
+        if sys.gettrace():
+            return "debug"
+
+        # Additional check for common debuggers
+        for name in ("pydevd", "debugpy", "pdb"):
+            if name in sys.modules:
+                return "debug"
+
+    except Exception:
+        pass
+    
     return "runtime"
 
 def get_logger(env=None):
-    env = env or detect_env()
-    if env == "test":
-        return _TinyLogger(name="test_logger", log_to_console=False, log_to_file=False)
-    elif env == "debug":
-        return _TinyLogger(name="debug_logger", log_to_console=True, log_to_file=False, level=logging.DEBUG)
+    env = env or _detect_env()
+    print("logger type: ", env)
+    if env == "debug":
+        return _TinyLogger(name="debug_logger", 
+                           log_to_console=True, 
+                           log_to_file=False, 
+                           level=logging.DEBUG)
+    # elif env == "test":
+    #     return _TinyLogger(name="test_logger", log_to_console=False, log_to_file=False)
     elif env == "runtime":
-        return _TinyLogger(name="runtime_logger", log_to_console=True, log_to_file=True, file_path="run.log", log_file_extension="json")
+        return _TinyLogger(name="runtime_logger", 
+                           log_to_console=True, 
+                           log_to_file=True, 
+                           file_path="run_log.json", 
+                           log_file_extension="json")
+        
+    
     raise ValueError(f"Unknown environment: {env}")

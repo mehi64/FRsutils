@@ -217,7 +217,7 @@ class FRSMOTE(BaseSoloFuzzyRoughOversampler):
         """
         # Start with known top-level parameters
         params = {
-            'fr_model_name': self.fr_model_name,
+            'fr_model_name': self.fr_model_type,
             'similarity_name': self.similarity_name,
             'similarity_tnorm_name': self.similarity_tnorm_name,
             'instance_ranking_strategy_name': self.instance_ranking_strategy_name,
