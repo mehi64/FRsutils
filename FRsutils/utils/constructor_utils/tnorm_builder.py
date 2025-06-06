@@ -4,7 +4,7 @@
 """
 
 from FRsutils.core.tnorms import MinTNorm, ProductTNorm, LukasiewiczTNorm, TNorm
-from FRsutils.utils.validation_utils import validate_tnorm_params
+from FRsutils.utils.validation_utils import validate_tnorm_choice
 
 def build_tnorm(name: str) -> TNorm:
     """
@@ -16,7 +16,7 @@ def build_tnorm(name: str) -> TNorm:
 
     @throws ValueError If the name is not recognized.
     """
-    name = validate_tnorm_params(name)
+    name = validate_tnorm_choice(name)
 
     if name == 'minimum':
         return MinTNorm()

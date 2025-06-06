@@ -1,11 +1,12 @@
 import warnings
 from imblearn.over_sampling.base import BaseOverSampler
 from abc import ABC, abstractmethod
-from FRsutils.utils.init_helpers import assign_allowed_kwargs
-from FRsutils.utils.validation_utils import get_fr_model_param_schema
+# from FRsutils.utils.init_helpers import assign_allowed_kwargs
+# from FRsutils.utils.validation_utils import get_fr_model_param_schema
+
 from FRsutils.utils.constructor_utils.fuzzy_rough_lazy_buildable_mixin import FuzzyRoughLazyBuildableMixin
 
-import FRsutils.utils.validation_utils as vutil 
+import FRsutils.utils.validation_utils as valutil 
 
 class BaseAllPurposeFuzzyRoughOversampler(FuzzyRoughLazyBuildableMixin, ABC, BaseOverSampler):
     """
@@ -53,18 +54,18 @@ class BaseAllPurposeFuzzyRoughOversampler(FuzzyRoughLazyBuildableMixin, ABC, Bas
                                     gaussian_similarity_sigma=gaussian_similarity_sigma,
                                     similarity_tnorm_type=similarity_tnorm_type)
 
-        self.instance_ranking_strategy = vutil.validate_ranking_strategy_choice(instance_ranking_strategy)
+        self.instance_ranking_strategy = valutil.validate_ranking_strategy_choice(instance_ranking_strategy)
         
         
 # _get_target_classes and _get_num_samples remain the same as in FRSMOTE
     def _get_target_classes(self):
         """Determine which classes to oversample based on sampling_strategy."""
         
-        if self.instance_ranking_strategy_name == 'pos':
+        if self.instance_ranking_strategy == 'pos':
             majority_class = max(self.target_stats_, key=self.target_stats_.get)
             return [cls for cls in self.classes_ if cls != majority_class]
-        elif isinstance(self.instance_ranking_strategy_name, dict):
-            return list(self.instance_ranking_strategy_name.keys())
+        elif isinstance(self.instance_ranking_strategy, dict):
+            return list(self.instance_ranking_strategy.keys())
         # Add more strategy handling if needed (float, list, callable)
         else:
             warnings.warn(f"Unsupported sampling_strategy: {self.instance_ranking_strategy}. Using 'auto'.")
@@ -72,14 +73,14 @@ class BaseAllPurposeFuzzyRoughOversampler(FuzzyRoughLazyBuildableMixin, ABC, Bas
 
     def _get_num_samples(self, class_label):
         """Determine number of samples to generate for a class."""
-        if self.instance_ranking_strategy_name == 'auto':
+        if self.instance_ranking_strategy == 'auto':
             majority_class = max(self.target_stats_, key=self.target_stats_.get)
             target_count = self.target_stats_[majority_class]
-        elif isinstance(self.instance_ranking_strategy_name, dict):
+        elif isinstance(self.instance_ranking_strategy, dict):
             # Ensure target count is not less than current count
-            target_count = max(self.target_stats_[class_label], self.instance_ranking_strategy_name[class_label])
+            target_count = max(self.target_stats_[class_label], self.instance_ranking_strategy[class_label])
         else: # Default to balancing against majority if strategy is unclear
-             warnings.warn(f"Interpreting sampling_strategy '{self.instance_ranking_strategy_name}' as 'auto'.")
+             warnings.warn(f"Interpreting sampling_strategy '{self.instance_ranking_strategy}' as 'auto'.")
              majority_class = max(self.target_stats_, key=self.target_stats_.get)
              target_count = self.target_stats_[majority_class]
 

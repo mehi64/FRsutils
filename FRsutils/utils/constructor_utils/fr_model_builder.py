@@ -12,6 +12,7 @@ from FRsutils.core.models.vqrs import VQRS
 from FRsutils.core.approximations import BaseFuzzyRoughModel
 from FRsutils.utils.constructor_utils.tnorm_builder import build_tnorm
 from FRsutils.utils.constructor_utils.function_registry import IMPLICATOR_REGISTRY, OWA_WEIGHT_REGISTRY
+import FRsutils.utils.validation_utils as valutils
 
 def build_fuzzy_rough_model(fr_model_type,
                             lb_implicator_type,
@@ -25,6 +26,10 @@ def build_fuzzy_rough_model(fr_model_type,
                             similarity_matrix, 
                             labels) -> BaseFuzzyRoughModel:
     
+   
+    # build the ITFRS model (validates the parameters internally)
+
+
     if fr_model_type == 'ITFRS':
         return ITFRS(
             similarity_matrix=similarity_matrix,

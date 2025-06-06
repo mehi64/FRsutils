@@ -7,7 +7,9 @@ import numpy as np
 
 class BaseFuzzyRoughModel(ABC):
     """Abstract base class for fuzzy-rough models."""
+    
     def __init__(self, similarity_matrix: np.ndarray, labels: np.ndarray):
+        
         if not ((0.0 <= similarity_matrix).all() and (similarity_matrix <= 1.0).all()):
             raise ValueError("All similarity values must be in the range [0.0, 1.0].")
         if (similarity_matrix.ndim != 2):

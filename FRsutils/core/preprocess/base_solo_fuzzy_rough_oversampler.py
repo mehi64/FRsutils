@@ -39,19 +39,19 @@ class BaseSoloFuzzyRoughOversampler(BaseAllPurposeFuzzyRoughOversampler):
                  ):
         
         super().__init__(fr_model_type=fr_model_type,
-                                    lb_implicator_type=lb_implicator_type,
-                                    ub_tnorm_type=ub_tnorm_type,
-                                    owa_weighting_strategy_type=owa_weighting_strategy_type,
-                                    fuzzy_quantifier_type=fuzzy_quantifier_type,
-                                    alpha_lower=alpha_lower,
-                                    beta_lower=beta_lower,
-                                    alpha_upper=alpha_upper,
-                                    beta_upper=beta_upper,
-                                    similarity_type=similarity_type,
-                                    gaussian_similarity_sigma=gaussian_similarity_sigma,
-                                    similarity_tnorm_type=similarity_tnorm_type,
-                                    instance_ranking_strategy=instance_ranking_strategy,
-                                    sampling_strategy=sampling_strategy)
+                        lb_implicator_type=lb_implicator_type,
+                        ub_tnorm_type=ub_tnorm_type,
+                        owa_weighting_strategy_type=owa_weighting_strategy_type,
+                        fuzzy_quantifier_type=fuzzy_quantifier_type,
+                        alpha_lower=alpha_lower,
+                        beta_lower=beta_lower,
+                        alpha_upper=alpha_upper,
+                        beta_upper=beta_upper,
+                        similarity_type=similarity_type,
+                        gaussian_similarity_sigma=gaussian_similarity_sigma,
+                        similarity_tnorm_type=similarity_tnorm_type,
+                        instance_ranking_strategy=instance_ranking_strategy,
+                        sampling_strategy=sampling_strategy)
         
         self.k_neighbors = k_neighbors
         self.bias_interpolation = bias_interpolation

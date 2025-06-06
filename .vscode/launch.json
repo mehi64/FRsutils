@@ -16,6 +16,17 @@
             "cwd": "${workspaceFolder}"
         },
         {
+            "name": "Python: gridsearch FRSMOTE",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "FRsutils.sandbox.grid_search_FRSMOTE",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}"
+        },
+        {
             "name": "Python: logger test",
             "type": "debugpy",
             "request": "launch",

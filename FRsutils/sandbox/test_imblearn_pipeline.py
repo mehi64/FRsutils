@@ -29,16 +29,23 @@ fr_model_params = {
 }
 
 frsmote = FRSMOTE(
-    fr_model_name='ITFRS',
-    similarity_name='linear',
-    similarity_tnorm_name='minimum',
-    instance_ranking_strategy_name='pos',
-    sampling_strategy='auto',
-    k_neighbors=5,
-    bias_interpolation=True,
-    random_state=42,
-    **fr_model_params
-)
+                 fr_model_type='ITFRS',
+                 lb_implicator_type='reichenbach',
+                 ub_tnorm_type='product',
+                 owa_weighting_strategy_type='linear',
+                 fuzzy_quantifier_type='quadratic',
+                 alpha_lower=0.1,
+                 beta_lower=0.6,
+                 alpha_upper=0.2,
+                 beta_upper=1.0,
+                 similarity_type='gaussian',
+                 gaussian_similarity_sigma=0.2,
+                 similarity_tnorm_type='minimum',
+                 instance_ranking_strategy='pos',
+                 sampling_strategy='auto',
+                 k_neighbors=5,
+                 bias_interpolation=False,
+                 random_state=42)
 
 # -----------------------------
 # Create imblearn pipeline

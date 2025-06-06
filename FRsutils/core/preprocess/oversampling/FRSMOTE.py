@@ -11,14 +11,7 @@ from FRsutils.utils.constructor_utils.tnorm_builder import build_tnorm
 from FRsutils.utils.constructor_utils.similarity_builder import build_similarity
 from FRsutils.core.similarities import calculate_similarity_matrix
 
-from FRsutils.utils.validation_utils import (
-    _validate_string_param_choice,
-    validate_fr_model_params,
-    ALLOWED_FR_MODELS,
-    ALLOWED_SIMILARITIES,
-    ALLOWED_TNORMS,
-    ALLOWED_RANKING_STRATEGIES
-)
+
 
 # --- FRSMOTE Implementation ---
 
@@ -27,41 +20,42 @@ class FRSMOTE(BaseSoloFuzzyRoughOversampler):
     @brief Fuzzy Rough Set based SMOTE (FRSMOTE) Oversampler.
     """
 
-    def __init__(self,
-                 fr_model_name='ITFRS',
-                 similarity_name='linear',
-                 similarity_tnorm_name='lukasiewicz',
-                 instance_ranking_strategy_name='pos',
+    def __init__(self,                
+                 fr_model_type='ITFRS',
+                 lb_implicator_type='reichenbach',
+                 ub_tnorm_type='product',
+                 owa_weighting_strategy_type='linear',
+                 fuzzy_quantifier_type='quadratic',
+                 alpha_lower=0.1,
+                 beta_lower=0.6,
+                 alpha_upper=0.2,
+                 beta_upper=1.0,
+                 similarity_type='gaussian',
+                 gaussian_similarity_sigma=0.2,
+                 similarity_tnorm_type='minimum',
+                 instance_ranking_strategy='pos',
                  sampling_strategy='auto',
                  k_neighbors=5,
                  bias_interpolation=False,
-                 random_state=None,
-                 **kwargs):
-        """
-        @brief Constructor for the FRSMOTE oversampler.
-
-        @details Initializes the FRSMOTE instance with fuzzy-rough model configuration,
-                 SMOTE-style interpolation settings, and performs all relevant validation.
-
-        @param fr_model_name The fuzzy rough model to use ('ITFRS', 'VQRS', 'OWAFRS').
-        @param similarity_name Similarity function name ('linear', 'gaussian').
-        @param similarity_tnorm T-norm name for aggregating similarity ('lukasiewicz', 'product', 'minimum').
-        @param instance_ranking_strategy Ranking metric to select base points ('pos', 'lower', 'upper').
-        @param sampling_strategy Resampling strategy (e.g., 'auto' or dict of class target sizes).
-        @param k_neighbors Number of neighbors for SMOTE interpolation.
-        @param bias_interpolation Whether to bias interpolation using fuzzy scores.
-        @param random_state Seed or random generator.
-        @param kwargs Must contain 'fr_model_params' for the selected model.
-        """
-        super().__init__(fr_model_name=fr_model_name,
-                 similarity_name=similarity_name,
-                 similarity_tnorm_name=similarity_tnorm_name,
-                 instance_ranking_strategy_name=instance_ranking_strategy_name,
-                 sampling_strategy=sampling_strategy,
-                 k_neighbors=k_neighbors,
-                 bias_interpolation=bias_interpolation,
-                 random_state=random_state,
-                 **kwargs)
+                 random_state=None):
+        
+        super().__init__(fr_model_type=fr_model_type,
+                        lb_implicator_type=lb_implicator_type,
+                        ub_tnorm_type=ub_tnorm_type,
+                        owa_weighting_strategy_type=owa_weighting_strategy_type,
+                        fuzzy_quantifier_type=fuzzy_quantifier_type,
+                        alpha_lower=alpha_lower,
+                        beta_lower=beta_lower,
+                        alpha_upper=alpha_upper,
+                        beta_upper=beta_upper,
+                        similarity_type=similarity_type,
+                        gaussian_similarity_sigma=gaussian_similarity_sigma,
+                        similarity_tnorm_type=similarity_tnorm_type,
+                        instance_ranking_strategy=instance_ranking_strategy,
+                        sampling_strategy=sampling_strategy,
+                        k_neighbors = k_neighbors,
+                        bias_interpolation = bias_interpolation,
+                        random_state = random_state)
         
               
 
@@ -207,51 +201,51 @@ class FRSMOTE(BaseSoloFuzzyRoughOversampler):
     def supported_strategies(self):
         return  {'auto', 'balance_minority'}  
     
-    def get_params(self, deep=True):
-        """
-        @brief Returns all parameters including nested fuzzy rough model parameters.
+    # def get_params(self, deep=True):
+    #     """
+    #     @brief Returns all parameters including nested fuzzy rough model parameters.
 
-        @param deep If True, will return parameters of nested objects.
+    #     @param deep If True, will return parameters of nested objects.
 
-        @return Dictionary of parameter names and values.
-        """
-        # Start with known top-level parameters
-        params = {
-            'fr_model_name': self.fr_model_type,
-            'similarity_name': self.similarity_name,
-            'similarity_tnorm_name': self.similarity_tnorm_name,
-            'instance_ranking_strategy_name': self.instance_ranking_strategy_name,
-            'sampling_strategy': self.sampling_strategy,
-            'k_neighbors': self.k_neighbors,
-            'bias_interpolation': self.bias_interpolation,
-            'random_state': self.random_state,
-            'fr_model_params': self.fr_model_params
-        }
+    #     @return Dictionary of parameter names and values.
+    #     """
+    #     # Start with known top-level parameters
+    #     params = {
+    #         'fr_model_name': self.fr_model_type,
+    #         'similarity_name': self.similarity_name,
+    #         'similarity_tnorm_name': self.similarity_tnorm_name,
+    #         'instance_ranking_strategy_name': self.instance_ranking_strategy_name,
+    #         'sampling_strategy': self.sampling_strategy,
+    #         'k_neighbors': self.k_neighbors,
+    #         'bias_interpolation': self.bias_interpolation,
+    #         'random_state': self.random_state,
+    #         'fr_model_params': self.fr_model_params
+    #     }
 
-        # Add fuzzy rough model parameters (those passed via **kwargs in init)
-        if hasattr(self, 'fr_model_params'):
-            for k, v in self.fr_model_params.items():
-                params[f'{k}'] = v
+    #     # Add fuzzy rough model parameters (those passed via **kwargs in init)
+    #     if hasattr(self, 'fr_model_params'):
+    #         for k, v in self.fr_model_params.items():
+    #             params[f'{k}'] = v
 
-        return params
+    #     return params
     
-    def set_params(self, **params):
-        """
-        @brief Sets the parameters including nested fuzzy rough model parameters.
+    # def set_params(self, **params):
+    #     """
+    #     @brief Sets the parameters including nested fuzzy rough model parameters.
 
-        @param params Dictionary of parameters to set.
+    #     @param params Dictionary of parameters to set.
 
-        @return self
-        """
-        # Separate top-level and nested fuzzy rough parameters
-        fr_model_params = self.fr_model_params.copy() if hasattr(self, 'fr_model_params') else {}
+    #     @return self
+    #     """
+    #     # Separate top-level and nested fuzzy rough parameters
+    #     fr_model_params = self.fr_model_params.copy() if hasattr(self, 'fr_model_params') else {}
 
-        for key, value in params.items():
-            if key.startswith("fr_model_params__"):
-                inner_key = key[len("fr_model_params__"):]
-                fr_model_params[inner_key] = value
-            else:
-                setattr(self, key, value)
+    #     for key, value in params.items():
+    #         if key.startswith("fr_model_params__"):
+    #             inner_key = key[len("fr_model_params__"):]
+    #             fr_model_params[inner_key] = value
+    #         else:
+    #             setattr(self, key, value)
 
-        self.fr_model_params = fr_model_params
-        return self
+    #     self.fr_model_params = fr_model_params
+    #     return self

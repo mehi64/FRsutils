@@ -42,10 +42,10 @@ class FuzzyRoughLazyBuildableMixin(ABC):
         self.owa_weighting_strategy_type = vutils.validate_owa_weighting_strategy_choice(owa_weighting_strategy_type)
         self.fuzzy_quantifier_type = vutils.validate_fuzzy_quantifier_choice(fuzzy_quantifier_type)
         
-        self.ahpha_lower = vutils.validate_range_0_1(alpha_lower, name='alpha_lower')
+        self.alpha_lower = vutils.validate_range_0_1(alpha_lower, name='alpha_lower')
         self.beta_lower = vutils.validate_range_0_1(beta_lower, name='beta_lower')
 
-        self.ahpha_upper = vutils.validate_range_0_1(alpha_upper, name='alpha_upper')
+        self.alpha_upper = vutils.validate_range_0_1(alpha_upper, name='alpha_upper')
         self.beta_upper = vutils.validate_range_0_1(beta_upper, name='beta_upper')
         
         if (alpha_lower >= beta_lower):
