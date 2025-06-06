@@ -16,6 +16,28 @@
             "cwd": "${workspaceFolder}"
         },
         {
+            "name": "Python: sandbox test TNorms factory",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "FRsutils.sandbox.test_TNorms",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Python: sandbox test Implicator factory",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "FRsutils.sandbox.test_implicators",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}"
+        },
+        {
             "name": "Python: gridsearch FRSMOTE",
             "type": "debugpy",
             "request": "launch",

@@ -5,3 +5,13 @@
 - Think about creation and tests together (params checks at build time)
 - __all__ decide about all parts of the project
 - use logger
+- check docstrings and comments
+- Add Yager tnorm and tests
+- Dependency Injection
+
+
+
+
+
+commit number
+247617e

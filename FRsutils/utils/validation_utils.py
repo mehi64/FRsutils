@@ -16,7 +16,7 @@ import numpy as np
 
 ALLOWED_FR_MODELS = {'ITFRS', 'VQRS', 'OWAFRS'}
 ALLOWED_SIMILARITIES = {'linear', 'gaussian'}
-ALLOWED_TNORMS = {'lukasiewicz', 'product', 'minimum'}
+
 ALLOWED_IMPLICATORS = {'gaines', 'goedel', 'kleene_dienes', 'lukasiewicz', 'reichenbach'}
 ALLOWED_FUZZY_QUANTIFIERS = {'linear', 'quadratic'}
 ALLOWED_OWA_WEIGHTING_STRATEGIES = {'linear'}
@@ -221,3 +221,4 @@ def validate_y_array(y: np.ndarray, expected_num_classes: int) -> np.ndarray:
         raise ValueError(f"Expected {expected_num_classes} unique classes, found {len(unique_classes)}.")
 
     return y
+
