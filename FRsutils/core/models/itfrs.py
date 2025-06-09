@@ -1,43 +1,117 @@
-# frutil/models/itfrs.py
 """
-ITFRS implementation.
+@file itfrs.py
+@brief Implementation of the IT2 Fuzzy Rough Set (ITFRS) approximation model.
+
+Provides a concrete implementation of the lower and upper approximations
+using a fuzzy implicator and a T-norm operator over a similarity matrix.
+
+##############################################
+# ✅ Quick Summary of Features
+# - ITFRS model for fuzzy rough approximation
+# - Pluggable architecture for T-norm and Implicator
+# - Lower and upper approximation computation
+# - Class introspection and serialization support
+
+# ✅ Summary Table of Design Principles
+# - Strategy Pattern: Uses user-defined T-norm and Implicator strategies
+# - Template Method: Inherits abstract methods from BaseFuzzyRoughModel
+# - Adapter Pattern: Provides to_dict/from_dict for serialization
+# - Clean Code: SRP, DRY, LSP, docstring documentation, fail-fast checks
+##############################################
 """
 
 from FRsutils.core.approximations import BaseFuzzyRoughModel
 import FRsutils.core.tnorms as tn
+import FRsutils.core.implicators as imp
+from FRsutils.utils.logger.logger_util import get_logger
 import numpy as np
 
+
+@BaseFuzzyRoughModel.register("itfrs")
 class ITFRS(BaseFuzzyRoughModel):
+    """
+    @brief Interval Type-2 Fuzzy Rough Set approximation model.
+
+    @param similarity_matrix: Precomputed similarity matrix (n x n)
+    @param labels: Array of class labels for each instance
+    @param tnorm: T-norm operator (object from TNorm)
+    @param implicator: Fuzzy implicator operator (object from Implicator)
+    """
     def __init__(self, 
                  similarity_matrix: np.ndarray, 
                  labels: np.ndarray, 
                  tnorm: tn.TNorm, 
-                 implicator):
+                 implicator: imp.Implicator, logger=None):
         super().__init__(similarity_matrix, labels)
+        self.logger = logger or get_logger()
+        self.logger.debug(f"{self.__class__.__name__} initialized.")
         self.tnorm = tnorm
-        self.implicator = np.vectorize(implicator)
+        self.implicator = implicator
 
-    def lower_approximation(self):
+    def lower_approximation(self) -> np.ndarray:
+        """
+        @brief Compute the lower approximation using the implicator.
+
+        @return: Lower approximation array (n,)
+        """
         label_mask = (self.labels[:, None] == self.labels[None, :]).astype(float)
         implication_vals = self.implicator(self.similarity_matrix, label_mask)
-        
-        # Since for the calculations of lower approximation, 
-        # we calculate Inf which is basically a minimum, 
-        # to exclude the same instance from calculations we don’t
-        #  need anything because the diagonal is set to 1.0 which
-        #  is ignored by min operator. To be sure all is correct,
-        #  inside code, we set main diagonal to 1.0
         np.fill_diagonal(implication_vals, 1.0)
         return np.min(implication_vals, axis=1)
 
-    def upper_approximation(self):
+    def upper_approximation(self) -> np.ndarray:
+        """
+        @brief Compute the upper approximation using the T-norm.
+
+        @return: Upper approximation array (n,)
+        """
         label_mask = (self.labels[:, None] == self.labels[None, :]).astype(float)
         tnorm_vals = self.tnorm(self.similarity_matrix, label_mask)
-
-        # Since for the calculations of upper approximation, 
-        # we calculate sup which is basically a maximum, 
-        # to exclude the same instance from calculations we 
-        # need to set the main diagonal to 0.0 which is ignored 
-        # by max operator.  Otherwise all upper approxamations will be 1.0.
         np.fill_diagonal(tnorm_vals, 0.0)
         return np.max(tnorm_vals, axis=1)
+
+    def to_dict(self) -> dict:
+        """
+        @brief Serialize the ITFRS instance to dictionary.
+
+        @return: Serializable dict including type and operator info.
+        """
+        return {
+            "type": "itfrs",
+            "tnorm": self.tnorm.to_dict(),
+            "implicator": self.implicator.to_dict()
+        }
+
+    @classmethod
+    def from_dict(cls, similarity_matrix, labels, data: dict) -> 'ITFRS':
+        """
+        @brief Reconstruct ITFRS model from serialized dictionary.
+
+        @param similarity_matrix: Matrix used for similarity
+        @param labels: Class label vector
+        @param data: Serialized dictionary
+        @return: ITFRS instance
+        """
+        tnorm = tn.TNorm.from_dict(data["tnorm"])
+        implicator = imp.Implicator.from_dict(data["implicator"])
+        return cls(similarity_matrix, labels, tnorm, implicator)
+
+    def describe_params_detailed(self) -> dict:
+        """
+        @brief Describe internal T-norm and implicator parameters.
+
+        @return: Dictionary describing parameters of components.
+        """
+        return {
+            "tnorm": self.tnorm.describe_params_detailed(),
+            "implicator": self.implicator.describe_params_detailed()
+        }
+
+    @classmethod
+    def validate_params(cls, **kwargs):
+        """
+        @brief Optional validation hook.
+
+        @param kwargs: Unused.
+        """
+        pass

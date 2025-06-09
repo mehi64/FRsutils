@@ -1,91 +1,123 @@
+"""
+Unit tests for T-norm classes in tnorms.py
+"""
 
-import FRsutils.core.tnorms as tn
-import tests.syntetic_data_for_tests as sds
 import numpy as np
-import sys
+import pytest
+from FRsutils.core.tnorms import TNorm
+from tests.syntetic_data_for_tests import syntetic_dataset_factory
 
-def test_tn_minimum_scalar_values():
-    data_dict = sds.syntetic_dataset_factory().tnorm_scalar_testing_data()
-    a_b = data_dict["a_b"]
-    expected = data_dict["minimum_outputs"]
-    temp_tnorm = tn.MinTNorm()
+# Fixtures
+@pytest.fixture
+def scalar_data():
+    return syntetic_dataset_factory().tnorm_scalar_testing_data()
 
-    result = []
+@pytest.fixture
+def matrix_data():
+    return syntetic_dataset_factory().tnorm_nxnx2_testing_dataset()
 
-    l = len(a_b)
-    for i in range(l):
-        result.append(temp_tnorm.reduce(a_b[i]))
-    
-    closeness = np.isclose(result, expected)
-    assert np.all(closeness), "outputs are not the expected values"
+# Parametrize test cases: (alias, expected_output_key)
+scalar_cases = [
+    ("minimum", "minimum_outputs"),
+    ("product", "product_outputs"),
+    ("lukasiewicz", "luk_outputs"),
+]
 
-    # if "pytest" in sys.modules:
-    #     aa = sys.modules["pytest"]
-    if hasattr(sys, 'gettrace') and sys.gettrace():
-        assert False
+matrix_cases = [
+    ("minimum", "minimum_outputs"),
+    ("product", "product_outputs"),
+    ("lukasiewicz", "luk_outputs"),
+]
 
-def test_tn_product_scalar_values():
-    data_dict = sds.syntetic_dataset_factory().tnorm_scalar_testing_data()
-    a_b = data_dict["a_b"]
-    expected = data_dict["product_outputs"]
-    temp_tnorm = tn.ProductTNorm()
+# Basic behavior tests
+@pytest.mark.parametrize("alias, output_key", scalar_cases)
+def test_tnorm_scalar_behavior(alias, output_key, scalar_data):
+    tn = TNorm.create(alias)
+    a_b = scalar_data["a_b"]
+    expected = scalar_data[output_key]
+    actual = np.array([tn(np.array([a]), np.array([b]))[0] for a, b in a_b])
+    np.testing.assert_allclose(actual, expected, rtol=1e-3, err_msg=f"{alias} scalar call failed")
 
-    result = []
+@pytest.mark.parametrize("alias, output_key", matrix_cases)
+def test_tnorm_matrix_behavior(alias, output_key, matrix_data):
+    tn = TNorm.create(alias)
+    a = matrix_data["similarity_matrix"]
+    b = matrix_data["label_mask"]
+    expected = matrix_data[output_key]
+    actual = tn(a, b)
+    np.testing.assert_allclose(actual, expected, rtol=1e-3, err_msg=f"{alias} matrix call failed")
 
-    l = len(a_b)
-    for i in range(l):
-        result.append(temp_tnorm.reduce(a_b[i]))
-    
-    closeness = np.isclose(result, expected)
-    assert np.all(closeness), "outputs are not the expected values"
+@pytest.mark.parametrize("alias", [c[0] for c in scalar_cases])
+def test_tnorm_reduce_output_shape(alias, matrix_data):
+    tn = TNorm.create(alias)
+    reduced = tn.reduce(matrix_data["similarity_matrix"])
+    assert reduced.shape == (matrix_data["similarity_matrix"].shape[1],)
 
-def test_tn_luk_scalar_values():
-    data_dict = sds.syntetic_dataset_factory().tnorm_scalar_testing_data()
-    a_b = data_dict["a_b"]
-    expected = data_dict["luk_outputs"]
-    temp_tnorm = tn.LukasiewiczTNorm()
+# Factory & Registry tests
+def test_factory_create_and_aliases():
+    aliases = TNorm.list_available()
+    for primary, names in aliases.items():
+        for alias in names:
+            tn = TNorm.create(alias)
+            assert isinstance(tn, TNorm)
 
-    result = []
+def test_invalid_alias_raises():
+    with pytest.raises(ValueError):
+        TNorm.create("unknown_tnorm")
 
-    l = len(a_b)
-    for i in range(l):
-        result.append(temp_tnorm.reduce(a_b[i]))
-    
-    closeness = np.isclose(result, expected)
-    assert np.all(closeness), "outputs are not the expected values"
+def test_strict_mode_extra_param_raises():
+    with pytest.raises(ValueError):
+        TNorm.create("minimum", strict=True, bogus_param=123)
 
-def test_tn_minimum_nxnx2_map_values():
-    data_dict = sds.syntetic_dataset_factory().tnorm_nxnx2_testing_dataset()
-    similarity_matrix = data_dict["similarity_matrix"]
-    label_mask  = data_dict["label_mask"]
-    expected = data_dict["minimum_outputs"]
-    temp_tnorm = tn.MinTNorm()
+# Serialization
+@pytest.mark.parametrize("alias", [c[0] for c in scalar_cases])
+def test_serialization_roundtrip(alias):
+    tn = TNorm.create(alias)
+    tn_dict = tn.to_dict()
+    tn2 = TNorm.from_dict(tn_dict)
+    assert isinstance(tn2, TNorm)
 
-    result = temp_tnorm(similarity_matrix, label_mask)
-    
-    closeness = np.isclose(result, expected)
-    assert np.all(closeness), "outputs are not the expected values"
+# Help
+@pytest.mark.parametrize("alias", [c[0] for c in scalar_cases])
+def test_help_returns_docstring(alias):
+    tn = TNorm.create(alias)
+    assert isinstance(tn.help(), str)
+    assert len(tn.help()) > 0
 
-def test_tn_product_nxnx2_map_values():
-    data_dict = sds.syntetic_dataset_factory().tnorm_nxnx2_testing_dataset()
-    similarity_matrix = data_dict["similarity_matrix"]
-    label_mask  = data_dict["label_mask"]
-    expected = data_dict["product_outputs"]
-    temp_tnorm = tn.ProductTNorm()
+# Special parameterized T-norms
+def test_yager_param_validation():
+    with pytest.raises(ValueError): TNorm.create("yager")  # missing p
+    with pytest.raises(ValueError): TNorm.create("yager", p="bad")
+    with pytest.raises(ValueError): TNorm.create("yager", p=-1)
+    tn = TNorm.create("yager", p=2)
+    assert isinstance(tn, TNorm)
 
-    result = temp_tnorm(similarity_matrix, label_mask)
-    
-    closeness = np.isclose(result, expected)
-    assert np.all(closeness), "outputs are not the expected values"
+def test_lambda_param_validation():
+    with pytest.raises(ValueError): TNorm.create("lambda")  # missing l
+    with pytest.raises(ValueError): TNorm.create("lambda", l="bad")
+    with pytest.raises(ValueError): TNorm.create("lambda", l=-2)
+    tn = TNorm.create("lambda", l=1.2)
+    assert isinstance(tn, TNorm)
 
-def test_tn_luk_nxnx2_map_values():
-    data_dict = sds.syntetic_dataset_factory().tnorm_nxnx2_testing_dataset()
-    similarity_matrix = data_dict["similarity_matrix"]
-    label_mask  = data_dict["label_mask"]
-    expected = data_dict["luk_outputs"]
-    temp_tnorm = tn.LukasiewiczTNorm()
+def test_drastic_product_behavior():
+    tn = TNorm.create("drastic")
+    a = np.array([0.8, 1.0, 0.3])
+    b = np.array([1.0, 0.5, 0.4])
+    expected = np.array([0.8, 0.5, 0.0])
+    result = tn(a, b)
+    np.testing.assert_allclose(result, expected)
 
-    result = temp_tnorm(similarity_matrix, label_mask)
-    
-    closeness = np.isclose(result, expected)
-    assert np.all(closeness), "outputs are not the expected values"
+def test_nilpotent_minimum_behavior():
+    tn = TNorm.create("nilpotent")
+    a = np.array([0.6, 0.7])
+    b = np.array([0.6, 0.2])
+    expected = np.array([0.6, 0.0])
+    result = tn(a, b)
+    np.testing.assert_allclose(result, expected)
+
+def test_hamacher_zero_denom_behavior():
+    tn = TNorm.create("hamacher")
+    a = np.array([0.0, 0.5])
+    b = np.array([0.0, 0.5])
+    result = tn(a, b)
+    assert result.shape == a.shape

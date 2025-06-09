@@ -9,9 +9,9 @@ They decouple model construction logic from the model class definitions.
 from FRsutils.core.models.itfrs import ITFRS
 from FRsutils.core.models.owafrs import OWAFRS
 from FRsutils.core.models.vqrs import VQRS
-from FRsutils.core.approximations import BaseFuzzyRoughModel
+from FRsutils.core.base_fuzzy_rough_model import BaseFuzzyRoughModel
 from FRsutils.utils.constructor_utils.tnorm_builder import build_tnorm
-from FRsutils.utils.constructor_utils.function_registry import IMPLICATOR_REGISTRY, OWA_WEIGHT_REGISTRY
+from FRsutils.utils.constructor_utils.function_registry_old import IMPLICATOR_REGISTRY, OWA_WEIGHT_REGISTRY
 import FRsutils.utils.validation_utils as valutils
 
 def build_fuzzy_rough_model(fr_model_type,

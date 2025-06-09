@@ -8,7 +8,7 @@
 - check docstrings and comments
 - Add Yager tnorm and tests
 - Dependency Injection
-
+- use keel to generate datasets for testing
 
 
 

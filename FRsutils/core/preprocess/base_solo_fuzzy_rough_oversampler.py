@@ -2,7 +2,7 @@ import numpy as np
 from collections import Counter
 from imblearn.over_sampling.base import BaseOverSampler
 from sklearn.utils import check_X_y
-from FRsutils.core.approximations import BaseFuzzyRoughModel
+from FRsutils.core.base_fuzzy_rough_model import BaseFuzzyRoughModel
 from abc import ABC, abstractmethod
 import warnings
 from FRsutils.core.models.itfrs import ITFRS

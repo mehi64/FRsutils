@@ -4,11 +4,11 @@ from sklearn.neighbors import NearestNeighbors
 import warnings
 import FRsutils.utils.math_utils.math_utils as math_utils
 from FRsutils.core.preprocess.base_solo_fuzzy_rough_oversampler import BaseSoloFuzzyRoughOversampler
-from FRsutils.core.approximations import BaseFuzzyRoughModel
+from FRsutils.core.base_fuzzy_rough_model import BaseFuzzyRoughModel
 
 from FRsutils.utils.constructor_utils.fr_model_builder import build_fuzzy_rough_model
 from FRsutils.utils.constructor_utils.tnorm_builder import build_tnorm
-from FRsutils.utils.constructor_utils.similarity_builder import build_similarity
+from FRsutils.utils.constructor_utils.similarity_builder_old import build_similarity
 from FRsutils.core.similarities import calculate_similarity_matrix
 
 

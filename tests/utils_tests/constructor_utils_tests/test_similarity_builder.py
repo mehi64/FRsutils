@@ -1,5 +1,5 @@
 import pytest
-from FRsutils.utils.constructor_utils.similarity_builder import build_similarity
+from FRsutils.utils.constructor_utils.similarity_builder_old import build_similarity
 from FRsutils.core.similarities import LinearSimilarity, GaussianSimilarity
 
 def test_build_linear_similarity():

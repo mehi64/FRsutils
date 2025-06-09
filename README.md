@@ -34,9 +34,16 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
   - Reichenbach
   - Lukasiewicz
 - T-norms
-  - min tnorm
-  - product tnorm
+  - Min tnorm
+  - Product tnorm
   - Lukasiewicz tnorm
+  - Yager tnorm
+  - DrasticProduct tnorm
+  - EinsteinProduct tnorm
+  - HamacherProduct tnorm
+  - NilpotentMinimum tnorm
+  - Lambda tnorm
+  - Custom tnorm developed by user
 - OWA weights (Ordered Weighted Average)
   - Linear
 - ITFRS (Implicator/T-norm Fuzzy-Rough Sets)

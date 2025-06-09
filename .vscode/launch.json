@@ -16,10 +16,32 @@
             "cwd": "${workspaceFolder}"
         },
         {
-            "name": "Python: sandbox test TNorms factory",
+            "name": "SNDBX use TNorms",
             "type": "debugpy",
             "request": "launch",
-            "module": "FRsutils.sandbox.test_TNorms",
+            "module": "FRsutils.sandbox.use_tnorms",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "SNDBX use ITFRS",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "FRsutils.sandbox.use_itfrs",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Python: sandbox test similarity factory",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "FRsutils.sandbox.test_similarity",
             "justMyCode": true,
             "env": {
                 "PYTHONPATH": "${workspaceFolder}"
@@ -74,8 +96,8 @@
             "name": "Python: All plots",
             "type": "debugpy",
             "request": "launch",
-            "module": "FRsutils.sandbox.plots.plot_fuzzy_quantifiers.py",
-            "justMyCode": true,
+            "module": "FRsutils.sandbox.plots.plot_tnorms",
+            "justMyCode": false,
             "env": {
                 "PYTHONPATH": "${workspaceFolder}"
             },
@@ -185,6 +207,30 @@
             "env": {
               "PYTHONPATH": "${workspaceFolder}"
             }
+        },
+        {
+            "name": "Tst Dbg tnorm core functionality",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": ["tests/core_tests/test_tnorms_core_functionality.py"],
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+              "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "Python: generate data",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "tests.generate_data_matrix_based_on_scalar_values",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}"
         }
     ]
 }
