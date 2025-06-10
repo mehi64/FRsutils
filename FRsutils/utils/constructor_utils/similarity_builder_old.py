@@ -3,10 +3,10 @@
 @brief Factory function to build similarity functions by name.
 """
 
-from FRsutils.core.similarities import LinearSimilarity, GaussianSimilarity, SimilarityFunction
+from FRsutils.core.similarities import LinearSimilarity, GaussianSimilarity, Similarity
 from FRsutils.utils.validation_utils import validate_similarity_choice
 
-def build_similarity(name: str, gaussian_similarity_sigma) -> SimilarityFunction:
+def build_similarity(name: str, gaussian_similarity_sigma) -> Similarity:
     """
     @brief Instantiates a similarity function object.
 

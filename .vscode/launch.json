@@ -27,6 +27,17 @@
             "cwd": "${workspaceFolder}"
         },
         {
+            "name": "SNDBX use similarities",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "FRsutils.sandbox.use_similarities",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}"
+        },
+        {
             "name": "SNDBX use ITFRS",
             "type": "debugpy",
             "request": "launch",

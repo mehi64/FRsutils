@@ -20,7 +20,7 @@ using a fuzzy implicator and a T-norm operator over a similarity matrix.
 ##############################################
 """
 
-from FRsutils.core.approximations import BaseFuzzyRoughModel
+from FRsutils.core.base_fuzzy_rough_model import BaseFuzzyRoughModel
 import FRsutils.core.tnorms as tn
 import FRsutils.core.implicators as imp
 from FRsutils.utils.logger.logger_util import get_logger

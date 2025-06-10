@@ -128,12 +128,6 @@ class TNorm(ABC):
         pass
 
 
-        # @brief Optional parameter validation hook for subclasses.
-
-        # @param kwargs: Parameters to validate.
-        # """
-        # pass
-
     def _get_params(self) -> dict:
         """
         @brief Get serializable parameters for reconstruction.
@@ -195,18 +189,18 @@ class TNorm(ABC):
         """
         pass
 
-    def apply_pairwise_matrix(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
-        """
-        @brief Apply the T-norm element-wise between two matrices of equal shape.
+    # def apply_pairwise_matrix(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    #     """
+    #     @brief Apply the T-norm element-wise between two matrices of equal shape.
 
-        @param a: An (n x n) matrix of values (e.g., similarities).
-        @param b: An (n x n) matrix of values (e.g., mask or labels).
-        @return: An (n x n) matrix of T-norm outputs.
-        """
-        if a.shape != b.shape:
-            raise ValueError("Input matrices must have the same shape.")
-        vec_call = np.vectorize(self.__call__)
-        return vec_call(a, b)
+    #     @param a: An (n x n) matrix of values (e.g., similarities).
+    #     @param b: An (n x n) matrix of values (e.g., mask or labels).
+    #     @return: An (n x n) matrix of T-norm outputs.
+    #     """
+    #     if a.shape != b.shape:
+    #         raise ValueError("Input matrices must have the same shape.")
+    #     vec_call = np.vectorize(self.__call__)
+    #     return vec_call(a, b)
    
     @property
     def name(self) -> str:

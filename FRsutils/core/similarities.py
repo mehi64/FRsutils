@@ -56,15 +56,15 @@ def _filter_args(cls, kwargs: dict) -> dict:
     return {k: v for k, v in kwargs.items() if k in sig.parameters}
 
 
-class SimilarityFunction(ABC):
+class Similarity(ABC):
     """
     @brief Abstract base class for all similarity functions.
 
     Provides a unified interface and registry for defining scalar similarity measures.
     """
 
-    _registry: Dict[str, Type['SimilarityFunction']] = {}
-    _aliases: Dict[Type['SimilarityFunction'], List[str]] = {}
+    _registry: Dict[str, Type['Similarity']] = {}
+    _aliases: Dict[Type['Similarity'], List[str]] = {}
 
     @classmethod
     def register(cls, *names: str):
@@ -73,7 +73,7 @@ class SimilarityFunction(ABC):
 
         @param names: Aliases for the similarity function.
         """
-        def decorator(subclass: Type['SimilarityFunction']):
+        def decorator(subclass: Type['Similarity']):
             if not names:
                 raise ValueError("At least one name must be provided for registration.")
             cls._aliases[subclass] = list(map(str.lower, names))
@@ -86,7 +86,7 @@ class SimilarityFunction(ABC):
         return decorator
 
     @classmethod
-    def create(cls, name: str, strict: bool = False, **kwargs) -> 'SimilarityFunction':
+    def create(cls, name: str, strict: bool = False, **kwargs) -> 'Similarity':
         """
         @brief Factory method to instantiate a similarity function by name or alias.
 
@@ -133,7 +133,7 @@ class SimilarityFunction(ABC):
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> 'SimilarityFunction':
+    def from_dict(cls, data: dict) -> 'Similarity':
         """
         @brief Deserialize a similarity function from a dictionary.
 
@@ -198,10 +198,18 @@ class SimilarityFunction(ABC):
             name: {"type": type(getattr(self, name)).__name__, "value": getattr(self, name)}
             for name in sig.parameters if name != "self" and hasattr(self, name)
         }
+    
+    @property
+    def name(self) -> str:
+        """
+        @brief Returns the registered name of the tnorm class.
 
+        @return: The class name as a lowercase string without TNorm prefix.
+        """
+        return self.__class__.__name__.replace("Similarity", "").lower()
 
-@SimilarityFunction.register("linear")
-class LinearSimilarity(SimilarityFunction):
+@Similarity.register("linear")
+class LinearSimilarity(Similarity):
     """
     @brief Linear similarity function: sim = max(0, 1 - |x - y|)
     """
@@ -210,8 +218,8 @@ class LinearSimilarity(SimilarityFunction):
         return np.maximum(0.0, 1.0 - np.abs(diff))
 
 
-@SimilarityFunction.register("gaussian", "gauss")
-class GaussianSimilarity(SimilarityFunction):
+@Similarity.register("gaussian", "gauss")
+class GaussianSimilarity(Similarity):
     """
     @brief Gaussian similarity: sim = exp(-diff^2 / (2 * sigma^2))
 
@@ -231,127 +239,127 @@ class GaussianSimilarity(SimilarityFunction):
     def validate_params(cls, **kwargs):
         sigma = kwargs.get("sigma")
         if sigma is None or not isinstance(sigma, (float, int)) or sigma <= 0:
-            raise ValueError("Parameter 'sigma' must be a positive number.")
+            raise ValueError("Parameter 'sigma' must be provided and be a positive number.")
 
-if ENABLE_PLACEHOLDER_SIMILARITIES:
-    @SimilarityFunction.register("cosine")
-    class CosineSimilarity(SimilarityFunction):
-    """
-    @brief Cosine similarity: sim = dot(x, y) / (||x|| * ||y||)
-    Assumes diff = x - y pairs prepared row-wise.
-    """
-    def compute(self, diff: np.ndarray) -> np.ndarray:
-        raise NotImplementedError("Cosine similarity is not pairwise on |x - y|, requires full vectors.")
-
-
-@SimilarityFunction.register("exponential")
-class ExponentialSimilarity(SimilarityFunction):
-    """
-    @brief Exponential similarity: sim = exp(-alpha * |x - y|)
-
-    @param alpha: Scaling parameter
-    """
-    def __init__(self, alpha: float = 1.0):
-        self.alpha = alpha
-
-    def compute(self, diff: np.ndarray) -> np.ndarray:
-        self._validate_diff(diff)
-        return np.exp(-self.alpha * np.abs(diff))
-
-    def _get_params(self) -> dict:
-        return {"alpha": self.alpha}
-
-    @classmethod
-    def validate_params(cls, **kwargs):
-        alpha = kwargs.get("alpha")
-        if alpha is None or not isinstance(alpha, (float, int)) or alpha <= 0:
-            raise ValueError("Parameter 'alpha' must be a positive number.")
+#     if ENABLE_PLACEHOLDER_SIMILARITIES:
+#         @Similarity.register("cosine")
+#         class CosineSimilarity(Similarity):
+#             """
+#             @brief Cosine similarity: sim = dot(x, y) / (||x|| * ||y||)
+#             Assumes diff = x - y pairs prepared row-wise.
+#             """
+#             def compute(self, diff: np.ndarray) -> np.ndarray:
+#                 raise NotImplementedError("Cosine similarity is not pairwise on |x - y|, requires full vectors.")
 
 
-@SimilarityFunction.register("yager")
-class YagerSimilarity(SimilarityFunction):
-    """
-    @brief Yager similarity: sim = 1 - (|x - y|^p)^(1/p)
+# @Similarity.register("exponential")
+# class ExponentialSimilarity(Similarity):
+#     """
+#     @brief Exponential similarity: sim = exp(-alpha * |x - y|)
 
-    @param p: Exponent parameter (must be > 0)
-    """
-    def __init__(self, p: float = 2.0):
-        self.p = p
+#     @param alpha: Scaling parameter
+#     """
+#     def __init__(self, alpha: float = 1.0):
+#         self.alpha = alpha
 
-    def compute(self, diff: np.ndarray) -> np.ndarray:
-        self._validate_diff(diff)
-        return 1.0 - (np.abs(diff) ** self.p) ** (1.0 / self.p)
+#     def compute(self, diff: np.ndarray) -> np.ndarray:
+#         self._validate_diff(diff)
+#         return np.exp(-self.alpha * np.abs(diff))
 
-    def _get_params(self) -> dict:
-        return {"p": self.p}
+#     def _get_params(self) -> dict:
+#         return {"alpha": self.alpha}
 
-    @classmethod
-    def validate_params(cls, **kwargs):
-        p = kwargs.get("p")
-        if p is None or not isinstance(p, (float, int)) or p <= 0:
-            raise ValueError("Parameter 'p' must be a positive number.")
-
-
-@SimilarityFunction.register("hamming")
-class HammingSimilarity(SimilarityFunction):
-    """
-    @brief Hamming similarity: sim = 1 - |x - y|
-    """
-    def compute(self, diff: np.ndarray) -> np.ndarray:
-        self._validate_diff(diff)
-        return 1.0 - np.abs(diff)
+#     @classmethod
+#     def validate_params(cls, **kwargs):
+#         alpha = kwargs.get("alpha")
+#         if alpha is None or not isinstance(alpha, (float, int)) or alpha <= 0:
+#             raise ValueError("Parameter 'alpha' must be a positive number.")
 
 
-if ENABLE_PLACEHOLDER_SIMILARITIES:
-    @SimilarityFunction.register("dice")
-    class DiceSimilarity(SimilarityFunction):
-    """
-    @brief Dice similarity (not strictly pairwise on |x - y|): placeholder only.
-    """
-    def compute(self, diff: np.ndarray) -> np.ndarray:
-        raise NotImplementedError("Dice similarity requires full input vectors, not just diff.")
+# @Similarity.register("yager")
+# class YagerSimilarity(Similarity):
+#     """
+#     @brief Yager similarity: sim = 1 - (|x - y|^p)^(1/p)
+
+#     @param p: Exponent parameter (must be > 0)
+#     """
+#     def __init__(self, p: float = 2.0):
+#         self.p = p
+
+#     def compute(self, diff: np.ndarray) -> np.ndarray:
+#         self._validate_diff(diff)
+#         return 1.0 - (np.abs(diff) ** self.p) ** (1.0 / self.p)
+
+#     def _get_params(self) -> dict:
+#         return {"p": self.p}
+
+#     @classmethod
+#     def validate_params(cls, **kwargs):
+#         p = kwargs.get("p")
+#         if p is None or not isinstance(p, (float, int)) or p <= 0:
+#             raise ValueError("Parameter 'p' must be a positive number.")
 
 
-if ENABLE_PLACEHOLDER_SIMILARITIES:
-    @SimilarityFunction.register("jaccard")
-    class JaccardSimilarity(SimilarityFunction):
-    """
-    @brief Jaccard similarity (not strictly pairwise on |x - y|): placeholder only.
-    """
-    def compute(self, diff: np.ndarray) -> np.ndarray:
-        raise NotImplementedError("Jaccard similarity requires full input vectors, not just diff.")
+# @Similarity.register("hamming")
+# class HammingSimilarity(Similarity):
+#     """
+#     @brief Hamming similarity: sim = 1 - |x - y|
+#     """
+#     def compute(self, diff: np.ndarray) -> np.ndarray:
+#         self._validate_diff(diff)
+#         return 1.0 - np.abs(diff)
 
 
-if ENABLE_PLACEHOLDER_SIMILARITIES:
-    @SimilarityFunction.register("tversky")
-    class TverskySimilarity(SimilarityFunction):
-    """
-    @brief Tversky similarity (not strictly pairwise on |x - y|): placeholder only.
+# if ENABLE_PLACEHOLDER_SIMILARITIES:
+#     @Similarity.register("dice")
+#     class DiceSimilarity(Similarity):
+#         """
+#         @brief Dice similarity (not strictly pairwise on |x - y|): placeholder only.
+#         """
+#         def compute(self, diff: np.ndarray) -> np.ndarray:
+#             raise NotImplementedError("Dice similarity requires full input vectors, not just diff.")
 
-    @param alpha: Weight for A \ B
-    @param beta: Weight for B \ A
-    """
-    def __init__(self, alpha: float = 0.5, beta: float = 0.5):
-        self.alpha = alpha
-        self.beta = beta
 
-    def compute(self, diff: np.ndarray) -> np.ndarray:
-        raise NotImplementedError("Tversky similarity requires full vector inputs.")
+# if ENABLE_PLACEHOLDER_SIMILARITIES:
+#     @Similarity.register("jaccard")
+#     class JaccardSimilarity(Similarity):
+#         """
+#         @brief Jaccard similarity (not strictly pairwise on |x - y|): placeholder only.
+#         """
+#         def compute(self, diff: np.ndarray) -> np.ndarray:
+#             raise NotImplementedError("Jaccard similarity requires full input vectors, not just diff.")
 
-    def _get_params(self) -> dict:
-        return {"alpha": self.alpha, "beta": self.beta}
 
-    @classmethod
-    def validate_params(cls, **kwargs):
-        alpha = kwargs.get("alpha")
-        beta = kwargs.get("beta")
-        if not isinstance(alpha, (int, float)) or not isinstance(beta, (int, float)):
-            raise ValueError("Tversky alpha and beta must be numeric.")
+# if ENABLE_PLACEHOLDER_SIMILARITIES:
+#     @Similarity.register("tversky")
+#     class TverskySimilarity(Similarity):
+#         """
+#         @brief Tversky similarity (not strictly pairwise on |x - y|): placeholder only.
+
+#         @param alpha: Weight for A \ B
+#         @param beta: Weight for B \ A
+#         """
+#         def __init__(self, alpha: float = 0.5, beta: float = 0.5):
+#             self.alpha = alpha
+#             self.beta = beta
+
+#         def compute(self, diff: np.ndarray) -> np.ndarray:
+#             raise NotImplementedError("Tversky similarity requires full vector inputs.")
+
+#         def _get_params(self) -> dict:
+#             return {"alpha": self.alpha, "beta": self.beta}
+
+#         @classmethod
+#         def validate_params(cls, **kwargs):
+#             alpha = kwargs.get("alpha")
+#             beta = kwargs.get("beta")
+#             if not isinstance(alpha, (int, float)) or not isinstance(beta, (int, float)):
+#                 raise ValueError("Tversky alpha and beta must be numeric.")
 
 
 def calculate_similarity_matrix(
     X: np.ndarray,
-    similarity_func: SimilarityFunction,
+    similarity_func: Similarity,
     tnorm: Callable[[np.ndarray, np.ndarray], np.ndarray]
 ) -> np.ndarray:
     """

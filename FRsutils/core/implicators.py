@@ -136,52 +136,43 @@ class Implicator(ABC):
         @param b: scalar float
         @raises ValueError: if inputs are out of range
         """
-        self._validate_inputs(a, b)
-
-        # Validates constructor parameters.
-
-        # @param kwargs: Parameters to validate.
-        # """
-        pass
-
-    
-    def __call__(self, a, b):
-        """
-        @brief Apply the implicator to scalar, 1D or 2D inputs.
-
-        Automatically dispatches to element-wise array-compatible logic.
-        """
-        a_arr = np.asarray(a)
-        b_arr = np.asarray(b)
-
-        if a_arr.shape != b_arr.shape:
-            raise ValueError(f"Incompatible shapes: {a_arr.shape} and {b_arr.shape}")
-
-        return self._compute_elementwise(a_arr, b_arr)
+        if not (0 <= a <= 1 and 0 <= b <= 1):
+            raise ValueError(f"Inputs must be in [0, 1]: {a}, {b}")
 
     @abstractmethod
-    def _compute_elementwise(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
+        """
+        @brief Apply the T-norm to two arrays element-wise.
+
+        @param a: First input array.
+        @param b: Second input array.
+        @return: Element-wise result of the T-norm.
+        """
+        pass
+
+    @abstractmethod
+    def _compute_scalar(self, a: float, b: float) -> float:
         """
         @brief Perform element-wise implicator operation on arrays of any shape.
 
-        @param a: NumPy array of arbitrary shape.
-        @param b: NumPy array of same shape as a.
-        @return: Result of applying implicator.
+        @param a: scalar float
+        @param b: scalar float
+        @return: scalar float
         """
         pass
     
-    def apply_pairwise_matrix(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
-        """
-        @brief Apply the implicator element-wise between two matrices of equal shape.
+    # def apply_pairwise_matrix(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    #     """
+    #     @brief Apply the implicator element-wise between two matrices of equal shape.
 
-        @param a: An (n x n) matrix of values (e.g., similarities).
-        @param b: An (n x n) matrix of values (e.g., mask or labels).
-        @return: An (n x n) matrix of implicator outputs.
-        """
-        if a.shape != b.shape:
-            raise ValueError("Input matrices must have the same shape.")
-        vec_call = np.vectorize(self.__call__)
-        return vec_call(a, b)
+    #     @param a: An (n x n) matrix of values (e.g., similarities).
+    #     @param b: An (n x n) matrix of values (e.g., mask or labels).
+    #     @return: An (n x n) matrix of implicator outputs.
+    #     """
+    #     if a.shape != b.shape:
+    #         raise ValueError("Input matrices must have the same shape.")
+    #     vec_call = np.vectorize(self.__call__)
+    #     return vec_call(a, b)
 
     def to_dict(self) -> dict:
         """
@@ -249,6 +240,15 @@ class Implicator(ABC):
         """
         return inspect.getdoc(self.__class__) or "No documentation available."
 
+    @property
+    def name(self) -> str:
+        """
+        @brief Returns the registered name of the tnorm class.
+
+        @return: The class name as a lowercase string without TNorm prefix.
+        """
+        return self.__class__.__name__.replace("Implicator", "").lower()
+
 # Non-parameterized implicators
 @Implicator.register("gaines")
 class GainesImplicator(Implicator):
@@ -258,7 +258,26 @@ class GainesImplicator(Implicator):
     - If a > b and a > 0: returns b / a
     - If a == 0: returns 0
     """
-    def _compute_elementwise(self, a: float, b: float) -> float:
+    def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
+        if a.shape != b.shape:
+            raise ValueError("Input arrays 'a' and 'b' must have the same shape.")
+
+        result = np.ones_like(a, dtype=np.float64)
+
+        # Case where a <= b
+        mask_le = a <= b
+        result[mask_le] = 1.0
+
+        # Case where a > b and a > 0
+        mask_gt = (a > b) & (a > 0)
+        result[mask_gt] = np.minimum(1.0, b[mask_gt] / a[mask_gt])
+
+        # Case where a == 0 (return 1 by convention)
+        # Already initialized to 1.0
+
+        return result
+    
+    def _compute_scalar(self, a: float, b: float) -> float:
         self._validate_inputs(a, b)
         if a <= b:
             return 1.0
@@ -274,7 +293,12 @@ class GoedelImplicator(Implicator):
     - If a <= b: returns 1
     - Else: returns b
     """
-    def _compute_elementwise(self, a: float, b: float) -> float:
+    def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
+        if a.shape != b.shape: 
+            raise ValueError("Input arrays must have the same shape.") 
+        return np.where(a <= b, 1.0, b)
+    
+    def _compute_scalar(self, a: float, b: float) -> float:
         self._validate_inputs(a, b)
         return 1.0 if a <= b else b
 
@@ -284,7 +308,12 @@ class KleeneDienesImplicator(Implicator):
     Kleene-Dienes fuzzy implicator:
     - Computes max(1 - a, b)
     """
-    def _compute_elementwise(self, a: float, b: float) -> float:
+    def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
+        if a.shape != b.shape:
+            raise ValueError("Input arrays must have the same shape.")
+        return np.maximum(1 - a, b)
+
+    def _compute_scalar(self, a: float, b: float) -> float:
         self._validate_inputs(a, b)
         return max(1.0 - a, b)
 
@@ -294,7 +323,12 @@ class ReichenbachImplicator(Implicator):
     Reichenbach fuzzy implicator:
     - Computes 1 - a + a * b
     """
-    def _compute_elementwise(self, a: float, b: float) -> float:
+    def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
+        if a.shape != b.shape:
+            raise ValueError("Input arrays must have the same shape.")
+        return 1.0 - a + a * b
+
+    def _compute_scalar(self, a: float, b: float) -> float:
         self._validate_inputs(a, b)
         return 1.0 - a + a * b
 
@@ -304,148 +338,186 @@ class LukasiewiczImplicator(Implicator):
     Łukasiewicz fuzzy implicator:
     - Computes min(1, 1 - a + b)
     """
-    def _compute_elementwise(self, a: float, b: float) -> float:
+    def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
+        if a.shape != b.shape:
+            raise ValueError("Input arrays must have the same shape.")
+        return np.minimum(1.0, 1 - a + b)
+
+    def _compute_scalar(self, a: float, b: float) -> float:
         self._validate_inputs(a, b)
         return min(1.0, 1.0 - a + b)
 
-# Parameterized implicators
-@Implicator.register("yager")
-class YagerImplicator(Implicator):
-    """
-    Yager fuzzy implicator:
-    - Computes min(1, (1 - a)^p + b^p)^(1/p)
+# # Parameterized implicators
+# @Implicator.register("yager")
+# class YagerImplicator(Implicator):
+#     """
+#     Yager fuzzy implicator:
+#     - Computes min(1, (1 - a)^p + b^p)^(1/p)
 
-    @param p: Exponent parameter > 0 (default 2)
-    """
-    def __init__(self, p: float = 2.0):
-        self.p = p
+#     @param p: Exponent parameter > 0 (default 2)
+#     """
+#     def __init__(self, p: float = 2.0):
+#         self.p = p
 
-    def _compute_elementwise(self, a: float, b: float) -> float:
-        if not (0 <= a <= 1 and 0 <= b <= 1):
-            raise ValueError("Inputs must be in range [0, 1].")
-        return min(1.0, ((1 - a) ** self.p + b ** self.p) ** (1 / self.p))
+#     def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
+#         if a.shape != b.shape:
+#             raise ValueError("Input arrays must have the same shape.")
+#         result = np.ones_like(a)
+#         mask = a > b
+#         result[mask] = np.power(
+#             np.maximum(0.0, 1 - np.power(a[mask], self.p) + np.power(b[mask], self.p)),
+#             1.0 / self.p
+#         )
+#         return result
 
-    @classmethod
-    def validate_params(cls, **kwargs):
-        p = kwargs.get("p")
+#     def _compute_scalar(self, a: float, b: float) -> float:
+#         if not (0 <= a <= 1 and 0 <= b <= 1):
+#             raise ValueError("Inputs must be in range [0, 1].")
+#         return min(1.0, ((1 - a) ** self.p + b ** self.p) ** (1 / self.p))
 
-
-    def _validate_inputs(self, a, b):
-        """
-        Ensures inputs a and b are in the range [0, 1].
-
-        @param a: scalar float
-        @param b: scalar float
-        @raises ValueError: if inputs are out of range
-        """
-        self._validate_inputs(a, b)
-
-        if p is None:
-            raise ValueError("Missing required parameter: p")
-        if not isinstance(p, (int, float)) or p <= 0:
-            raise ValueError("Parameter 'p' must be a positive number.")
-
-@Implicator.register("weber")
-class WeberImplicator(Implicator):
-    """
-    Weber fuzzy implicator:
-    - Computes min(1, (b^p) / (a^p + (1 - a)^p))
-
-    @param p: Exponent parameter > 0 (default 2)
-    """
-    def __init__(self, p: float = 2.0):
-        self.p = p
-
-    def _compute_elementwise(self, a: float, b: float) -> float:
-        denom = (a ** self.p + (1 - a) ** self.p)
-        return min(1.0, b ** self.p / denom if denom != 0 else 1.0)
-
-    @classmethod
-    def validate_params(cls, **kwargs):
-        p = kwargs.get("p")
+#     @classmethod
+#     def validate_params(cls, **kwargs):
+#         p = kwargs.get("p")
 
 
-    def _validate_inputs(self, a, b):
-        """
-        Ensures inputs a and b are in the range [0, 1].
+#     def _validate_inputs(self, a, b):
+#         """
+#         Ensures inputs a and b are in the range [0, 1].
 
-        @param a: scalar float
-        @param b: scalar float
-        @raises ValueError: if inputs are out of range
-        """
-        self._validate_inputs(a, b)
+#         @param a: scalar float
+#         @param b: scalar float
+#         @raises ValueError: if inputs are out of range
+#         """
+#         self._validate_inputs(a, b)
 
-        if p is None:
-            raise ValueError("Missing required parameter: p")
-        if not isinstance(p, (int, float)) or p <= 0:
-            raise ValueError("Parameter 'p' must be a positive number.")
+#         if p is None:
+#             raise ValueError("Missing required parameter: p")
+#         if not isinstance(p, (int, float)) or p <= 0:
+#             raise ValueError("Parameter 'p' must be a positive number.")
 
-@Implicator.register("frank")
-class FrankImplicator(Implicator):
-    """
-    Frank fuzzy implicator:
-    - Computes log_b(1 + ((b^p - 1)(1 - a^p)) / (p - 1))
+# @Implicator.register("weber")
+# class WeberImplicator(Implicator):
+#     """
+#     Weber fuzzy implicator:
+#     - Computes min(1, (b^p) / (a^p + (1 - a)^p))
 
-    @param p: Base parameter, p > 0 and p != 1 (default: 2.0)
-    """
-    def __init__(self, p: float = 2.0):
-        self.p = p
+#     @param p: Exponent parameter > 0 (default 2)
+#     """
+#     def __init__(self, p: float = 2.0):
+#         self.p = p
+    
+#     def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
+#         if a.shape != b.shape:
+#             raise ValueError("Input arrays must have the same shape.")
+#         result = np.ones_like(a, dtype=np.float64)
+#         mask = a > 0
+#         result[mask] = np.minimum(1.0, b[mask] / a[mask])
+#         return result
 
-    def _compute_elementwise(self, a: float, b: float) -> float:
-        if self.p == 1:
-            return 1.0 - a + a * b
-        num = (self.p ** b - 1) * (1 - self.p ** a)
-        denom = self.p - 1
-        result = 1 + num / denom
-        return np.clip(np.log(result) / np.log(self.p), 0, 1)
+#     def _compute_scalar(self, a: float, b: float) -> float:
+#         denom = (a ** self.p + (1 - a) ** self.p)
+#         return min(1.0, b ** self.p / denom if denom != 0 else 1.0)
 
-    @classmethod
-    def validate_params(cls, **kwargs):
-        p = kwargs.get("p")
-
-
-    def _validate_inputs(self, a, b):
-        """
-        Ensures inputs a and b are in the range [0, 1].
-
-        @param a: scalar float
-        @param b: scalar float
-        @raises ValueError: if inputs are out of range
-        """
-        self._validate_inputs(a, b)
-
-        if p is None or not isinstance(p, (int, float)) or p <= 0 or p == 1:
-            raise ValueError("Parameter 'p' must be > 0 and != 1")
-
-@Implicator.register("sugeno-weber", "sw")
-class SugenoWeberImplicator(Implicator):
-    """
-    Sugeno-Weber fuzzy implicator:
-    - Computes min(1, (b - a + a * b) / (1 + p * (1 - a) * b))
-
-    @param p: Interaction parameter (default: 1.0)
-    """
-    def __init__(self, p: float = 1.0):
-        self.p = p
-
-    def _compute_elementwise(self, a: float, b: float) -> float:
-        denom = 1 + self.p * (1 - a) * b
-        return min(1.0, (b - a + a * b) / denom if denom != 0 else 1.0)
-
-    @classmethod
-    def validate_params(cls, **kwargs):
-        p = kwargs.get("p")
+#     @classmethod
+#     def validate_params(cls, **kwargs):
+#         p = kwargs.get("p")
 
 
-    def _validate_inputs(self, a, b):
-        """
-        Ensures inputs a and b are in the range [0, 1].
+#     def _validate_inputs(self, a, b):
+#         """
+#         Ensures inputs a and b are in the range [0, 1].
 
-        @param a: scalar float
-        @param b: scalar float
-        @raises ValueError: if inputs are out of range
-        """
-        self._validate_inputs(a, b)
+#         @param a: scalar float
+#         @param b: scalar float
+#         @raises ValueError: if inputs are out of range
+#         """
+#         self._validate_inputs(a, b)
 
-        if p is None or not isinstance(p, (int, float)):
-            raise ValueError("Parameter 'p' must be a number")
+#         if p is None:
+#             raise ValueError("Missing required parameter: p")
+#         if not isinstance(p, (int, float)) or p <= 0:
+#             raise ValueError("Parameter 'p' must be a positive number.")
+
+# # @Implicator.register("frank")
+# # class FrankImplicator(Implicator):
+# #     """
+# #     Frank fuzzy implicator:
+# #     - Computes log_b(1 + ((b^p - 1)(1 - a^p)) / (p - 1))
+
+# #     @param p: Base parameter, p > 0 and p != 1 (default: 2.0)
+# #     """
+# #     def __init__(self, p: float = 2.0):
+# #         self.p = p
+#     # def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
+#     #     if a.shape != b.shape:
+#     #         raise ValueError("Input arrays must have the same shape.")
+#     #     numerator = (np.power(self.s, b) - 1) * (np.power(self.s, 1 - a) - 1)
+#     #     denominator = self.s - 1
+#     #     result = 1 + numerator / denominator
+#     #     return np.log(result) / np.log(self.s)
+
+# #     def _compute_elementwise(self, a: float, b: float) -> float:
+# #         if self.p == 1:
+# #             return 1.0 - a + a * b
+# #         num = (self.p ** b - 1) * (1 - self.p ** a)
+# #         denom = self.p - 1
+# #         result = 1 + num / denom
+# #         return np.clip(np.log(result) / np.log(self.p), 0, 1)
+
+# #     @classmethod
+# #     def validate_params(cls, **kwargs):
+# #         p = kwargs.get("p")
+
+
+# #     def _validate_inputs(self, a, b):
+# #         """
+# #         Ensures inputs a and b are in the range [0, 1].
+
+# #         @param a: scalar float
+# #         @param b: scalar float
+# #         @raises ValueError: if inputs are out of range
+# #         """
+# #         self._validate_inputs(a, b)
+
+# #         if p is None or not isinstance(p, (int, float)) or p <= 0 or p == 1:
+# #             raise ValueError("Parameter 'p' must be > 0 and != 1")
+
+# # @Implicator.register("sugeno-weber", "sw")
+# # class SugenoWeberImplicator(Implicator):
+# #     """
+# #     Sugeno-Weber fuzzy implicator:
+# #     - Computes min(1, (b - a + a * b) / (1 + p * (1 - a) * b))
+
+# #     @param p: Interaction parameter (default: 1.0)
+# #     """
+# #     def __init__(self, p: float = 1.0):
+# #         self.p = p
+
+# #     def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
+# #         if a.shape != b.shape:
+# #             raise ValueError("Input arrays must have the same shape.")
+# #         numerator = 1 - a + b - self.lambd * a * (1 - b)
+# #         denominator = 1 + self.lambd
+# #         return np.minimum(1.0, numerator / denominator)
+
+# #     def _compute_elementwise(self, a: float, b: float) -> float:
+# #         denom = 1 + self.p * (1 - a) * b
+# #         return min(1.0, (b - a + a * b) / denom if denom != 0 else 1.0)
+
+# #     @classmethod
+# #     def validate_params(cls, **kwargs):
+# #         p = kwargs.get("p")
+
+
+# #     def _validate_inputs(self, a, b):
+# #         """
+# #         Ensures inputs a and b are in the range [0, 1].
+
+# #         @param a: scalar float
+# #         @param b: scalar float
+# #         @raises ValueError: if inputs are out of range
+# #         """
+# #         self._validate_inputs(a, b)
+
+# #         if p is None or not isinstance(p, (int, float)):
+# #             raise ValueError("Parameter 'p' must be a number")
