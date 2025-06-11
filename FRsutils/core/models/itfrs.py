@@ -104,7 +104,7 @@ class ITFRS(BaseFuzzyRoughModel):
         """
         return {
             "tnorm": self.tnorm.describe_params_detailed(),
-            "implicator": self.implicator.describe_params_detailed()
+            "implicator": self.implicator.get_params_detailed()
         }
 
     @classmethod

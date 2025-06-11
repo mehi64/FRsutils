@@ -7,109 +7,14 @@ Supports registration, instantiation via alias, and computation of linear and qu
 
 import numpy as np
 from abc import ABC, abstractmethod
-from typing import Dict, Type, List
-import inspect
+from FRsutils.core.registry_factory_mixin import RegistryFactoryMixin
 
-
-def _filter_args(cls, kwargs: dict) -> dict:
-    """
-    Filters keyword arguments to only those accepted by the class constructor.
-
-    @param cls: Class whose constructor is inspected.
-    @param kwargs: Supplied keyword arguments.
-    @return: Filtered arguments.
-    """
-    sig = inspect.signature(cls.__init__)
-    return {k: v for k, v in kwargs.items() if k in sig.parameters}
-
-
-class FuzzyQuantifier(ABC):
+class FuzzyQuantifier(ABC, RegistryFactoryMixin):
     """
     @brief Abstract base class for fuzzy quantifiers.
 
     Provides registry mechanism, interface, and parameter validation support.
     """
-
-    _registry: Dict[str, Type['FuzzyQuantifier']] = {}
-    _aliases: Dict[Type['FuzzyQuantifier'], List[str]] = {}
-
-    @classmethod
-    def register(cls, *names: str):
-        """
-        @brief Registers a fuzzy quantifier under one or more names.
-
-        @param names: Aliases to register.
-        """
-        def decorator(subclass: Type['FuzzyQuantifier']):
-            if not names:
-                raise ValueError("At least one alias is required.")
-            cls._aliases[subclass] = list(map(str.lower, names))
-            for name in names:
-                key = name.lower()
-                if key in cls._registry:
-                    raise ValueError(f"FuzzyQuantifier alias '{key}' already registered.")
-                cls._registry[key] = subclass
-            return subclass
-        return decorator
-
-    @classmethod
-    def create(cls, name: str, strict: bool = False, **kwargs) -> 'FuzzyQuantifier':
-        """
-        @brief Instantiates a fuzzy quantifier by alias.
-
-        @param name: Name or alias of the quantifier.
-        @param strict: Whether to raise error on unused kwargs.
-        @param kwargs: Parameters to pass to constructor.
-        @return: FuzzyQuantifier instance.
-        """
-        name = name.lower()
-        if name not in cls._registry:
-            raise ValueError(f"Unknown fuzzy quantifier alias: {name}")
-        quant_cls = cls._registry[name]
-        quant_cls.validate_params(**kwargs)
-        ctor_args = _filter_args(quant_cls, kwargs)
-        if strict:
-            unused = set(kwargs) - set(ctor_args)
-            if unused:
-                raise ValueError(f"Unused parameters in strict mode: {unused}")
-        return quant_cls(**ctor_args)
-
-    @classmethod
-    def list_available(cls) -> Dict[str, List[str]]:
-        """@return Dictionary of all registered fuzzy quantifier names and aliases."""
-        return {names[0]: names for names in cls._aliases.values()}
-
-    @classmethod
-    def validate_params(cls, **kwargs):
-        """Optional parameter validation hook for subclasses."""
-        pass
-
-    def to_dict(self) -> dict:
-        """
-        @return Serialized dictionary representation.
-        """
-        return {
-            "type": self.__class__.__name__.replace("FuzzyQuantifier", "").lower(),
-            **self._get_params()
-        }
-
-    @classmethod
-    def from_dict(cls, data: dict) -> 'FuzzyQuantifier':
-        """
-        @param data: Dictionary with type and parameters.
-        @return: Deserialized FuzzyQuantifier instance.
-        """
-        data = data.copy()
-        name = data.pop("type")
-        return cls.create(name, **data)
-
-    def _get_params(self) -> dict:
-        """Override in subclasses to return constructor parameters."""
-        return {}
-
-    def help(self) -> str:
-        """@return Class docstring or fallback."""
-        return self.__class__.__doc__.strip() if self.__class__.__doc__ else "No documentation available."
 
     @abstractmethod
     def __call__(self, x: np.ndarray) -> np.ndarray:

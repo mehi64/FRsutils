@@ -1,5 +1,5 @@
 """
-@file approximations.py
+@file base_fuzzy_rough_model.py
 @brief Base class for fuzzy rough set approximation models.
 
 Defines the abstract contract that all fuzzy rough models must implement,
@@ -16,17 +16,16 @@ including lower and upper approximations, boundary and positive regions.
 
 from abc import ABC, abstractmethod
 import numpy as np
+from FRsutils.core.registry_factory_mixin import RegistryFactoryMixin
 
-from FRsutils.utils.constructor_utils.fuzzy_rough_lazy_buildable_mixin import FuzzyRoughModelRegistryMixin
-
-class BaseFuzzyRoughModel(ABC, FuzzyRoughModelRegistryMixin):
+class BaseFuzzyRoughModel(ABC, RegistryFactoryMixin):
     """
     @brief Abstract base class for fuzzy-rough approximation models.
 
     @param similarity_matrix: Symmetric (n x n) similarity matrix in [0, 1]
     @param labels: Label vector of length n
     """
-    
+
     def __init__(self, similarity_matrix: np.ndarray, labels: np.ndarray):
         if not isinstance(similarity_matrix, np.ndarray) or similarity_matrix.ndim != 2:
             raise ValueError("similarity_matrix must be a 2D NumPy array.")
@@ -66,6 +65,20 @@ class BaseFuzzyRoughModel(ABC, FuzzyRoughModelRegistryMixin):
         """
         return self.upper_approximation() - self.lower_approximation()
 
+    def positive_region(self) -> np.ndarray:
+        """
+        @brief Return the positive region (same as lower approx).
+
+        @return: Lower approximation values.
+        """
+        return self.lower_approximation()
+
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}(n={len(self.labels)})"
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
     def to_dict(self) -> dict:
         """
         @brief Placeholder for serialization logic.
@@ -73,17 +86,3 @@ class BaseFuzzyRoughModel(ABC, FuzzyRoughModelRegistryMixin):
         @return: Raise if not implemented.
         """
         raise NotImplementedError("Subclasses must implement to_dict().")
-
-def __str__(self) -> str:
-    return f"{self.__class__.__name__}(n={len(self.labels)})"
-
-def __repr__(self) -> str:
-    return self.__str__()
-
-def positive_region(self) -> np.ndarray:
-    """
-    @brief Return the positive region (same as lower approx).
-
-    @return: Lower approximation values.
-    """
-    return self.lower_approximation()

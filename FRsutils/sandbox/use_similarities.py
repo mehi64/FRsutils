@@ -3,9 +3,12 @@ import FRsutils.core.tnorms as tn
 import tests.synthetic_data_store as sds
 import numpy as np
 
-tnrm = tn.TNorm.create('min')
-sim1 = sim.Similarity.create('gaussian', strict=False, sigma=0.67)
-params = sim1.describe_params_detailed()
+tnrm0 = tn.TNorm.create('min')
+dic0 = tnrm0.to_dict()
+tnrm1 = tn.TNorm.from_dict(dic0)
+nme = tnrm0.name
+sim1 = sim.Similarity.create('linear', strict=False, sigma=0.67)
+params = sim1.get_params_detailed()
 hlp =sim1.help()
 print(hlp)
 nme = sim1.name
@@ -20,7 +23,7 @@ vals = ds[0]['expected']
 sim_mat = sim.calculate_similarity_matrix(
     X,
     sim1,
-    tnrm)
+    tnrm0)
 
 print(sim_mat)
 

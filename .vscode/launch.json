@@ -5,18 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: snippets",
+            "name": "SNDBX use Implicators",
             "type": "debugpy",
             "request": "launch",
-            "module": "tests.snippets",
-            "justMyCode": true,
+            "module": "FRsutils.sandbox.use_implicators",
+            "justMyCode": false,
             "env": {
                 "PYTHONPATH": "${workspaceFolder}"
             },
             "cwd": "${workspaceFolder}"
         },
         {
-            "name": "SNDBX use TNorms",
+            "name": "SNDBX use tnorms",
             "type": "debugpy",
             "request": "launch",
             "module": "FRsutils.sandbox.use_tnorms",
@@ -38,7 +38,7 @@
             "cwd": "${workspaceFolder}"
         },
         {
-            "name": "SNDBX use ITFRS",
+            "name": "SNDBX use itfrs",
             "type": "debugpy",
             "request": "launch",
             "module": "FRsutils.sandbox.use_itfrs",

@@ -88,7 +88,7 @@ class OWAFRS(BaseFuzzyRoughModel):
     def describe_params_detailed(self) -> dict:
         return {
             "tnorm": self.tnorm.describe_params_detailed(),
-            "implicator": self.implicator.describe_params_detailed(),
+            "implicator": self.implicator.get_params_detailed(),
             "lower_app_weights_method": {"type": "str", "value": "inf_weights_linear"},
             "upper_app_weights_method": {"type": "str", "value": "sup_weights_linear"}
         }
