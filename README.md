@@ -12,6 +12,7 @@
   - pandas
   - colorlog
   - pytest (if you want to run unit tests)
+  - zzz
 
 # Fuzzy-Rough set utilities (Under development)
 
