@@ -30,6 +30,7 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
   - Gaussian
 - Implicators
   - Gaines
+<img src="images/implicators/eq_imp_gaines.JPG" alt="eq_imp_gaines" width="250"/>
   - Goedel
   - Kleene–Dienes
   - Reichenbach
