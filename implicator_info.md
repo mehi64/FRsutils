@@ -5,9 +5,9 @@ This document provides a list of commonly used fuzzy implicators, their formulae
 ## 📘 What Are Fuzzy Implicators?
 
 In **fuzzy logic**, an **implicator** is a function  
-\[
-I: [0,1]^2 \rightarrow [0,1]
-\]  
+
+**I: [0,1]² → [0,1]**
+
 used to generalize classical logical implication for fuzzy sets. Implicators are widely used in fuzzy inference systems, fuzzy control, and approximate reasoning.
 
 ---
@@ -16,12 +16,13 @@ used to generalize classical logical implication for fuzzy sets. Implicators are
 
 | Property                   | Symbol / Definition |
 |---------------------------|----------------------|
-| **I1. Boundary Conditions** | \( I(0, 0) = I(1, 1) = 1,\quad I(1, 0) = 0 \) |
-| **I2. Monotonicity**       | \( b_1 \leq b_2 \Rightarrow I(a, b_1) \leq I(a, b_2) \)<br>\( a_1 \leq a_2 \Rightarrow I(a_1, b) \geq I(a_2, b) \) |
-| **I3. Exchange Principle** | \( I(a, b) = I(1 - b, 1 - a) \) |
-| **I4. Identity**           | \( I(a, 1) = 1 \) |
-| **I5. Contrapositive Symmetry** | \( I(a, b) = I(1 - b, 1 - a) \) |
-| **I6. Classical Implication** | \( a \leq b \Rightarrow I(a, b) = 1 \) |
+| **I1. Boundary Conditions** | `I(0, 0) = I(1, 1) = 1, I(1, 0) = 0` |
+| **I2. Monotonicity**       | `b₁ ≤ b₂ => I(a, b₁) ≤ I(a, b₂)`<br>`a₁ ≤ a₂ => I(a₁, b) ≥ I(a₂, b)` |
+| **I3. Exchange Principle** | `I(a, b) = I(1 - b, 1 - a)` |
+| **I4. Identity**           | `I(a, 1) = 1` |
+| **I5. Contrapositive Symmetry** | `I(a, b) = I(1 - b, 1 - a)` |
+| **I6. Classical Implication** | `a ≤ b => I(a, b) = 1` |
+
 
 > ✅ Most practical fuzzy systems expect I1, I2, I4, and I6 at minimum.
 
