@@ -97,9 +97,9 @@ used to generalize classical logical implication for fuzzy sets. Implicators are
 - ✅ = Property is satisfied  
 - ❌ = Property is not satisfied  
 - These results are generally true for all values of parameters (where applicable), assuming valid ranges:
-  - Frank: \( s > 0, s \ne 1 \)
-  - Yager: \( p > 0 \)
-  - Sugeno–Weber: \( \lambda \ge -1 \)
+  - Frank: $s > 0, s \ne 1$
+  - Yager: $p > 0$
+  - Sugeno–Weber: $\lambda \geq -1$
 
 
 ## References (must be checked)
