@@ -5,9 +5,11 @@ This document provides a list of commonly used fuzzy implicators, their formulae
 ## Implicators' equation
 
 <!--Gaines -->
-<img src="images/implicators/eq_imp_gaines.JPG" alt="eq_imp_gaines." width="450"/>
+<img src="images/implicators/eq_imp_gaines.JPG" alt="eq_imp_gaines." width="600"/>
 
-- **Gödel**: ...
+<!--Gödel -->
+<img src="images/implicators/eq_imp_goedel.JPG" alt="eq_imp_goedel." width="600"/>
+
 - **Kleene-Dienes**: ...
 - *(Continue with your content)*
   - Gaines
