@@ -4,7 +4,7 @@ This document provides a list of commonly used fuzzy implicators, their formulae
 
 ## Implicators' equation
 
-- **Gaines**
+<!--Gaines -->
 <img src="images/implicators/eq_imp_gaines.JPG" alt="eq_imp_gaines." width="450"/>
 
 - **Gödel**: ...
