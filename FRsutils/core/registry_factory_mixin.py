@@ -188,3 +188,16 @@ class RegistryFactoryMixin:
         name = self.__class__.__name__
         return name.replace("TNorm", "").replace("Implicator", "").replace("Similarity", "").lower()
     
+    
+    @classmethod
+    def get_registered_name(cls, instance: Any) -> str:
+        """
+        @brief Get the primary registered alias for a given instance.
+
+        @param instance: An instance of a registered subclass.
+        @return: Primary alias string.
+        """
+        for klass, aliases in cls._aliases.items():
+            if isinstance(instance, klass):
+                return aliases[0]
+        raise ValueError(f"No registered alias found for instance of type {type(instance).__name__}")

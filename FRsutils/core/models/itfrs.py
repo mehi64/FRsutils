@@ -20,6 +20,7 @@ using a fuzzy implicator and a T-norm operator over a similarity matrix.
 ##############################################
 """
 
+from FRsutils.utils.constructor_utils.lazy_builder_from_config_mixin import LazyBuildableFromConfigMixin
 from FRsutils.core.fuzzy_rough_model import FuzzyRoughModel
 import FRsutils.core.tnorms as tn
 import FRsutils.core.implicators as imp
@@ -28,7 +29,7 @@ import numpy as np
 
 
 @FuzzyRoughModel.register("itfrs")
-class ITFRS(FuzzyRoughModel):
+class ITFRS(FuzzyRoughModel, LazyBuildableFromConfigMixin):
     """
     @brief Interval Type-2 Fuzzy Rough Set approximation model.
 
@@ -140,3 +141,22 @@ class ITFRS(FuzzyRoughModel):
         impli = kwargs.get("implicator")
         if impli is None or not isinstance(impli, imp.Implicator):
             raise ValueError("Parameter 'implicator' must be provided and be an instance of derived classes from Implicator.")
+
+    @classmethod
+    def from_config(cls, similarity_matrix, labels, tnorm_name: str, implicator_name: str, 
+                    tnorm_params=None, implicator_params=None, logger=None):
+        """
+        @brief Alternate constructor that creates an ITFRS model from registry names.
+
+        @param similarity_matrix: Similarity matrix
+        @param labels: Labels
+        @param tnorm_name: Registered T-norm name
+        @param implicator_name: Registered implicator name
+        @param tnorm_params: Optional dict of T-norm parameters
+        @param implicator_params: Optional dict of implicator parameters
+        @param logger: Optional logger
+        @return: ITFRS instance
+        """
+        tnorm = tn.TNorm.create(tnorm_name, **(tnorm_params or {}))
+        implicator = imp.Implicator.create(implicator_name, **(implicator_params or {}))
+        return cls(similarity_matrix, labels, tnorm, implicator, logger=logger)
