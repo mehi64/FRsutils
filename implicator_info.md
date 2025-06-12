@@ -5,23 +5,52 @@ This document provides a list of commonly used fuzzy implicators, their formulae
 ## Implicators' equation
 
 <!--Gaines -->
-<img src="images/implicators/eq_imp_gaines.JPG" alt="eq_imp_gaines." width="600"/>
+<img src="images/implicators/eq_imp_gaines.JPG" alt="eq_imp_gaines" width="600"/>
+
+------
 
 <!--Gödel -->
-<img src="images/implicators/eq_imp_goedel.JPG" alt="eq_imp_goedel." width="600"/>
+<img src="images/implicators/eq_imp_goedel.JPG" alt="eq_imp_goedel" width="600"/>
 
-- **Kleene-Dienes**: ...
-- *(Continue with your content)*
-  - Gaines
-  - Goedel
-  - Kleene–Dienes
-  - Reichenbach
-  - Lukasiewicz
-  - Gaines
-  - Yager
-  - Weber
-  - Frank
-  - Sugeno–Weber
+------
+
+<!--Kleene–Dienes-->
+<img src="images/implicators/eq_imp_kd.JPG" alt="eq_imp_kd" width="600"/>
+
+------
+
+<!--Reichenbach-->
+<img src="images/implicators/eq_imp_reichenbach.JPG" alt="eq_imp_Reichenbach" width="600"/>
+
+-----
+
+<!--Lukasiewicz-->
+<img src="images/implicators/eq_imp_luk.JPG" alt="eq_imp_luk" width="600"/>
+
+-----
+
+<!--Yager-->
+<img src="images/implicators/eq_imp_yager.JPG" alt="eq_imp_yager" width="600"/>
+
+-----
+
+<!--Weber-->
+<img src="images/implicators/eq_imp_weber.JPG" alt="eq_imp_weber" width="600"/>
+
+-----
+
+<!--Frank-->
+<img src="images/implicators/eq_imp_frank.JPG" alt="eq_imp_frank" width="600"/>
+
+-----
+
+<!--Sugeno–Weber-->
+<img src="images/implicators/eq_imp_sugeno_weber.JPG" alt="eq_imp_sugeno_weber" width="600"/>
+
+  - 
+  - 
+  - 
+  - 
 
 ## References (must be checked)
 
