@@ -35,6 +35,9 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
   - Kleene–Dienes
   - Reichenbach
   - Lukasiewicz
+
+For a list of fuzzy implicators and their formulas, see [Implicators](implicators.md).
+
 - T-norms
   - Min tnorm
   - Product tnorm
