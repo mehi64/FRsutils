@@ -86,8 +86,11 @@ class Similarity(ABC, RegistryFactoryMixin):
 @Similarity.register("linear")
 class LinearSimilarity(Similarity):
     """
-    @brief Linear similarity function: sim = max(0, 1 - |x - y|)
+    @brief Linear similarity function: sim = max(0, 1 - |x - y|) given 0<= x,y <=1.0 
     """
+    def __init__(self):
+        self.validate_params()
+        
     def compute(self, diff: np.ndarray) -> np.ndarray:
         self._validate_diff(diff)
         return np.maximum(0.0, 1.0 - np.abs(diff))
@@ -96,7 +99,7 @@ class LinearSimilarity(Similarity):
 @Similarity.register("gaussian", "gauss")
 class GaussianSimilarity(Similarity):
     """
-    @brief Gaussian similarity: sim = exp(-diff^2 / (2 * sigma^2))
+    @brief Gaussian similarity: sim = exp(-(x - y)^2 / (2 * sigma^2))
 
     @param sigma: Standard deviation for the Gaussian kernel.
     """

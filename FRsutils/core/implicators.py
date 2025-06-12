@@ -87,6 +87,9 @@ class Implicator(ABC, RegistryFactoryMixin):
 # Non-parameterized implicators
 @Implicator.register("gaines")
 class GainesImplicator(Implicator):
+    def __init__(self):
+        self.validate_params()
+
     def _compute_scalar(self, a: float, b: float) -> float:
         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
             raise ValueError("Inputs must be in range [0.0, 1.0].")
@@ -101,6 +104,9 @@ class GainesImplicator(Implicator):
 
 @Implicator.register("goedel")
 class GoedelImplicator(Implicator):
+    def __init__(self):
+        self.validate_params()
+
     def _compute_scalar(self, a: float, b: float) -> float:
         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
             raise ValueError("Inputs must be in range [0.0, 1.0].")
@@ -108,6 +114,9 @@ class GoedelImplicator(Implicator):
 
 @Implicator.register("kleene", "kleene-dienes")
 class KleeneDienesImplicator(Implicator):
+    def __init__(self):
+        self.validate_params()
+
     def _compute_scalar(self, a: float, b: float) -> float:
         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
             raise ValueError("Inputs must be in range [0.0, 1.0].")
@@ -115,6 +124,9 @@ class KleeneDienesImplicator(Implicator):
 
 @Implicator.register("reichenbach")
 class ReichenbachImplicator(Implicator):
+    def __init__(self):
+        self.validate_params()
+
     def _compute_scalar(self, a: float, b: float) -> float:
         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
             raise ValueError("Inputs must be in range [0.0, 1.0].")
@@ -122,33 +134,76 @@ class ReichenbachImplicator(Implicator):
 
 @Implicator.register("lukasiewicz","luk")
 class LukasiewiczImplicator(Implicator):
+    def __init__(self):
+        self.validate_params()
+        
     def _compute_scalar(self, a: float, b: float) -> float:
         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
             raise ValueError("Inputs must be in range [0.0, 1.0].")
         return min(1.0, 1.0 - a + b)
 
+# @Implicator.register("goguen", "product")
+# class GoguenImplicator(Implicator):
+#     def _compute_scalar(self, a: float, b: float) -> float:
+#         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
+#             raise ValueError("Inputs must be in range [0.0, 1.0].")
+#         return 1.0 if a <= b else b / a if a > 0 else 1.0
 
-# Parameterized implicators
-@Implicator.register("yager")
-class YagerImplicator(Implicator):
-    # we need __init__ because needed parameters for yager implicator gotten
-    # be checking the signature of this function. Moreover, it is called when
-    # create function is called
-    def __init__(self, p: float = 2.0):
-        self.p = p
+# @Implicator.register("rescher")
+# class RescherImplicator(Implicator):
+#     def _compute_scalar(self, a: float, b: float) -> float:
+#         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
+#             raise ValueError("Inputs must be in range [0.0, 1.0].")
+#         return 1.0 if a <= b else max(1.0 - a, b)
 
-    def _compute_scalar(self, a: float, b: float) -> float:
-        if not (0 <= a <= 1 and 0 <= b <= 1):
-            raise ValueError("Inputs must be in range [0, 1].")
-        return min(1.0, ((1 - a) ** self.p + b ** self.p) ** (1 / self.p))
+# @Implicator.register("yager")
+# class YagerImplicator(Implicator):
+#     def _compute_scalar(self, a: float, b: float) -> float:
+#         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
+#             raise ValueError("Inputs must be in range [0.0, 1.0].")
+#         return min(1.0, (1.0 - a) ** 2 + b)
 
-    @classmethod
-    def validate_params(cls, **kwargs):
-        p = kwargs.get("p")
-        if p is None:
-            raise ValueError("Missing required parameter: p")
-        if not isinstance(p, (int, float)) or p <= 0:
-            raise ValueError("Parameter 'p' must be a positive number.")
+# @Implicator.register("weber")
+# class WeberImplicator(Implicator):
+#     def _compute_scalar(self, a: float, b: float) -> float:
+#         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
+#             raise ValueError("Inputs must be in range [0.0, 1.0].")
+#         return 1.0 if a <= b else (1.0 - a + b) / (1.0 + b) if b < 1.0 else 1.0
+
+# @Implicator.register("fodor")
+# class FodorImplicator(Implicator):
+#     def _compute_scalar(self, a: float, b: float) -> float:
+#         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
+#             raise ValueError("Inputs must be in range [0.0, 1.0].")
+#         return 1.0 if a <= b else max(1.0 - a, b)
+
+##################### Parameterized implicators ############################
+
+
+
+
+
+
+# @Implicator.register("yager")
+# class YagerParametricImplicator(Implicator):
+#     # we need __init__ because needed parameters for yager implicator gotten
+#     # be checking the signature of this function. Moreover, it is called when
+#     # create function is called
+#     def __init__(self, p: float = 2.0):
+#         self.p = p
+
+#     def _compute_scalar(self, a: float, b: float) -> float:
+#         if not (0 <= a <= 1 and 0 <= b <= 1):
+#             raise ValueError("Inputs must be in range [0, 1].")
+#         return min(1.0, (1 - (a ** self.p) + (b ** self.p)) ** (1.0 / self.p))
+
+#     @classmethod
+#     def validate_params(cls, **kwargs):
+#         p = kwargs.get("p")
+#         if p is None:
+#             raise ValueError("Missing required parameter: p")
+#         if not isinstance(p, (int, float)) or p <= 0:
+#             raise ValueError("Parameter 'p' must be a positive number.")
 
 # @Implicator.register("weber")
 # class WeberImplicator(Implicator):

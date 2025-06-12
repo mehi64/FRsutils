@@ -27,9 +27,9 @@ Implements factory registration, serialization, validation, and multi-input supp
 # Design Pattern		Registry Pattern	TNorm._registry and register()
 # Design Pattern		Template Method		Defines abstract __call__ and reduce methods
 # Design Pattern		Strategy Pattern	Each subclass defines its logic
-# Design Pattern		Decorator		@TNorm.register(...)
-# Design Pattern		Adapter			Serialization via to_dict/from_dict
-# Architecture		Pluggable			New T-norms extend base class via registration
+# Design Pattern		Decorator		    @TNorm.register(...)
+# Design Pattern		Adapter			    Serialization via to_dict/from_dict
+# Architecture		    Pluggable			New T-norms extend base class via registration
 # Clean Code			SRP, DRY, LSP, Fail-Fast, Reflection
 ##############################################
 """
@@ -73,6 +73,8 @@ class MinTNorm(TNorm):
     """
     @brief Minimum T-norm: min(a, b)
     """
+    def __init__(self):
+        self.validate_params()
 
     def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
         return np.minimum(a, b)
@@ -86,6 +88,8 @@ class ProductTNorm(TNorm):
     """
     @brief Product T-norm: a * b
     """
+    def __init__(self):
+        self.validate_params()
 
     def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
         return a * b
@@ -99,6 +103,8 @@ class LukasiewiczTNorm(TNorm):
     """
     @brief Łukasiewicz T-norm: max(0, a + b - 1)
     """
+    def __init__(self):
+        self.validate_params()
 
     def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
         return np.maximum(0.0, a + b - 1.0)
@@ -118,6 +124,8 @@ class YagerTNorm(TNorm):
 
     @param p: Exponent parameter that controls the shape (default = 2.0).
     """
+    def __init__(self):
+        self.validate_params()
 
     def __init__(self, p: float = 2.0):
         self.p = p
@@ -163,6 +171,9 @@ class DrasticProductTNorm(TNorm):
     - b if a == 1
     - 0 otherwise
     """
+    def __init__(self):
+        self.validate_params()
+
     def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
         return np.where(b == 1.0, a, np.where(a == 1.0, b, 0.0))
 
@@ -179,6 +190,9 @@ class EinsteinProductTNorm(TNorm):
     @brief Einstein Product T-norm:
     T(a, b) = (a * b) / (2 - (a + b - a * b))
     """
+    def __init__(self):
+        self.validate_params()
+
     def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
         denom = 2 - (a + b - a * b)
         return np.where(denom != 0, (a * b) / denom, 0.0)
@@ -196,6 +210,9 @@ class HamacherProductTNorm(TNorm):
     @brief Hamacher Product T-norm:
     T(a, b) = (a * b) / (a + b - a * b) if (a + b - a * b) != 0 else 0
     """
+    def __init__(self):
+        self.validate_params()
+
     def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
         with np.errstate(divide='ignore', invalid='ignore'):
             denom = a + b - a * b
@@ -217,6 +234,9 @@ class NilpotentMinimumTNorm(TNorm):
     @brief Nilpotent Minimum T-norm:
     T(a, b) = min(a, b) if (a + b) > 1 else 0
     """
+    def __init__(self):
+        self.validate_params()
+
     def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
         return np.where((a + b) > 1.0, np.minimum(a, b), 0.0)
 
@@ -235,6 +255,9 @@ class LambdaTNorm(TNorm):
 
     @param l: Lambda parameter (must be > 0)
     """
+    def __init__(self):
+        self.validate_params()
+
     def __init__(self, l: float = 1.0):
         self.l = l
 
@@ -265,27 +288,27 @@ class LambdaTNorm(TNorm):
         return {"l": self.l}
 
 
-@TNorm.register("function", "function_based")
-class FunctionNormTNorm(TNorm):
-    """
-    @brief Function-based T-norm:
-    Custom function supplied at runtime.
+# @TNorm.register("function", "function_based")
+# class FunctionNormTNorm(TNorm):
+#     """
+#     @brief Function-based T-norm:
+#     Custom function supplied at runtime.
 
-    @param func: Callable taking two floats or arrays and returning array
-    """
-    def __init__(self, func):
-        if not callable(func):
-            raise ValueError("FunctionNorm requires a callable 'func'")
-        self.func = func
+#     @param func: Callable taking two floats or arrays and returning array
+#     """
+#     def __init__(self, func):
+#         if not callable(func):
+#             raise ValueError("FunctionNorm requires a callable 'func'")
+#         self.func = func
 
-    def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
-        return self.func(a, b)
+#     def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
+#         return self.func(a, b)
 
-    def reduce(self, arr: np.ndarray) -> np.ndarray:
-        result = arr[0]
-        for x in arr[1:]:
-            result = self.__call__(result, x)
-        return result
+#     def reduce(self, arr: np.ndarray) -> np.ndarray:
+#         result = arr[0]
+#         for x in arr[1:]:
+#             result = self.__call__(result, x)
+#         return result
 
-    def _get_params(self) -> dict:
-        return {}  # Not serializable by default
+#     def _get_params(self) -> dict:
+#         return {}  # Not serializable by default

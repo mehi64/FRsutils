@@ -4,7 +4,7 @@ from sklearn.neighbors import NearestNeighbors
 import warnings
 import FRsutils.utils.math_utils.math_utils as math_utils
 from FRsutils.core.preprocess.base_solo_fuzzy_rough_oversampler import BaseSoloFuzzyRoughOversampler
-from FRsutils.core.base_fuzzy_rough_model import BaseFuzzyRoughModel
+from FRsutils.core.fuzzy_rough_model import FuzzyRoughModel
 
 from FRsutils.utils.constructor_utils.fr_model_builder import build_fuzzy_rough_model
 from FRsutils.utils.constructor_utils.tnorm_builder import build_tnorm

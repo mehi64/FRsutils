@@ -24,18 +24,37 @@ class FuzzyQuantifier(ABC, RegistryFactoryMixin):
         """
         pass
 
+    @classmethod
+    def validate_params(self, **kwargs):
+        alpha = kwargs.get("alpha")
+        beta = kwargs.get("beta")
+
+        if alpha is None or not isinstance(alpha, (float, int)):
+            raise ValueError(f"Missing or invalid parameter: {alpha}. It must be provided and be an int or a float number")
+        if beta is None or not isinstance(beta, (float, int)):
+            raise ValueError(f"Missing or invalid parameter: {beta}. It must be provided and be an int or a float number")
+
+        if not (0 <= alpha < beta <= 1):
+            raise ValueError("Require 0 <= alpha < beta <= 1")
+
+    def _get_params(self) -> dict:
+        return {"alpha": self.alpha, "beta": self.beta}
+
 
 @FuzzyQuantifier.register("linear")
 class LinearFuzzyQuantifier(FuzzyQuantifier):
     """
     @brief Linear fuzzy quantifier: piecewise linear increase from alpha to beta.
 
-    Q(p) = 0            if p <= alpha  
-           1            if p >= beta  
-           (p - alpha)/(beta - alpha) otherwise
+    Q(x) = 0            if x <= alpha  
+           1            if x >= beta  
+           (x - alpha)/(beta - alpha) otherwise
     """
 
     def __init__(self, alpha: float, beta: float):
+
+        self.validate_params(alpha=alpha,
+                             beta=beta)
         self.alpha = alpha
         self.beta = beta
 
@@ -45,31 +64,27 @@ class LinearFuzzyQuantifier(FuzzyQuantifier):
                         np.where(x >= self.beta, 1.0,
                                  (x - self.alpha) / (self.beta - self.alpha)))
 
-    def _get_params(self) -> dict:
-        return {"alpha": self.alpha, "beta": self.beta}
-
-    @classmethod
-    def validate_params(cls, **kwargs):
-        alpha = kwargs.get("alpha")
-        beta = kwargs.get("beta")
-        if alpha is None or beta is None:
-            raise ValueError("Both alpha and beta must be provided.")
-        if not (0 <= alpha < beta <= 1):
-            raise ValueError("Require 0 <= alpha < beta <= 1")
-
+    def to_dict(self) -> dict:
+        return {"type": 'linear',
+                "alpha": self.alpha,
+                "beta": self.beta}
+    
 
 @FuzzyQuantifier.register("quadratic", "quad")
 class QuadraticFuzzyQuantifier(FuzzyQuantifier):
     """
     @brief Quadratic fuzzy quantifier: smooth increase using a parabola.
 
-    Q(p) = 0                           if p <= alpha  
-           2*((p-alpha)/(beta-alpha))^2          if alpha < p <= mid  
-           1 - 2*((p-beta)/(beta-alpha))^2       if mid < p <= beta  
-           1                           if p > beta
+    Q(x) =  0                                     if x <= alpha  
+            2*((x-alpha)/(beta-alpha))^2          if alpha < x <= mid  
+            1 - 2*((x-beta)/(beta-alpha))^2       if mid < x <= beta  
+            1                                     if x > beta
     """
 
     def __init__(self, alpha: float, beta: float):
+        
+        self.validate_params(alpha=alpha,
+                             beta=beta)
         self.alpha = alpha
         self.beta = beta
 
@@ -88,14 +103,7 @@ class QuadraticFuzzyQuantifier(FuzzyQuantifier):
         result[mask4] = 1.0
         return result
 
-    def _get_params(self) -> dict:
-        return {"alpha": self.alpha, "beta": self.beta}
-
-    @classmethod
-    def validate_params(cls, **kwargs):
-        alpha = kwargs.get("alpha")
-        beta = kwargs.get("beta")
-        if alpha is None or beta is None:
-            raise ValueError("Both alpha and beta must be provided.")
-        if not (0 <= alpha < beta <= 1):
-            raise ValueError("Require 0 <= alpha < beta <= 1")
+    def to_dict(self) -> dict:
+        return {"type": 'quadratic',
+                "alpha": self.alpha,
+                "beta": self.beta}

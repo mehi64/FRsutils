@@ -1,8 +1,7 @@
 import numpy as np
 from FRsutils.core.similarities import Similarity, calculate_similarity_matrix
-from FRsutils.core.tnorms import TNorm
-from FRsutils.core.implicators import Implicator
-from FRsutils.core.models.itfrs import ITFRS
+from FRsutils.core.fuzzy_quantifiers import FuzzyQuantifier
+from FRsutils.core.models.vqrs import VQRS
 from FRsutils.utils.logger.logger_util import get_logger
 import tests.syntetic_data_for_tests as sdf
 from FRsutils.core.fuzzy_rough_model import FuzzyRoughModel as FRMODEL
@@ -10,9 +9,9 @@ from FRsutils.core.fuzzy_rough_model import FuzzyRoughModel as FRMODEL
 
 data_synthteic = sdf.syntetic_dataset_factory()
 
-TSTITFRS = data_synthteic.ITFRS_testing_dataset()
-sim_matrix = TSTITFRS['sim_matrix']
-y = TSTITFRS['y']
+TSTVQRS = data_synthteic.VQRS_testing_dataset()
+sim_matrix = TSTVQRS['sim_matrix']
+y = TSTVQRS['y']
 
 # X = np.array([
 #     [0.10, 0.32, 0.48],
@@ -31,29 +30,28 @@ y = TSTITFRS['y']
 # sim_matrix2 = calculate_similarity_matrix(X, similarity_func, tnrm)
 
 
+Q_l = FuzzyQuantifier.create("quadratic", alpha=.1, beta=.6)
+Q_u = FuzzyQuantifier.create("quadratic", alpha=.2, beta=1.0)
 
 
-# Create ITFRS model with product tnorm and gaines implicator
-tnorm = TNorm.create("product")
-implicator = Implicator.create("luk")
 
 logger = get_logger()
 
-model = ITFRS(similarity_matrix=sim_matrix,
-              labels=y,
-              tnorm=tnorm,
-              implicator=implicator,
-              logger=logger)
+model = VQRS(similarity_matrix=sim_matrix,
+            labels=y,
+            fuzzy_quantifier_lower=Q_l,
+            fuzzy_quantifier_upper=Q_u,
+            logger=logger)
 
 upper = model.upper_approximation()
 lower = model.lower_approximation()
 
 args_ = {'similarity_matrix': sim_matrix, 
-                 'labels': y, 
-                 'tnorm': tnorm, 
-                 'implicator': implicator}
+        'labels': y, 
+        'fuzzy_quantifier_lower':Q_l,
+        'fuzzy_quantifier_upper':Q_u}
 
-frmodel = FRMODEL.create(name='itfrs', strict=False, **args_)
+frmodel = FRMODEL.create(name='vqrs', strict=False, **args_)
 
 upper1 = frmodel.upper_approximation()
 lower1 = frmodel.lower_approximation()

@@ -84,7 +84,9 @@ class RegistryFactoryMixin:
             raise ValueError(f"Unknown alias: {name}")
         target_cls = cls._registry[name]
         
-        target_cls.validate_params(**kwargs)
+        # parameter validation is done inside __init__ 
+        # functions and all classes must have it
+        # target_cls.validate_params(**kwargs)
         
         # ctor_args means constructor arguments
         # filter out unused parameters
@@ -166,7 +168,7 @@ class RegistryFactoryMixin:
         return inspect.getdoc(self.__class__) or "No documentation available."
 
     @classmethod
-    def validate_params(cls, **kwargs):
+    def validate_params(self, **kwargs):
         """
         @brief Optional parameter validation hook for subclasses.
         
@@ -186,9 +188,3 @@ class RegistryFactoryMixin:
         name = self.__class__.__name__
         return name.replace("TNorm", "").replace("Implicator", "").replace("Similarity", "").lower()
     
-    
-    # def __str__(self) -> str:
-    #     return f"{self.__class__.__name__}(n={len(self.labels)})"
-
-    # def __repr__(self) -> str:
-    #     return self.__str__()

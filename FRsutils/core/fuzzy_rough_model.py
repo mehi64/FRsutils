@@ -18,7 +18,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 from FRsutils.core.registry_factory_mixin import RegistryFactoryMixin
 
-class BaseFuzzyRoughModel(ABC, RegistryFactoryMixin):
+class FuzzyRoughModel(ABC, RegistryFactoryMixin):
     """
     @brief Abstract base class for fuzzy-rough approximation models.
 
@@ -27,15 +27,10 @@ class BaseFuzzyRoughModel(ABC, RegistryFactoryMixin):
     """
 
     def __init__(self, similarity_matrix: np.ndarray, labels: np.ndarray):
-        if not isinstance(similarity_matrix, np.ndarray) or similarity_matrix.ndim != 2:
-            raise ValueError("similarity_matrix must be a 2D NumPy array.")
-        if similarity_matrix.shape[0] != similarity_matrix.shape[1]:
-            raise ValueError("similarity_matrix must be square.")
-        if not ((0.0 <= similarity_matrix).all() and (similarity_matrix <= 1.0).all()):
-            raise ValueError("All similarity values must be in the range [0.0, 1.0].")
-        if len(labels) != similarity_matrix.shape[0]:
-            raise ValueError("Length of labels must match similarity_matrix size.")
-
+        
+        self.validate_params_base(similarity_matrix=similarity_matrix, 
+                                  labels=labels)
+        
         self.similarity_matrix = similarity_matrix
         self.labels = labels
 
@@ -73,12 +68,6 @@ class BaseFuzzyRoughModel(ABC, RegistryFactoryMixin):
         """
         return self.lower_approximation()
 
-    def __str__(self) -> str:
-        return f"{self.__class__.__name__}(n={len(self.labels)})"
-
-    def __repr__(self) -> str:
-        return self.__str__()
-
     def to_dict(self) -> dict:
         """
         @brief Placeholder for serialization logic.
@@ -86,3 +75,23 @@ class BaseFuzzyRoughModel(ABC, RegistryFactoryMixin):
         @return: Raise if not implemented.
         """
         raise NotImplementedError("Subclasses must implement to_dict().")
+
+    @classmethod
+    def validate_params_base(self, **kwargs):
+                                    # self,
+                                #    similarity_matrix: np.ndarray, 
+                                #    labels: np.ndarray):
+        """
+        @brief Validates similarity matrix and labels
+        """
+        similarity_matrix = kwargs.get("similarity_matrix")
+        labels = kwargs.get("labels")
+
+        if not isinstance(similarity_matrix, np.ndarray) or similarity_matrix.ndim != 2:
+            raise ValueError("similarity_matrix must be a 2D NumPy array.")
+        if similarity_matrix.shape[0] != similarity_matrix.shape[1]:
+            raise ValueError("similarity_matrix must be square.")
+        if not ((0.0 <= similarity_matrix).all() and (similarity_matrix <= 1.0).all()):
+            raise ValueError("All similarity values must be in the range [0.0, 1.0].")
+        if len(labels) != similarity_matrix.shape[0]:
+            raise ValueError("Length of labels must match similarity_matrix size.")

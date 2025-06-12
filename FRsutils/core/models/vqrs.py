@@ -21,14 +21,15 @@ Uses fuzzy quantifiers to define soft decision regions based on similarity matri
 ##############################################
 """
 
-from FRsutils.core.base_fuzzy_rough_model import BaseFuzzyRoughModel
+from FRsutils.core.fuzzy_rough_model import FuzzyRoughModel
 import FRsutils.core.tnorms as tn
 from FRsutils.core.fuzzy_quantifiers import FuzzyQuantifier
+from FRsutils.utils.logger.logger_util import get_logger
 import numpy as np
 
 
-@BaseFuzzyRoughModel.register("vqrs")
-class VQRS(BaseFuzzyRoughModel):
+@FuzzyRoughModel.register("vqrs")
+class VQRS(FuzzyRoughModel):
     """
     @brief VQRS model for fuzzy rough approximation using fuzzy quantifiers.
 
@@ -41,25 +42,22 @@ class VQRS(BaseFuzzyRoughModel):
     def __init__(self, 
                  similarity_matrix: np.ndarray, 
                  labels: np.ndarray, 
-                 alpha_lower: float,
-                 beta_lower: float,
-                 alpha_upper: float,
-                 beta_upper: float,
-                 fuzzy_quantifier: str = "quadratic"):
-        super().__init__(similarity_matrix, labels)
+                 fuzzy_quantifier_lower: FuzzyQuantifier,
+                 fuzzy_quantifier_upper: FuzzyQuantifier,
+                 logger=None):
         
-        if alpha_lower > beta_lower or alpha_upper > beta_upper:
-            raise ValueError("Alpha must be less than or equal to beta for both bounds.")
+        super().__init__(similarity_matrix, labels)
+        self.logger = logger or get_logger()
+        self.logger.debug(f"{self.__class__.__name__} initialized.")
 
-        self.alpha_lower = alpha_lower
-        self.beta_lower = beta_lower
-        self.alpha_upper = alpha_upper
-        self.beta_upper = beta_upper
-        self.fuzzy_quantifier_name = fuzzy_quantifier.lower()
+        self.validate_params(fuzzy_quantifier_lower=fuzzy_quantifier_lower,
+                             fuzzy_quantifier_upper=fuzzy_quantifier_upper)
+
+        self.fuzzy_quantifier_lower=fuzzy_quantifier_lower
+        self.fuzzy_quantifier_upper=fuzzy_quantifier_upper
 
         self.tnorm = tn.MinTNorm()
-        self.fq_lower = FuzzyQuantifier.create(self.fuzzy_quantifier_name, alpha=alpha_lower, beta=beta_lower)
-        self.fq_upper = FuzzyQuantifier.create(self.fuzzy_quantifier_name, alpha=alpha_upper, beta=beta_upper)
+
 
     def _interim_calculations(self) -> np.ndarray:
         label_mask = (self.labels[:, None] == self.labels[None, :]).astype(float)
@@ -70,43 +68,62 @@ class VQRS(BaseFuzzyRoughModel):
         return numerator / denominator
 
     def lower_approximation(self) -> np.ndarray:
-        return self.fq_lower(self._interim_calculations())
+        return self.fuzzy_quantifier_lower(self._interim_calculations())
 
     def upper_approximation(self) -> np.ndarray:
-        return self.fq_upper(self._interim_calculations())
+        return self.fuzzy_quantifier_upper(self._interim_calculations())
 
     def to_dict(self) -> dict:
         return {
             "type": "vqrs",
-            "alpha_lower": self.alpha_lower,
-            "beta_lower": self.beta_lower,
-            "alpha_upper": self.alpha_upper,
-            "beta_upper": self.beta_upper,
-            "fuzzy_quantifier": self.fuzzy_quantifier_name
+            "fuzzy_quantifier_lower": self.fuzzy_quantifier_lower.to_dict(),
+            "fuzzy_quantifier_upper": self.fuzzy_quantifier_upper.to_dict()
         }
 
     @classmethod
     def from_dict(cls, similarity_matrix, labels, data: dict) -> 'VQRS':
-        return cls(similarity_matrix, labels,
-                   data["alpha_lower"], data["beta_lower"],
-                   data["alpha_upper"], data["beta_upper"],
-                   data.get("fuzzy_quantifier", "quadratic"))
+        raise NotImplementedError("Class method not implemented for VQRS.")
+        # return cls(similarity_matrix, labels,
+        #            data["alpha_lower"], data["beta_lower"],
+        #            data["alpha_upper"], data["beta_upper"],
+        #            data.get("fuzzy_quantifier", "quadratic"))
 
     def describe_params_detailed(self) -> dict:
+        raise NotImplementedError("Class method not implemented for VQRS.")
+        # return {
+        #     "alpha_lower": {"type": "float", "value": self.alpha_lower},
+        #     "beta_lower": {"type": "float", "value": self.beta_lower},
+        #     "alpha_upper": {"type": "float", "value": self.alpha_upper},
+        #     "beta_upper": {"type": "float", "value": self.beta_upper},
+        #     "fuzzy_quantifier": {"type": "str", "value": self.fuzzy_quantifier_name}
+        # }
+
+    def _get_params(self) -> dict:
+        """
+        @brief Describe internal parameters.
+
+        @return: Dictionary describing internal parameters.
+        """
         return {
-            "alpha_lower": {"type": "float", "value": self.alpha_lower},
-            "beta_lower": {"type": "float", "value": self.beta_lower},
-            "alpha_upper": {"type": "float", "value": self.alpha_upper},
-            "beta_upper": {"type": "float", "value": self.beta_upper},
-            "fuzzy_quantifier": {"type": "str", "value": self.fuzzy_quantifier_name}
+            "min_tnorm": self.tnorm,
+            "fuzzy_quantifier_lower": self.fuzzy_quantifier_lower,
+            "fuzzy_quantifier_upper": self.fuzzy_quantifier_upper,
+            "similarity_matrix":self.similarity_matrix,
+            "labels":self.labels
         }
 
     @classmethod
-    def validate_params(cls, **kwargs):
-        for key in ["alpha_lower", "beta_lower", "alpha_upper", "beta_upper"]:
-            val = kwargs.get(key)
-            if val is None or not isinstance(val, (float, int)):
-                raise ValueError(f"Missing or invalid parameter: {key}")
-        fq_name = kwargs.get("fuzzy_quantifier", "quadratic")
-        FuzzyQuantifier.validate_params(alpha=kwargs["alpha_lower"], beta=kwargs["beta_lower"])
-        FuzzyQuantifier.validate_params(alpha=kwargs["alpha_upper"], beta=kwargs["beta_upper"])
+    def validate_params(self, **kwargs):
+        """
+        @brief validation hook.
+
+        @param kwargs
+        """
+
+        Q_l = kwargs.get("fuzzy_quantifier_lower")
+        if Q_l is None or not isinstance(Q_l, FuzzyQuantifier):
+            raise ValueError("Parameter 'fuzzy_quantifier_lower' must be provided and be an instance of derived classes from FuzzyQuantifier.")
+
+        Q_h = kwargs.get("fuzzy_quantifier_upper")
+        if Q_h is None or not isinstance(Q_h, FuzzyQuantifier):
+            raise ValueError("Parameter 'fuzzy_quantifier_upper' must be provided and be an instance of derived classes from FuzzyQuantifier.")

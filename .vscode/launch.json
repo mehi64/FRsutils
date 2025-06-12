@@ -49,6 +49,17 @@
             "cwd": "${workspaceFolder}"
         },
         {
+            "name": "SNDBX use vqrs",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "FRsutils.sandbox.use_vqrs",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}"
+        },
+        {
             "name": "Python: sandbox test similarity factory",
             "type": "debugpy",
             "request": "launch",

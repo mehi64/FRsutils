@@ -20,15 +20,15 @@ using a fuzzy implicator and a T-norm operator over a similarity matrix.
 ##############################################
 """
 
-from FRsutils.core.base_fuzzy_rough_model import BaseFuzzyRoughModel
+from FRsutils.core.fuzzy_rough_model import FuzzyRoughModel
 import FRsutils.core.tnorms as tn
 import FRsutils.core.implicators as imp
 from FRsutils.utils.logger.logger_util import get_logger
 import numpy as np
 
 
-@BaseFuzzyRoughModel.register("itfrs")
-class ITFRS(BaseFuzzyRoughModel):
+@FuzzyRoughModel.register("itfrs")
+class ITFRS(FuzzyRoughModel):
     """
     @brief Interval Type-2 Fuzzy Rough Set approximation model.
 
@@ -41,10 +41,15 @@ class ITFRS(BaseFuzzyRoughModel):
                  similarity_matrix: np.ndarray, 
                  labels: np.ndarray, 
                  tnorm: tn.TNorm, 
-                 implicator: imp.Implicator, logger=None):
+                 implicator: imp.Implicator,
+                 logger=None):
         super().__init__(similarity_matrix, labels)
         self.logger = logger or get_logger()
         self.logger.debug(f"{self.__class__.__name__} initialized.")
+
+        self.validate_params(tnorm=tnorm, 
+                             implicator=implicator)
+
         self.tnorm = tnorm
         self.implicator = implicator
 
@@ -106,12 +111,32 @@ class ITFRS(BaseFuzzyRoughModel):
             "tnorm": self.tnorm.describe_params_detailed(),
             "implicator": self.implicator.get_params_detailed()
         }
+    
+    def _get_params(self) -> dict:
+        """
+        @brief Describe internal T-norm and implicator parameters.
+
+        @return: Dictionary containing T-norm and implicator used in itfrs.
+        """
+        return {
+            "tnorm": self.tnorm,
+            "implicator": self.implicator,
+            "similarity_matrix":self.similarity_matrix,
+            "labels":self.labels
+        }
 
     @classmethod
-    def validate_params(cls, **kwargs):
+    def validate_params(self, **kwargs):
         """
-        @brief Optional validation hook.
+        @brief validation hook.
 
-        @param kwargs: Unused.
+        @param kwargs
         """
-        pass
+        
+        tnrm = kwargs.get("tnorm")
+        if tnrm is None or not isinstance(tnrm, tn.TNorm):
+            raise ValueError("Parameter 'tnorm' must be provided and be an instance of derived classes from TNorm.")
+
+        impli = kwargs.get("implicator")
+        if impli is None or not isinstance(impli, imp.Implicator):
+            raise ValueError("Parameter 'implicator' must be provided and be an instance of derived classes from Implicator.")
