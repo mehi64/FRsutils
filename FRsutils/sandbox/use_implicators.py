@@ -1,4 +1,4 @@
-from FRsutils.core.implicators import Implicator
+from FRsutils.core.implicators import Implicator, YagerImplicator
 import tests.synthetic_data_store as sds
 import numpy as np
 
@@ -18,9 +18,9 @@ print("Łukasiewicz Implicator:", imp(0.3, 0.7))
 imp = Implicator.create("gaines")  # alias for lukasiewicz
 print("Łukasiewicz Implicator:", imp(0.3, 0.7))
 
-# # Yager implicator with p = 2
-# imp = Implicator.create("yager", p=2.0)
-# print("Yager Implicator (p=2):", imp(0.5, 0.8))
+# Yager implicator with p = 2
+imp = Implicator.create("yager", p=2.0)
+print("Yager Implicator (p=2):", imp(0.5, 0.8))
 
 # # Weber implicator with lambda = 0.7
 # imp = Implicator.create("weber", lambd=0.7)

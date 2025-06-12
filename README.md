@@ -28,7 +28,7 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 - Similarities
   - Linear
   - Gaussian
-- Implicators (See [Implicators](implicator_info.md))
+- Implicators (See [fuzzy implicators](implicators_info.md))
   - Gaines
   - Goedel
   - Kleene–Dienes

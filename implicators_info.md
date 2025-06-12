@@ -101,6 +101,8 @@ used to generalize classical logical implication for fuzzy sets. Implicators are
   - Yager: $p > 0$
   - Sugeno–Weber: $\lambda \geq -1$
 
+------
+
 
 ## References (must be checked)
 
