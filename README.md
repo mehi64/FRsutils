@@ -28,16 +28,17 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 - Similarities
   - Linear
   - Gaussian
-- Implicators
+- Implicators (See [Implicators](implicator_info.md))
   - Gaines
-<img src="images/implicators/eq_imp_gaines.JPG" alt="eq_imp_gaines" width="250"/>
   - Goedel
   - Kleene–Dienes
   - Reichenbach
   - Lukasiewicz
-
-For a list of fuzzy implicators and their formulas, see [Implicators](implicators.md).
-
+  - Gaines
+  - Yager
+  - Weber
+  - Frank
+  - Sugeno–Weber
 - T-norms
   - Min tnorm
   - Product tnorm
