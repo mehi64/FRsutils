@@ -36,7 +36,7 @@ Supports registration, creation, serialization, and parameter validation.
 import numpy as np
 from abc import ABC, abstractmethod
 from typing import Type, Dict, List, Union
-from FRsutils.core.registry_factory_mixin import RegistryFactoryMixin
+from FRsutils.utils.constructor_utils.registry_factory_mixin import RegistryFactoryMixin
 
 class Implicator(ABC, RegistryFactoryMixin):
     """

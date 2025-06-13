@@ -22,7 +22,8 @@ serialization, and matrix computation based on selected T-norms.
 from typing import Callable
 import numpy as np
 from abc import ABC, abstractmethod
-from FRsutils.core.registry_factory_mixin import RegistryFactoryMixin
+from FRsutils.utils.constructor_utils.registry_factory_mixin import RegistryFactoryMixin
+from FRsutils.core.tnorms import TNorm
 
 class Similarity(ABC, RegistryFactoryMixin):
     """
@@ -263,3 +264,30 @@ def calculate_similarity_matrix(
 
     np.fill_diagonal(sim_matrix, 1.0)
     return sim_matrix
+
+def build_similarity_matrix(X: np.ndarray, **kwargs) -> np.ndarray:
+    """
+    @brief Build a pairwise similarity matrix from input features and a config dictionary.
+
+    @param X: Normalized input matrix of shape (n_samples, n_features)
+    @param kwargs: Flattened config including:
+        - similarity: name of similarity function (e.g., 'gaussian')
+        - similarity_tnorm: name of T-norm to use across features (e.g., 'minimum')
+        - parameters for similarity function (e.g., sigma=0.2)
+        - parameters for tnorm (e.g., p=2.0 for Yager)
+    @return: Pairwise similarity matrix (n x n)
+    """
+    similarity_type = kwargs.get("similarity", "gaussian")
+    similarity_params = {
+        k: v for k, v in kwargs.items() if k not in {"similarity", "similarity_tnorm"}
+    }
+
+    tnorm_type = kwargs.get("similarity_tnorm", "minimum")
+    tnorm_params = {
+        k: v for k, v in kwargs.items() if k not in {"similarity", "similarity_tnorm"}
+    }
+
+    similarity_func = Similarity.create(similarity_type, **similarity_params)
+    tnorm_func = TNorm.create(tnorm_type, **tnorm_params)
+
+    return calculate_similarity_matrix(X, similarity_func, tnorm_func)

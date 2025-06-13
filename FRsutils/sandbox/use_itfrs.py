@@ -58,11 +58,24 @@ frmodel = FRMODEL.create(name='itfrs', strict=False, **args_)
 upper1 = frmodel.upper_approximation()
 lower1 = frmodel.lower_approximation()
 
+mdl = FRMODEL.get_class("itfrs").from_config(
+    similarity_matrix=sim_matrix, labels=y,
+    tnorm_name='product',
+    implicator_name='luk'
+)
+
+upper2 = mdl.upper_approximation()
+lower2 = mdl.lower_approximation()
+
 # print("tnorm:", tnorm.name)
 # print("implicator:", implicator.name)
 print("Lower Approximation:", lower)
-print("Lower Approximation:", lower1)
+print("Lower Approximation:", lower2)
 print("Upper Approximation:", upper)
-print("Upper Approximation:", upper1)
+print("Upper Approximation:", upper2)
 
 print("Done")
+
+#############################################################
+
+

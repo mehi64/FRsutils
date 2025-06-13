@@ -53,14 +53,24 @@ args_ = {'similarity_matrix': sim_matrix,
 
 frmodel = FRMODEL.create(name='vqrs', strict=False, **args_)
 
+model_cls = FRMODEL.get_class("vqrs")
+vqrs_model = model_cls.from_config(similarity_matrix=sim_matrix,
+                                   labels=y,
+                                    alpha_lower=0.1, beta_lower=0.6,
+                                    alpha_upper=0.2, beta_upper=1.0,
+                                    fuzzy_quantifier="quadratic")
+
 upper1 = frmodel.upper_approximation()
 lower1 = frmodel.lower_approximation()
 
+upper2 = vqrs_model.upper_approximation()
+lower2 = vqrs_model.lower_approximation()
+
 # print("tnorm:", tnorm.name)
 # print("implicator:", implicator.name)
-print("Lower Approximation:", lower)
+print("Lower Approximation:", lower2)
 print("Lower Approximation:", lower1)
-print("Upper Approximation:", upper)
+print("Upper Approximation:", upper2)
 print("Upper Approximation:", upper1)
 
 print("Done")

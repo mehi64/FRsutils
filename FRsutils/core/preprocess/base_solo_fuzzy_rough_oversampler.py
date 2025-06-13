@@ -1,51 +1,37 @@
 """
 @file base_solo_fuzzy_rough_oversampler.py
-@brief Base oversampler that uses only fuzzy rough sets (no generative models).
-
-Extends BaseAllPurposeFuzzyRoughOversampler to provide fit and resampling hooks.
-
-##############################################
-# ✅ Summary
-# - Uses fuzzy-rough approximations for ranking/selection
-# - Compatible with LazyBuildableFromConfigMixin
-# - Adds fit(), fit_resample(), and abstract resampling logic
-##############################################
+@brief Base class for fuzzy rough oversamplers that don’t rely on external generators.
 """
 
 import numpy as np
 from collections import Counter
-from imblearn.over_sampling.base import BaseOverSampler
 from sklearn.utils import check_X_y
-from abc import ABC, abstractmethod
-import warnings
-
-from FRsutils.core.similarities import calculate_similarity_matrix
+from abc import abstractmethod
 from FRsutils.core.preprocess.base_allpurpose_fuzzy_rough_oversampler import BaseAllPurposeFuzzyRoughOversampler
 from FRsutils.utils.fuzzy_rough_dataset_validation_utils import compatible_dataset_with_FuzzyRough
+from FRsutils.core.fuzzy_rough_model import FuzzyRoughModel
+from FRsutils.core.similarities import build_similarity_matrix
 
 class BaseSoloFuzzyRoughOversampler(BaseAllPurposeFuzzyRoughOversampler):
-    """
-    @brief Oversampler that uses fuzzy rough set theory directly (no VAE/GAN).
-    """
-
-    def __init__(self,
-                 k_neighbors=5,
-                 bias_interpolation=False,
-                 random_state=None,
-                 **fr_config_kwargs):
-
-        super().__init__(**fr_config_kwargs)
-        self.k_neighbors = k_neighbors
-        self.bias_interpolation = bias_interpolation
-        self.random_state = random_state
+    def __init__(self, **kwargs):
+        """
+        @brief Initializes solo fuzzy rough oversampler with fuzzy config and SMOTE-related settings.
+        @param kwargs Dictionary of hyperparameters including k_neighbors, bias_interpolation, etc.
+        """
+        self.k_neighbors = kwargs.get("k_neighbors", 5)
+        self.bias_interpolation = kwargs.get("bias_interpolation", False)
+        self.random_state = kwargs.get("random_state", None)
+        super().__init__(**kwargs)
+        self._lazy_model_registry = FuzzyRoughModel
 
     def fit(self, X, y):
         """
-        @brief Validates input and builds the fuzzy-rough model lazily.
+        @brief Validates the input dataset, computes similarity matrix, and builds the fuzzy-rough model.
 
-        @param X: Feature matrix
-        @param y: Target labels
-        @return: self
+        @param X Normalized feature matrix (2D np.ndarray).
+        @param y Target class labels (1D np.ndarray).
+
+        @return self
         """
         compatible_dataset_with_FuzzyRough(X, y)
         self._check_params()
@@ -55,52 +41,48 @@ class BaseSoloFuzzyRoughOversampler(BaseAllPurposeFuzzyRoughOversampler):
         self.classes_, _ = np.unique(y, return_counts=True)
         self.target_stats_ = Counter(y)
 
-        self.ensure_built(X, y)
+        # ✅ Build similarity matrix using the kwargs-based API
+        similarity_matrix = build_similarity_matrix(X, **self._lazy_model_config)
+
+        # tnorm_name=None, implicator_name=None,
+        # tnorm_params=None, implicator_params=None,
+        # logger=None
+                    
+        # ✅ Ensure the fuzzy rough model is built
+        self.ensure_built(similarity_matrix, y)
+
         return self
 
-    def fit_resample(self, X, y):
-        self.fit(X, y)
-        X_resampled, y_resampled = self._fit_resample(X, y)
-        return X_resampled, y_resampled
+    @property
+    def positive_region(self):
+        return self.lazy_model.lower_approximation()
 
-    def transformm(self, X, y=None):
-        """
-        @brief Applies resampling transformation (for sklearn pipelines).
+    def get_params(self, deep=True):
+        return {
+            "k_neighbors": self.k_neighbors,
+            "bias_interpolation": self.bias_interpolation,
+            "random_state": self.random_state,
+            "sampling_strategy": self.sampling_strategy,
+            "instance_ranking_strategy": self.instance_ranking_strategy,
+            **self._lazy_model_config,
+        }
 
-        @param X: Feature matrix
-        @param y: Labels (required)
-        @return: Tuple (X_resampled, y_resampled)
-        """
-        if y is None:
-            raise ValueError("y cannot be None when using transform().")
-        return self.fit_resample(X, y)
-
-    @abstractmethod
-    def _check_params(self):
-        """Validates hyperparameters specific to derived class."""
-        pass
-
-    @abstractmethod
-    def _fit_resample(self, X, y):
-        """Actual resampling logic to be implemented in subclasses."""
-        raise NotImplementedError("Subclasses must implement _fit_resample().")
+    def set_params(self, **params):
+        for key, val in params.items():
+            if hasattr(self, key):
+                setattr(self, key, val)
+            else:
+                self._lazy_model_config[key] = val
+        return self
 
     @abstractmethod
-    def _prepare_minority_samples(self, X, y, class_label):
-        """
-        Selects minority samples used for interpolation.
-
-        @param X: Feature matrix
-        @param y: Target labels
-        @param class_label: The label of the minority class
-        @return: np.ndarray of selected sample indices
-        """
-        pass
+    def _check_params(self): pass
 
     @abstractmethod
-    def _generate_new_samples(self):
-        """
-        Generates new synthetic samples based on selected neighbors.
-        Must be implemented in subclasses.
-        """
-        pass
+    def _fit_resample(self, X, y): pass
+
+    @abstractmethod
+    def _prepare_minority_samples(self, X, y, class_label): pass
+
+    @abstractmethod
+    def _generate_new_samples(self): pass

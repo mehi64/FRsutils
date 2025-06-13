@@ -16,7 +16,7 @@ including lower and upper approximations, boundary and positive regions.
 
 from abc import ABC, abstractmethod
 import numpy as np
-from FRsutils.core.registry_factory_mixin import RegistryFactoryMixin
+from FRsutils.utils.constructor_utils.registry_factory_mixin import RegistryFactoryMixin
 
 class FuzzyRoughModel(ABC, RegistryFactoryMixin):
     """

@@ -37,7 +37,7 @@ Implements factory registration, serialization, validation, and multi-input supp
 import numpy as np
 from abc import ABC, abstractmethod
 from typing import Union
-from FRsutils.core.registry_factory_mixin import RegistryFactoryMixin
+from FRsutils.utils.constructor_utils.registry_factory_mixin import RegistryFactoryMixin
 
 class TNorm(ABC, RegistryFactoryMixin):
     """

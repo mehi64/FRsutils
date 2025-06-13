@@ -201,3 +201,17 @@ class RegistryFactoryMixin:
             if isinstance(instance, klass):
                 return aliases[0]
         raise ValueError(f"No registered alias found for instance of type {type(instance).__name__}")
+    
+    @classmethod
+    def get_class(cls, name: str) -> Type:
+        """
+        @brief Returns the registered class associated with a given alias.
+
+        @param name: The alias name (case-insensitive).
+        @return: The class object registered under that alias.
+        @raises ValueError: If alias is not registered.
+        """
+        name = name.lower()
+        if name not in cls._registry:
+            raise ValueError(f"Unknown alias: {name}")
+        return cls._registry[name]

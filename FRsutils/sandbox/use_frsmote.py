@@ -1,0 +1,38 @@
+import numpy as np
+from FRsutils.core.preprocess.oversampling.FRSMOTE import FRSMOTE
+
+
+# Example imbalanced dataset
+X = np.array([
+    [0.1, 0.2],
+    [0.2, 0.1],
+    [0.15, 0.18],  # Minority class
+    [0.8, 0.9],
+    [0.82, 0.88],
+    [0.85, 0.91],
+    [0.87, 0.93]
+])
+y = np.array([1, 1, 1, 0, 0, 0, 0])  # Class 1 is minority
+
+# Initialize FRSMOTE with default or overridden parameters
+smote = FRSMOTE(
+    type='itfrs',
+    similarity_name='gaussian',
+    gaussian_similarity_sigma=0.2,
+    similarity_tnorm_name='minimum',
+    lb_implicator_name='lukasiewicz',
+    ub_tnorm_name='product',
+    k_neighbors=3,
+    random_state=42
+)
+
+# Apply oversampling
+X_resampled, y_resampled = smote.fit_resample(X, y)
+
+print("Original class distribution:", np.bincount(y))
+print("Resampled class distribution:", np.bincount(y_resampled))
+
+params = smote.get_params()
+
+smote.set_params(**params)
+print("Parameters:", params)

@@ -20,7 +20,7 @@ using a fuzzy implicator and a T-norm operator over a similarity matrix.
 ##############################################
 """
 
-from FRsutils.utils.constructor_utils.lazy_builder_from_config_mixin import LazyBuildableFromConfigMixin
+from FRsutils.utils.constructor_utils.lazy_buildable_from_config_mixin import LazyBuildableFromConfigMixin
 from FRsutils.core.fuzzy_rough_model import FuzzyRoughModel
 import FRsutils.core.tnorms as tn
 import FRsutils.core.implicators as imp
@@ -29,7 +29,7 @@ import numpy as np
 
 
 @FuzzyRoughModel.register("itfrs")
-class ITFRS(FuzzyRoughModel, LazyBuildableFromConfigMixin):
+class ITFRS(FuzzyRoughModel):
     """
     @brief Interval Type-2 Fuzzy Rough Set approximation model.
 
@@ -142,21 +142,34 @@ class ITFRS(FuzzyRoughModel, LazyBuildableFromConfigMixin):
         if impli is None or not isinstance(impli, imp.Implicator):
             raise ValueError("Parameter 'implicator' must be provided and be an instance of derived classes from Implicator.")
 
-    @classmethod
-    def from_config(cls, similarity_matrix, labels, tnorm_name: str, implicator_name: str, 
-                    tnorm_params=None, implicator_params=None, logger=None):
-        """
-        @brief Alternate constructor that creates an ITFRS model from registry names.
 
-        @param similarity_matrix: Similarity matrix
-        @param labels: Labels
-        @param tnorm_name: Registered T-norm name
-        @param implicator_name: Registered implicator name
-        @param tnorm_params: Optional dict of T-norm parameters
-        @param implicator_params: Optional dict of implicator parameters
-        @param logger: Optional logger
+    @classmethod
+    def from_config(cls, similarity_matrix, labels, **kwargs):
+        """
+        @brief Alternate constructor for ITFRS using flexible kwargs.
+
+        Accepts flat parameters:
+        - tnorm: optional direct TNorm object
+        - implicator: optional direct Implicator object
+        - tnorm_name: name of T-norm (e.g. 'minimum') if tnorm not given
+        - implicator_name: name of Implicator (e.g. 'lukasiewicz') if implicator not given
+        - any extra kwargs forwarded to TNorm or Implicator based on their param signatures
+
+        @param similarity_matrix: Similarity matrix (n x n)
+        @param labels: Target labels (n,)
+        @param kwargs: Flat config dict
         @return: ITFRS instance
         """
-        tnorm = tn.TNorm.create(tnorm_name, **(tnorm_params or {}))
-        implicator = imp.Implicator.create(implicator_name, **(implicator_params or {}))
-        return cls(similarity_matrix, labels, tnorm, implicator, logger=logger)
+        tnorm = kwargs.get("tnorm")
+        lb_implicator = kwargs.get("implicator")
+
+        # Attempt registry-based creation if objects not passed directly
+        if tnorm is None:
+            ub_tnorm_name = kwargs.get("ub_tnorm_name", "minimum")
+            ub_tnorm = tn.TNorm.create(ub_tnorm_name, **kwargs)
+        if lb_implicator is None:
+            implicator_name = kwargs.get("lb_implicator_name", "lukasiewicz")
+            lb_implicator = imp.Implicator.create(implicator_name, **kwargs)
+
+        logger = kwargs.get("logger", None)
+        return cls(similarity_matrix, labels, ub_tnorm, lb_implicator, logger=logger)

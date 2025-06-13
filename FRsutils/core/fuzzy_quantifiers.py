@@ -7,7 +7,7 @@ Supports registration, instantiation via alias, and computation of linear and qu
 
 import numpy as np
 from abc import ABC, abstractmethod
-from FRsutils.core.registry_factory_mixin import RegistryFactoryMixin
+from FRsutils.utils.constructor_utils.registry_factory_mixin import RegistryFactoryMixin
 
 class FuzzyQuantifier(ABC, RegistryFactoryMixin):
     """

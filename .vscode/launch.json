@@ -49,6 +49,17 @@
             "cwd": "${workspaceFolder}"
         },
         {
+            "name": "SNDBX use frsmote",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "FRsutils.sandbox.use_frsmote",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}"
+        },
+        {
             "name": "SNDBX use vqrs",
             "type": "debugpy",
             "request": "launch",
