@@ -11,6 +11,7 @@ using a fuzzy implicator and a T-norm operator over a similarity matrix.
 # - Pluggable architecture for T-norm and Implicator
 # - Lower and upper approximation computation
 # - Class introspection and serialization support
+# - Logger injection via BaseComponentWithLogger
 
 # ✅ Summary Table of Design Principles
 # - Strategy Pattern: Uses user-defined T-norm and Implicator strategies
@@ -21,17 +22,16 @@ using a fuzzy implicator and a T-norm operator over a similarity matrix.
 """
 
 from FRsutils.utils.constructor_utils.lazy_buildable_from_config_mixin import LazyBuildableFromConfigMixin
-from FRsutils.core.fuzzy_rough_model import FuzzyRoughModel
+from FRsutils.core.models.fuzzy_rough_model import FuzzyRoughModel
 import FRsutils.core.tnorms as tn
 import FRsutils.core.implicators as imp
-from FRsutils.utils.logger.logger_util import get_logger
 import numpy as np
 
 
 @FuzzyRoughModel.register("itfrs")
 class ITFRS(FuzzyRoughModel):
     """
-    @brief Interval Type-2 Fuzzy Rough Set approximation model.
+    @brief Implicator-TNorm Fuzzy Rough Set approximation model.
 
     @param similarity_matrix: Precomputed similarity matrix (n x n)
     @param labels: Array of class labels for each instance
@@ -44,8 +44,9 @@ class ITFRS(FuzzyRoughModel):
                  tnorm: tn.TNorm, 
                  implicator: imp.Implicator,
                  logger=None):
-        super().__init__(similarity_matrix, labels)
-        self.logger = logger or get_logger()
+        super().__init__(similarity_matrix,
+                          labels,
+                          logger=logger)
         self.logger.debug(f"{self.__class__.__name__} initialized.")
 
         self.validate_params(tnorm=tnorm, 
@@ -110,7 +111,7 @@ class ITFRS(FuzzyRoughModel):
         """
         return {
             "tnorm": self.tnorm.describe_params_detailed(),
-            "implicator": self.implicator.get_params_detailed()
+            "implicator": self.implicator.describe_params_detailed()
         }
     
     def _get_params(self) -> dict:
@@ -127,13 +128,14 @@ class ITFRS(FuzzyRoughModel):
         }
 
     @classmethod
-    def validate_params(self, **kwargs):
+    def validate_params(cls, **kwargs):
         """
         @brief validation hook.
 
         @param kwargs
         """
-        
+        cls.get_logger().debug("itfrs debug message")
+
         tnrm = kwargs.get("tnorm")
         if tnrm is None or not isinstance(tnrm, tn.TNorm):
             raise ValueError("Parameter 'tnorm' must be provided and be an instance of derived classes from TNorm.")

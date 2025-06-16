@@ -22,8 +22,9 @@ in the FRsutils framework. It encapsulates:
 
 import inspect
 from typing import Type, Dict, List, Any
+from abc import ABC, abstractmethod
 
-class RegistryFactoryMixin:
+class RegistryFactoryMixin(ABC):
     """
     @brief Mixin class for pluggable component registration and instantiation.
 
@@ -35,11 +36,26 @@ class RegistryFactoryMixin:
         """
         @brief Automatically initializes per-subclass registry.
         Ensures that each subclass maintains its own `_registry` and `_aliases`.
-        This is because tnorms and implicators can have the same name, e.g. yager, luk.
+        This is because some tnorms and implicators can have the same name, e.g. yager, luk.
         """
+
+        # __init_subclass__ is a special method in Python, automatically called whenever
+        # a class is subclassed. It's like a constructor—but for classes, not instances.
+        # You override it when you want to customize how subclasses 
+        # are constructed.
+        # 
+        # Every class that inherits from RegistryFactoryMixin 
+        # (e.g. TNorm, Implicator, SimilarityFunction) automatically 
+        # gets its own _registry and _aliases dictionaries because 
+        # Python calls this method at the time of class definition, 
+        # not at runtime.
+
+        # print(f"{cls.__name__} __init_subclass__ is called")
         super().__init_subclass__(**kwargs)
+        
         # a mapping between names and classes. it stores all registered classes
         cls._registry: Dict[str, Type] = {}
+        
         # a mapping between classes and several aliases for each class.
         # for example, Yager could beregistered with 'yager', 'yg', 'yager_implicator', etc.    
         cls._aliases: Dict[Type, List[str]] = {}
@@ -85,8 +101,8 @@ class RegistryFactoryMixin:
         target_cls = cls._registry[name]
         
         # parameter validation is done inside __init__ 
-        # functions and all classes must have it
-        # target_cls.validate_params(**kwargs)
+        # all classes inherited from RegistryFactoryMixin must have __init__
+        # and call validate_params in there.
         
         # ctor_args means constructor arguments
         # filter out unused parameters
@@ -120,7 +136,7 @@ class RegistryFactoryMixin:
         sig = inspect.signature(cls.__init__)
         return {k: v for k, v in kwargs.items() if k in sig.parameters}
 
-    def get_params_detailed(self) -> dict:
+    def describe_params_detailed(self) -> dict:
         """
         @brief Returns a dictionary describing the current instance's parameters.
 
@@ -134,8 +150,10 @@ class RegistryFactoryMixin:
             for name in sig.parameters if name != "self" and hasattr(self, name)
         }
 
-    def _get_params(self):
-        return {}
+    @abstractmethod
+    def _get_params(self)-> dict:
+        raise NotImplementedError("All derived classes must implement _get_params.")
+
 
     def to_dict(self) -> dict:
         """
@@ -168,26 +186,35 @@ class RegistryFactoryMixin:
         return inspect.getdoc(self.__class__) or "No documentation available."
 
     @classmethod
-    def validate_params(self, **kwargs):
+    @abstractmethod
+    def validate_params(cls, **kwargs):
         """
-        @brief Optional parameter validation hook for subclasses.
+        @brief parameter validation hook for subclasses.
+        all subclasses must implement validate_params
         
         @param kwargs: Parameters to validate.
         """
-        pass
+        raise NotImplementedError("all subclasses must implement validate_params")
     
     @property
     def name(self) -> str:
         """
-        @brief Returns the registered name of the class (lowercased, with suffix removed).
+        @brief Returns the registered name of the class (lowercased, with known suffix removed).
 
-        Removes suffixes like 'TNorm', 'Implicator', 'SimilarityFunction' from class name.
+        Strips one of the known suffixes like 'TNorm', 'Implicator', etc., based on class name.
 
         @return: Cleaned lowercase name.
         """
         name = self.__class__.__name__
-        return name.replace("TNorm", "").replace("Implicator", "").replace("Similarity", "").lower()
-    
+        suffixes = ["TNorm", "Implicator", "Similarity", "SimilarityFunction", 
+                    "FuzzyQuantifier", "Model", "Function", "Strategy"]  # Expand as needed
+
+        for suffix in suffixes:
+            if name.endswith(suffix):
+                name = name[: -len(suffix)]
+                break  # Stop after first match
+
+        return name.lower()
     
     @classmethod
     def get_registered_name(cls, instance: Any) -> str:

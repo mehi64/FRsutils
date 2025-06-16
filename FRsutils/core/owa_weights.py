@@ -7,7 +7,7 @@ separate lower and upper weight generation methods.
 """
 
 import numpy as np
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Type, Dict, List
 import inspect
 
@@ -17,7 +17,7 @@ def _filter_args(cls, kwargs: dict) -> dict:
     return {k: v for k, v in kwargs.items() if k in sig.parameters}
 
 
-class OWAWeightStrategy(ABC):
+class OWAWeightStrategy():
     """
     @brief Abstract base class for OWA weight strategies.
 

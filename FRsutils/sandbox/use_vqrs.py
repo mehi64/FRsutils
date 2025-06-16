@@ -4,7 +4,7 @@ from FRsutils.core.fuzzy_quantifiers import FuzzyQuantifier
 from FRsutils.core.models.vqrs import VQRS
 from FRsutils.utils.logger.logger_util import get_logger
 import tests.syntetic_data_for_tests as sdf
-from FRsutils.core.fuzzy_rough_model import FuzzyRoughModel as FRMODEL
+from FRsutils.core.models.fuzzy_rough_model import FuzzyRoughModel as FRMODEL
 
 
 data_synthteic = sdf.syntetic_dataset_factory()

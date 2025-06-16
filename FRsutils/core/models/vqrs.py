@@ -9,7 +9,7 @@ import numpy as np
 import FRsutils.core.tnorms as tn
 from FRsutils.core.fuzzy_quantifiers import FuzzyQuantifier
 from FRsutils.utils.logger.logger_util import get_logger
-from FRsutils.core.fuzzy_rough_model import FuzzyRoughModel
+from FRsutils.core.models.fuzzy_rough_model import FuzzyRoughModel
 
 
 @FuzzyRoughModel.register("vqrs")

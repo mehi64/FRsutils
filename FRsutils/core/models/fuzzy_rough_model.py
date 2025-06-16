@@ -14,11 +14,13 @@ including lower and upper approximations, boundary and positive regions.
 ##############################################
 """
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 import numpy as np
 from FRsutils.utils.constructor_utils.registry_factory_mixin import RegistryFactoryMixin
+from FRsutils.utils.base_component_with_logger import BaseComponentWithLogger
 
-class FuzzyRoughModel(ABC, RegistryFactoryMixin):
+
+class FuzzyRoughModel(RegistryFactoryMixin, BaseComponentWithLogger):
     """
     @brief Abstract base class for fuzzy-rough approximation models.
 
@@ -26,8 +28,12 @@ class FuzzyRoughModel(ABC, RegistryFactoryMixin):
     @param labels: Label vector of length n
     """
 
-    def __init__(self, similarity_matrix: np.ndarray, labels: np.ndarray):
+    def __init__(self, 
+                 similarity_matrix: np.ndarray, 
+                 labels: np.ndarray,
+                 logger=None):
         
+        BaseComponentWithLogger.__init__(self, logger)
         self.validate_params_base(similarity_matrix=similarity_matrix, 
                                   labels=labels)
         
@@ -41,7 +47,7 @@ class FuzzyRoughModel(ABC, RegistryFactoryMixin):
 
         @return: Array of lower approximation values.
         """
-        pass
+        raise NotImplementedError("lower_approximation is not implemented")
 
     @abstractmethod
     def upper_approximation(self) -> np.ndarray:
@@ -50,7 +56,8 @@ class FuzzyRoughModel(ABC, RegistryFactoryMixin):
 
         @return: Array of upper approximation values.
         """
-        pass
+        raise NotImplementedError("upper_approximation is not implemented")
+
 
     def boundary_region(self) -> np.ndarray:
         """
@@ -75,18 +82,25 @@ class FuzzyRoughModel(ABC, RegistryFactoryMixin):
         @return: Raise if not implemented.
         """
         raise NotImplementedError("Subclasses must implement to_dict().")
+    
+    def from_dict(cls, 
+                  similarity_matrix, 
+                  labels, 
+                  data: dict):
+        raise NotImplementedError("Subclasses must implement from_dict().")
+                  
 
     @classmethod
-    def validate_params_base(self, **kwargs):
-                                    # self,
-                                #    similarity_matrix: np.ndarray, 
-                                #    labels: np.ndarray):
+    def validate_params_base(cls, **kwargs):
         """
         @brief Validates similarity matrix and labels
         """
         similarity_matrix = kwargs.get("similarity_matrix")
         labels = kwargs.get("labels")
 
+        if ((similarity_matrix is None) or (labels is None)):
+            raise ValueError("similarity_matrix and labels must be provided.")
+        
         if not isinstance(similarity_matrix, np.ndarray) or similarity_matrix.ndim != 2:
             raise ValueError("similarity_matrix must be a 2D NumPy array.")
         if similarity_matrix.shape[0] != similarity_matrix.shape[1]:

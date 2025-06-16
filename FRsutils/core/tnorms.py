@@ -35,11 +35,10 @@ Implements factory registration, serialization, validation, and multi-input supp
 """
 
 import numpy as np
-from abc import ABC, abstractmethod
-from typing import Union
+from abc import abstractmethod
 from FRsutils.utils.constructor_utils.registry_factory_mixin import RegistryFactoryMixin
 
-class TNorm(ABC, RegistryFactoryMixin):
+class TNorm(RegistryFactoryMixin):
     """
     @brief Abstract base class for all T-norms.
 
@@ -68,6 +67,21 @@ class TNorm(ABC, RegistryFactoryMixin):
         """
         pass
 
+    @classmethod
+    @abstractmethod
+    def validate_params(cls, **kwargs):
+        """
+        @brief Optional parameter validation hook for subclasses.
+        
+        @param kwargs: Parameters to validate.
+        """
+        raise NotImplementedError("all subclasses must implement validate_params")
+    
+    @abstractmethod
+    def _get_params(self)-> dict:
+        raise NotImplementedError("all derived calsses need to implemet _get_params")
+
+
 @TNorm.register('minimum', 'min')
 class MinTNorm(TNorm):
     """
@@ -81,6 +95,18 @@ class MinTNorm(TNorm):
 
     def reduce(self, arr: np.ndarray) -> np.ndarray:
         return np.min(arr, axis=0)
+
+    def validate_params(cls, **kwargs):
+        """
+        @brief This class does not need parameter validation
+        """
+        pass
+
+    def _get_params(self)-> dict:
+        """
+        @brief no parameters
+        """
+        return {}
 
 
 @TNorm.register('product', 'prod', 'algebraic')
@@ -97,6 +123,17 @@ class ProductTNorm(TNorm):
     def reduce(self, arr: np.ndarray) -> np.ndarray:
         return np.prod(arr, axis=0)
 
+    def validate_params(cls, **kwargs):
+        """
+        @brief This class does not need parameter validation
+        """
+        pass
+
+    def _get_params(self)-> dict:
+        """
+        @brief no parameters
+        """
+        return {}
 
 @TNorm.register('lukasiewicz', 'luk', 'bounded')
 class LukasiewiczTNorm(TNorm):
@@ -114,7 +151,18 @@ class LukasiewiczTNorm(TNorm):
         for x in arr[1:]:
             result = max(0.0, result + x - 1.0)
         return result
+    
+    def validate_params(cls, **kwargs):
+        """
+        @brief This class does not need parameter validation
+        """
+        pass
 
+    def _get_params(self)-> dict:
+        """
+        @brief no parameters
+        """
+        return {}
 
 @TNorm.register('yager', 'yg')
 class YagerTNorm(TNorm):
@@ -124,10 +172,10 @@ class YagerTNorm(TNorm):
 
     @param p: Exponent parameter that controls the shape (default = 2.0).
     """
-    def __init__(self):
-        self.validate_params()
+           
 
     def __init__(self, p: float = 2.0):
+        self.validate_params(p=p)
         self.p = p
 
     def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
@@ -183,6 +231,17 @@ class DrasticProductTNorm(TNorm):
             result = np.where(x == 1.0, result, np.where(result == 1.0, x, 0.0))
         return result
 
+    def validate_params(cls, **kwargs):
+        """
+        @brief This class does not need parameter validation
+        """
+        pass
+
+    def _get_params(self)-> dict:
+        """
+        @brief no parameters
+        """
+        return {}
 
 @TNorm.register("einstein", "einstein_product")
 class EinsteinProductTNorm(TNorm):
@@ -202,7 +261,18 @@ class EinsteinProductTNorm(TNorm):
         for x in arr[1:]:
             result = (result * x) / (2 - (result + x - result * x))
         return result
+    
+    def _get_params(self)-> dict:
+        """
+        @brief no parameters
+        """
+        return {}
 
+    def validate_params(cls, **kwargs):
+        """
+        @brief This class does not need parameter validation
+        """
+        pass
 
 @TNorm.register("hamacher", "hamacher_product")
 class HamacherProductTNorm(TNorm):
@@ -227,6 +297,17 @@ class HamacherProductTNorm(TNorm):
             result = (result * x) / denom if denom != 0 else 0.0
         return result
 
+    def validate_params(cls, **kwargs):
+        """
+        @brief This class does not need parameter validation
+        """
+        pass
+
+    def _get_params(self)-> dict:
+        """
+        @brief no parameters
+        """
+        return {}
 
 @TNorm.register("nilpotent", "nilpotent_minimum")
 class NilpotentMinimumTNorm(TNorm):
@@ -246,6 +327,17 @@ class NilpotentMinimumTNorm(TNorm):
             result = np.where((result + x) > 1.0, np.minimum(result, x), 0.0)
         return result
 
+    def validate_params(cls, **kwargs):
+        """
+        @brief This class does not need parameter validation
+        """
+        pass
+
+    def _get_params(self)-> dict:
+        """
+        @brief no parameters
+        """
+        return {}
 
 @TNorm.register("lambda", "lambda_tnorm")
 class LambdaTNorm(TNorm):
@@ -255,10 +347,9 @@ class LambdaTNorm(TNorm):
 
     @param l: Lambda parameter (must be > 0)
     """
-    def __init__(self):
-        self.validate_params()
 
     def __init__(self, l: float = 1.0):
+        self.validate_params(l=l)
         self.l = l
 
     def __call__(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:

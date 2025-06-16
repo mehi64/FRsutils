@@ -9,7 +9,7 @@ from sklearn.utils import check_X_y
 from abc import abstractmethod
 from FRsutils.core.preprocess.base_allpurpose_fuzzy_rough_oversampler import BaseAllPurposeFuzzyRoughOversampler
 from FRsutils.utils.fuzzy_rough_dataset_validation_utils import compatible_dataset_with_FuzzyRough
-from FRsutils.core.fuzzy_rough_model import FuzzyRoughModel
+from FRsutils.core.models.fuzzy_rough_model import FuzzyRoughModel
 from FRsutils.core.similarities import build_similarity_matrix
 
 class BaseSoloFuzzyRoughOversampler(BaseAllPurposeFuzzyRoughOversampler):

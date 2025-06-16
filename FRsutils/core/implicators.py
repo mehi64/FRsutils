@@ -34,11 +34,11 @@ Supports registration, creation, serialization, and parameter validation.
 """
 
 import numpy as np
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Type, Dict, List, Union
 from FRsutils.utils.constructor_utils.registry_factory_mixin import RegistryFactoryMixin
 
-class Implicator(ABC, RegistryFactoryMixin):
+class Implicator(RegistryFactoryMixin):
     """
     @brief Abstract base class for fuzzy implicators.
 
@@ -101,6 +101,19 @@ class GainesImplicator(Implicator):
         # a>b and a=0
         else:
             return 0.0
+        
+    def validate_params(cls, **kwargs):
+        """
+        @brief This class does not need parameter validation
+        """
+        pass
+
+    def _get_params(self)-> dict:
+        """
+        @brief no parameters
+        """
+        return {}
+
 
 @Implicator.register("goedel")
 class GoedelImplicator(Implicator):
@@ -111,6 +124,18 @@ class GoedelImplicator(Implicator):
         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
             raise ValueError("Inputs must be in range [0.0, 1.0].")
         return 1.0 if a <= b else b
+    
+    def validate_params(cls, **kwargs):
+        """
+        @brief This class does not need parameter validation
+        """
+        pass
+
+    def _get_params(self)-> dict:
+        """
+        @brief no parameters
+        """
+        return {}
 
 @Implicator.register("kleene", "kleene-dienes")
 class KleeneDienesImplicator(Implicator):
@@ -121,6 +146,19 @@ class KleeneDienesImplicator(Implicator):
         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
             raise ValueError("Inputs must be in range [0.0, 1.0].")
         return max(1.0 - a, b)
+    
+    def validate_params(cls, **kwargs):
+        """
+        @brief This class does not need parameter validation
+        """
+        pass
+
+    def _get_params(self)-> dict:
+        """
+        @brief no parameters
+        """
+        return {}
+
 
 @Implicator.register("reichenbach")
 class ReichenbachImplicator(Implicator):
@@ -131,6 +169,19 @@ class ReichenbachImplicator(Implicator):
         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
             raise ValueError("Inputs must be in range [0.0, 1.0].")
         return 1.0 - a + a * b
+    
+    def validate_params(cls, **kwargs):
+        """
+        @brief This class does not need parameter validation
+        """
+        pass
+
+    def _get_params(self)-> dict:
+        """
+        @brief no parameters
+        """
+        return {}
+
 
 @Implicator.register("lukasiewicz","luk")
 class LukasiewiczImplicator(Implicator):
@@ -141,6 +192,19 @@ class LukasiewiczImplicator(Implicator):
         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
             raise ValueError("Inputs must be in range [0.0, 1.0].")
         return min(1.0, 1.0 - a + b)
+    
+    def validate_params(cls, **kwargs):
+        """
+        @brief This class does not need parameter validation
+        """
+        pass
+
+    def _get_params(self)-> dict:
+        """
+        @brief no parameters
+        """
+        return {}
+
 
 # @Implicator.register("goguen", "product")
 # class GoguenImplicator(Implicator):

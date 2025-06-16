@@ -9,9 +9,10 @@
 - Add Yager tnorm and tests
 - Dependency Injection
 - use keel to generate datasets for testing
-
-
-
-
-commit number
-247617e
+- check all def validate_params(cls, **kwargs): to be implemented and have cls not self.
+-update def name(self) -> str: with all classes that inherit mixin?no, automate this
+-make sure all classes inherited from mixin, have validate_params(cls, **kwargs), and _get_params(self)
+- update def get_logger(cls): for that import
+- def from_dict(cls, similarity_matrix, labels, data: dict) have different signatures with mixin and chain of inheritance
+- 
+	

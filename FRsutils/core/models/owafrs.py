@@ -21,7 +21,7 @@ Extends fuzzy rough approximation using OWA weights for more flexible decision r
 
 import FRsutils.core.tnorms as tn
 import FRsutils.core.owa_weights as owa_weights
-from FRsutils.core.approximations import BaseFuzzyRoughModel
+from FRsutils.core.models.fuzzy_rough_model import BaseFuzzyRoughModel
 import FRsutils.core.implicators as imp
 from FRsutils.utils.logger.logger_util import get_logger
 import numpy as np
@@ -88,7 +88,7 @@ class OWAFRS(BaseFuzzyRoughModel):
     def describe_params_detailed(self) -> dict:
         return {
             "tnorm": self.tnorm.describe_params_detailed(),
-            "implicator": self.implicator.get_params_detailed(),
+            "implicator": self.implicator.describe_params_detailed(),
             "lower_app_weights_method": {"type": "str", "value": "inf_weights_linear"},
             "upper_app_weights_method": {"type": "str", "value": "sup_weights_linear"}
         }

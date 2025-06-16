@@ -25,7 +25,7 @@ from abc import ABC, abstractmethod
 from FRsutils.utils.constructor_utils.registry_factory_mixin import RegistryFactoryMixin
 from FRsutils.core.tnorms import TNorm
 
-class Similarity(ABC, RegistryFactoryMixin):
+class Similarity(RegistryFactoryMixin):
     """
     @brief Abstract base class for all similarity functions.
 
@@ -56,6 +56,8 @@ class Similarity(ABC, RegistryFactoryMixin):
         @brief Optional parameter validation for subclass-specific settings.
         """
         pass
+
+   
 
 
 
@@ -95,6 +97,12 @@ class LinearSimilarity(Similarity):
     def compute(self, diff: np.ndarray) -> np.ndarray:
         self._validate_diff(diff)
         return np.maximum(0.0, 1.0 - np.abs(diff))
+    
+    def _get_params(self)-> dict:
+        """
+        @brief no parameters
+        """
+        return {}
 
 
 @Similarity.register("gaussian", "gauss")
