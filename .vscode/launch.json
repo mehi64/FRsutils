@@ -229,11 +229,11 @@
             }
         },
         {
-            "name": "Tst Dbg validation Utils",
+            "name": "Tst Dbg tnorm core functionality",
             "type": "debugpy",
             "request": "launch",
             "module": "pytest",
-            "args": ["tests/utils_tests/validation_utils_tests/test_validation_utils.py"],
+            "args": ["tests/core_tests/test_tnorms_core_functionality.py"],
             "console": "integratedTerminal",
             "justMyCode": true,
             "cwd": "${workspaceFolder}",
@@ -242,13 +242,26 @@
             }
         },
         {
-            "name": "Tst Dbg tnorm core functionality",
+            "name": "Tst itfrs",
             "type": "debugpy",
             "request": "launch",
             "module": "pytest",
-            "args": ["tests/core_tests/test_tnorms_core_functionality.py"],
+            "args": ["tests/models_tests/test_itfrs.py"],
             "console": "integratedTerminal",
-            "justMyCode": true,
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}",
+            "env": {
+              "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "Tst vqrs",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": ["tests/models_tests/test_vqrs.py"],
+            "console": "integratedTerminal",
+            "justMyCode": false,
             "cwd": "${workspaceFolder}",
             "env": {
               "PYTHONPATH": "${workspaceFolder}"

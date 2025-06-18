@@ -75,20 +75,26 @@ class FuzzyRoughModel(RegistryFactoryMixin, BaseComponentWithLogger):
         """
         return self.lower_approximation()
 
-    def to_dict(self) -> dict:
+    @abstractmethod
+    def to_dict(self, include_data: bool = False) -> dict:
         """
-        @brief Placeholder for serialization logic.
+        @param include_data: If True, include similarity matrix and labels in output.
+        @return: Serialized dictionary representation of the model.
+        """
+        raise NotImplementedError
 
-        @return: Raise if not implemented.
+
+    @classmethod
+    @abstractmethod
+    def from_dict(cls, data: dict, similarity_matrix=None, labels=None, logger=None):
         """
-        raise NotImplementedError("Subclasses must implement to_dict().")
-    
-    def from_dict(cls, 
-                  similarity_matrix, 
-                  labels, 
-                  data: dict):
-        raise NotImplementedError("Subclasses must implement from_dict().")
-                  
+        @param data: Serialized dict.
+        @param similarity_matrix: Optional matrix override.
+        @param labels: Optional label override.
+        @param logger: Optional logger override.
+        @return: Reconstructed model instance.
+        """
+        raise NotImplementedError       
 
     @classmethod
     def validate_params_base(cls, **kwargs):
@@ -109,3 +115,17 @@ class FuzzyRoughModel(RegistryFactoryMixin, BaseComponentWithLogger):
             raise ValueError("All similarity values must be in the range [0.0, 1.0].")
         if len(labels) != similarity_matrix.shape[0]:
             raise ValueError("Length of labels must match similarity_matrix size.")
+
+    @classmethod
+    @abstractmethod
+    def from_config(cls, config: dict, similarity_matrix=None, labels=None, logger=None):
+        """
+        @brief Alternate constructor from flat config dict.
+
+        @param config: Config dictionary.
+        @param similarity_matrix: Optional matrix.
+        @param labels: Optional labels.
+        @param logger: Optional logger.
+        @return: Model instance.
+        """
+        raise NotImplementedError("Subclasses must implement from_config().")

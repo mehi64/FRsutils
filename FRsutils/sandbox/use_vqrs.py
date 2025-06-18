@@ -2,9 +2,9 @@ import numpy as np
 from FRsutils.core.similarities import Similarity, calculate_similarity_matrix
 from FRsutils.core.fuzzy_quantifiers import FuzzyQuantifier
 from FRsutils.core.models.vqrs import VQRS
-from FRsutils.utils.logger.logger_util import get_logger
 import tests.syntetic_data_for_tests as sdf
 from FRsutils.core.models.fuzzy_rough_model import FuzzyRoughModel as FRMODEL
+from FRsutils.utils.logger.logger_util import get_logger
 
 
 data_synthteic = sdf.syntetic_dataset_factory()
@@ -53,12 +53,21 @@ args_ = {'similarity_matrix': sim_matrix,
 
 frmodel = FRMODEL.create(name='vqrs', strict=False, **args_)
 
-model_cls = FRMODEL.get_class("vqrs")
-vqrs_model = model_cls.from_config(similarity_matrix=sim_matrix,
-                                   labels=y,
-                                    alpha_lower=0.1, beta_lower=0.6,
-                                    alpha_upper=0.2, beta_upper=1.0,
-                                    fuzzy_quantifier="quadratic")
+# model_cls = FRMODEL.get_class("vqrs")
+# vqrs_model = model_cls.from_config(similarity_matrix=sim_matrix,
+#                                    labels=y,
+#                                     alpha_lower=0.1, beta_lower=0.6,
+#                                     alpha_upper=0.2, beta_upper=1.0,
+#                                     fuzzy_quantifier="quadratic")
+
+conf = frmodel.to_dict(include_data=True)
+vqrs_model = FRMODEL.get_class("vqrs").from_config(conf)
+
+conf2 = frmodel.to_dict(include_data=False)
+vqrs_model2 = FRMODEL.get_class("vqrs").from_config(conf2,sim_matrix,y)
+
+vqrs_model3 = FRMODEL.get_class("vqrs").from_dict(conf2,sim_matrix,y)
+
 
 upper1 = frmodel.upper_approximation()
 lower1 = frmodel.lower_approximation()
@@ -66,10 +75,21 @@ lower1 = frmodel.lower_approximation()
 upper2 = vqrs_model.upper_approximation()
 lower2 = vqrs_model.lower_approximation()
 
+upper3 = vqrs_model2.upper_approximation()
+lower3 = vqrs_model2.lower_approximation()
+
+upper4 = vqrs_model3.upper_approximation()
+lower4 = vqrs_model3.lower_approximation()
+
 # print("tnorm:", tnorm.name)
 # print("implicator:", implicator.name)
+print("Lower Approximation:", lower4)
+print("Lower Approximation:", lower3)
 print("Lower Approximation:", lower2)
 print("Lower Approximation:", lower1)
+
+print("Upper Approximation:", upper4)
+print("Upper Approximation:", upper3)
 print("Upper Approximation:", upper2)
 print("Upper Approximation:", upper1)
 

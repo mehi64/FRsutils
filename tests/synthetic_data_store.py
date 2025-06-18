@@ -163,3 +163,106 @@ def get_similarity_testing_testsets():
             }
         }
     ]
+
+def get_ITFRS_testing_testsets():
+    Reichenbach_lowerBound = np.array([0.63, 0.65, 0.45, 0.26, 0.26])
+    KD_lowerBound = np.array([0.63, 0.65, 0.45, 0.26, 0.26])
+    Luk_lowerBound = np.array([0.63, 0.65, 0.45, 0.26, 0.26])
+    Goedel_lowerBound = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+    Gaines_lowerBound = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+
+    prod_tn_upperBound = np.array([0.54, 0.54, 0.73, 0.29, 0.73])
+    min_tn_upperBound = np.array([0.54, 0.54, 0.73, 0.29, 0.73])
+
+    return [
+        {
+            "name": "itfrs",
+            "y" : np.array([1, 1, 0, 1, 0]),
+
+            "sim_matrix": np.array([
+            [1.00, 0.54, 0.37, 0.19, 0.10],
+            [0.54, 1.00, 0.35, 0.29, 0.20],
+            [0.37, 0.35, 1.00, 0.55, 0.73],
+            [0.19, 0.29, 0.55, 1.00, 0.74],
+            [0.10, 0.20, 0.73, 0.74, 1.00]
+        ]),
+
+            "expected": 
+            {
+                "Reichenbach_lowerBound" : Reichenbach_lowerBound,
+                "KD_lowerBound" : KD_lowerBound,
+                "Luk_lowerBound" : Luk_lowerBound,
+                "Goedel_lowerBound" : Goedel_lowerBound,
+                "Gaines_lowerBound" : Gaines_lowerBound,
+                "prod_tn_upperBound" : prod_tn_upperBound,
+                "min_tn_upperBound" : min_tn_upperBound
+
+            }
+        }
+    ]
+
+def get_VQRS_testing_testsets():
+    
+    return [
+        {
+            "name": "vqrs",
+            "y" : np.array([1, 1, 0, 1, 0]),
+            "sim_matrix": np.array([
+            [1.00, 0.54, 0.37, 0.19, 0.10],
+            [0.54, 1.00, 0.35, 0.29, 0.20],
+            [0.37, 0.35, 1.00, 0.55, 0.73],
+            [0.19, 0.29, 0.55, 1.00, 0.74],
+            [0.10, 0.20, 0.73, 0.74, 1.00]
+        ]),
+            "alpha_lower" : 0.1,
+            "beta_lower"  :0.6,
+            "alpha_upper" :0.2,
+            "beta_upper"  :1.0,
+
+            "expected": 
+            {
+                "upper_bound_quadratic" : np.array([0.521049496528125,	0.50362976378912,	0.085078125,	0.015835966374605,	0.141019503319767628125]),
+                "lower_bound_quadratic" : np.array([1.0,	1.0,	0.5582,	0.2344383779189888,	0.718538097101394872]),
+                "upper_bound_linear" : np.array([0.521049496528125,	0.50362976378912,	0.085078125,	0.015835966374605,	0.141019503319767628125]),
+                "lower_bound_linear" : np.array([1.0,	1.0,	0.5582,	0.2344383779189888,	0.718538097101394872])
+
+            }
+        }
+    ]
+
+def get_OWAFRS_testing_testsets():
+    pass
+    # owa_linear_Reichenbach_lowerBound = np.array([0.822 , 0.8, 0.599, 0.539, 0.624])
+    # owa_linear_KD_lowerBound = np.array([0.822 , 0.8, 0.599, 0.539, 0.624])
+    # Luk_lowerBound = np.array([0.63, 0.65, 0.45, 0.26, 0.26])
+    # Goedel_lowerBound = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+    # Gaines_lowerBound = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+
+    # prod_tn_upperBound = np.array([0.54, 0.54, 0.73, 0.29, 0.73])
+    # min_tn_upperBound = np.array([0.54, 0.54, 0.73, 0.29, 0.73])
+
+    # return [
+    #     {
+    #         "name": "owafrs",
+    #         "y" : np.array([1, 1, 0, 1, 0]),
+
+    #         "sim_matrix": np.array([
+    #         [1.00, 0.54, 0.37, 0.19, 0.10],
+    #         [0.54, 1.00, 0.35, 0.29, 0.20],
+    #         [0.37, 0.35, 1.00, 0.55, 0.73],
+    #         [0.19, 0.29, 0.55, 1.00, 0.74],
+    #         [0.10, 0.20, 0.73, 0.74, 1.00]
+    #     ]),
+
+    #         "expected": 
+    #         {
+    #             "Reichenbach_lowerBound" : Reichenbach_lowerBound,
+    #             "KD_lowerBound" : KD_lowerBound,
+    #             "Luk_lowerBound" : Luk_lowerBound,
+    #             "Goedel_lowerBound" : Goedel_lowerBound,
+    #             "Gaines_lowerBound" : Gaines_lowerBound,
+    #             "prod_tn_upperBound" : prod_tn_upperBound,
+    #             "min_tn_upperBound" : min_tn_upperBound
+    #         }
+    #     }
+    # ]

@@ -21,7 +21,6 @@ using a fuzzy implicator and a T-norm operator over a similarity matrix.
 ##############################################
 """
 
-from FRsutils.utils.constructor_utils.lazy_buildable_from_config_mixin import LazyBuildableFromConfigMixin
 from FRsutils.core.models.fuzzy_rough_model import FuzzyRoughModel
 import FRsutils.core.tnorms as tn
 import FRsutils.core.implicators as imp
@@ -41,19 +40,19 @@ class ITFRS(FuzzyRoughModel):
     def __init__(self, 
                  similarity_matrix: np.ndarray, 
                  labels: np.ndarray, 
-                 tnorm: tn.TNorm, 
-                 implicator: imp.Implicator,
+                 ub_tnorm: tn.TNorm, 
+                 lb_implicator: imp.Implicator,
                  logger=None):
         super().__init__(similarity_matrix,
                           labels,
                           logger=logger)
         self.logger.debug(f"{self.__class__.__name__} initialized.")
 
-        self.validate_params(tnorm=tnorm, 
-                             implicator=implicator)
+        self.validate_params(ub_tnorm=ub_tnorm, 
+                             lb_implicator=lb_implicator)
 
-        self.tnorm = tnorm
-        self.implicator = implicator
+        self.ub_tnorm = ub_tnorm
+        self.lb_implicator = lb_implicator
 
     def lower_approximation(self) -> np.ndarray:
         """
@@ -62,7 +61,7 @@ class ITFRS(FuzzyRoughModel):
         @return: Lower approximation array (n,)
         """
         label_mask = (self.labels[:, None] == self.labels[None, :]).astype(float)
-        implication_vals = self.implicator(self.similarity_matrix, label_mask)
+        implication_vals = self.lb_implicator(self.similarity_matrix, label_mask)
         np.fill_diagonal(implication_vals, 1.0)
         return np.min(implication_vals, axis=1)
 
@@ -73,35 +72,56 @@ class ITFRS(FuzzyRoughModel):
         @return: Upper approximation array (n,)
         """
         label_mask = (self.labels[:, None] == self.labels[None, :]).astype(float)
-        tnorm_vals = self.tnorm(self.similarity_matrix, label_mask)
+        tnorm_vals = self.ub_tnorm(self.similarity_matrix, label_mask)
         np.fill_diagonal(tnorm_vals, 0.0)
         return np.max(tnorm_vals, axis=1)
 
-    def to_dict(self) -> dict:
+    def to_dict(self, include_data: bool = False) -> dict:
         """
-        @brief Serialize the ITFRS instance to dictionary.
+        @brief Serialize the ITFRS model to a dictionary.
 
-        @return: Serializable dict including type and operator info.
+        @param include_data: If True, include similarity_matrix and labels in the output.
+
+        @return: Dictionary representation of the model.
         """
-        return {
+        data = {
             "type": "itfrs",
-            "tnorm": self.tnorm.to_dict(),
-            "implicator": self.implicator.to_dict()
+            "ub_tnorm": self.ub_tnorm.to_dict(),
+            "lb_implicator": self.lb_implicator.to_dict()
         }
 
-    @classmethod
-    def from_dict(cls, similarity_matrix, labels, data: dict) -> 'ITFRS':
-        """
-        @brief Reconstruct ITFRS model from serialized dictionary.
+        if include_data:
+            data["similarity_matrix"] = self.similarity_matrix.tolist()
+            data["labels"] = self.labels.tolist()
 
-        @param similarity_matrix: Matrix used for similarity
-        @param labels: Class label vector
-        @param data: Serialized dictionary
+        return data
+
+
+    @classmethod
+    def from_dict(cls, data: dict, similarity_matrix=None, labels=None, logger=None) -> "ITFRS":
+        """
+        @brief Reconstruct an ITFRS model from a serialized dictionary.
+
+        @param data: Serialized dictionary (from to_dict)
+        @param similarity_matrix: Optional matrix to override or fill in if not in data
+        @param labels: Optional label vector to override or fill in if not in data
+        @param logger: Optional logger
+
         @return: ITFRS instance
         """
-        tnorm = tn.TNorm.from_dict(data["tnorm"])
-        implicator = imp.Implicator.from_dict(data["implicator"])
-        return cls(similarity_matrix, labels, tnorm, implicator)
+        
+        # Rebuild operators
+        tnorm = tn.TNorm.from_dict(data["ub_tnorm"])
+        implicator = imp.Implicator.from_dict(data["lb_implicator"])
+
+        # Use matrix and labels from dict if present, else fallback to args
+        sim = np.array(data["similarity_matrix"]) if "similarity_matrix" in data else similarity_matrix
+        lbl = np.array(data["labels"]) if "labels" in data else labels
+
+        if sim is None or lbl is None:
+            raise ValueError("similarity_matrix and labels must be provided either in data or as arguments.")
+
+        return cls(sim, lbl, tnorm, implicator, logger=logger)
 
     def describe_params_detailed(self) -> dict:
         """
@@ -110,8 +130,8 @@ class ITFRS(FuzzyRoughModel):
         @return: Dictionary describing parameters of components.
         """
         return {
-            "tnorm": self.tnorm.describe_params_detailed(),
-            "implicator": self.implicator.describe_params_detailed()
+            "ub_tnorm": self.ub_tnorm.describe_params_detailed(),
+            "lb_implicator": self.lb_implicator.describe_params_detailed()
         }
     
     def _get_params(self) -> dict:
@@ -121,8 +141,8 @@ class ITFRS(FuzzyRoughModel):
         @return: Dictionary containing T-norm and implicator used in itfrs.
         """
         return {
-            "tnorm": self.tnorm,
-            "implicator": self.implicator,
+            "ub_tnorm": self.ub_tnorm,
+            "lb_implicator": self.lb_implicator,
             "similarity_matrix":self.similarity_matrix,
             "labels":self.labels
         }
@@ -134,44 +154,46 @@ class ITFRS(FuzzyRoughModel):
 
         @param kwargs
         """
-        cls.get_logger().debug("itfrs debug message")
-
-        tnrm = kwargs.get("tnorm")
+        
+        tnrm = kwargs.get("ub_tnorm")
         if tnrm is None or not isinstance(tnrm, tn.TNorm):
             raise ValueError("Parameter 'tnorm' must be provided and be an instance of derived classes from TNorm.")
 
-        impli = kwargs.get("implicator")
+        impli = kwargs.get("lb_implicator")
         if impli is None or not isinstance(impli, imp.Implicator):
             raise ValueError("Parameter 'implicator' must be provided and be an instance of derived classes from Implicator.")
 
 
     @classmethod
-    def from_config(cls, similarity_matrix, labels, **kwargs):
+    def from_config(cls, config: dict, similarity_matrix=None, labels=None) -> "ITFRS":
         """
-        @brief Alternate constructor for ITFRS using flexible kwargs.
+        @brief Create an ITFRS instance from a configuration dictionary.
 
-        Accepts flat parameters:
-        - tnorm: optional direct TNorm object
-        - implicator: optional direct Implicator object
-        - tnorm_name: name of T-norm (e.g. 'minimum') if tnorm not given
-        - implicator_name: name of Implicator (e.g. 'lukasiewicz') if implicator not given
-        - any extra kwargs forwarded to TNorm or Implicator based on their param signatures
-
-        @param similarity_matrix: Similarity matrix (n x n)
-        @param labels: Target labels (n,)
-        @param kwargs: Flat config dict
+        @param config: Serialized config dict (can include tnorm, implicator, and optionally data)
+        @param similarity_matrix: Optional override for similarity matrix
+        @param labels: Optional override for label vector
         @return: ITFRS instance
         """
-        tnorm = kwargs.get("tnorm")
-        lb_implicator = kwargs.get("implicator")
 
-        # Attempt registry-based creation if objects not passed directly
-        if tnorm is None:
-            ub_tnorm_name = kwargs.get("ub_tnorm_name", "minimum")
-            ub_tnorm = tn.TNorm.create(ub_tnorm_name, **kwargs)
-        if lb_implicator is None:
-            implicator_name = kwargs.get("lb_implicator_name", "lukasiewicz")
-            lb_implicator = imp.Implicator.create(implicator_name, **kwargs)
+        # Load operators from dict or registry
+        ub_tnorm = config.get("ub_tnorm")
+        if isinstance(ub_tnorm, dict):
+            ub_tnorm = tn.TNorm.from_dict(ub_tnorm)
+        elif ub_tnorm is None:
+            ub_tnorm = tn.TNorm.create(config.get("ub_tnorm_name", "minimum"), **config)
 
-        logger = kwargs.get("logger", None)
-        return cls(similarity_matrix, labels, ub_tnorm, lb_implicator, logger=logger)
+        lb_implicator = config.get("lb_implicator")
+        if isinstance(lb_implicator, dict):
+            lb_implicator = imp.Implicator.from_dict(lb_implicator)
+        elif lb_implicator is None:
+            lb_implicator = imp.Implicator.create(config.get("lb_implicator_name", "lukasiewicz"), **config)
+
+        # Handle matrix and labels
+        sim = similarity_matrix if similarity_matrix is not None else (np.array(config["similarity_matrix"]) if "similarity_matrix" in config else None)
+        lbl = labels if labels is not None else (np.array(config["labels"]) if "labels" in config else None)
+
+        if sim is None or lbl is None:
+            raise ValueError("similarity_matrix and labels must be provided either as arguments or in the config dictionary.")
+
+        logger = config.get("logger", None)
+        return cls(sim, lbl, ub_tnorm, lb_implicator, logger=logger)

@@ -1,2 +1,2 @@
 all __inits__ must call validate_params because create method uses __init__
-
+therefore in just one place, validation is checked. Even in factories, inside create, __init__ function is called.
