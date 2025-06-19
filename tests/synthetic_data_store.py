@@ -6,7 +6,7 @@ Provides structured test datasets for verifying T-norms, Implicators, and other 
 
 import numpy as np
 
-def get_tnorm_scalar_testsets():
+def get_tnorm_call_testsets():
     return [
         {
             "name": "basic_tnorms_DS_1",
@@ -24,11 +24,12 @@ def get_tnorm_scalar_testsets():
                 "minimum": np.array([0.18, 0.18, 0.88, 0.48, 1.0, 0.0, 0.65, 0.37]),
                 "product": np.array([0.1314, 0.1314, 0.7744, 0.4368, 1.00, 0.00, 0.65, 0.37]),
                 "lukasiewicz": np.array([0.0, 0.0, 0.76, 0.39, 1.00, 0.00, 0.65, 0.37]),
-                "drastic_product": np.array([0.00, 0.00, 0.00, 0.00, 1.00, 0.00, 0.65, 0.37]),
-                "hamacher_product": np.array([0.168764, 0.168764, 0.785714, 0.458246, 1.00, 0.00, 0.65, 0.37]),
+                "drastic": np.array([0.00, 0.00, 0.00, 0.00, 1.00, 0.00, 0.65, 0.37]),
+                "hamacher": np.array([0.168764, 0.168764, 0.785714, 0.458246, 1.00, 0.00, 0.65, 0.37]),
                 "einstein": np.array([0.107581, 0.107581, 0.763407, 0.417271, 1.00, 0.00, 0.65, 0.37]),
-                "nilpotent_min": np.array([0.00, 0.00, 0.88, 0.48, 1.00, 0.00, 0.65, 0.37]),
-                "yager_p=0.835": np.array([0.00, 0.00, 0.724771, 0.332934, 1.00, 0.00, 0.65, 0.37])
+                "nilpotent": np.array([0.00, 0.00, 0.88, 0.48, 1.00, 0.00, 0.65, 0.37]),
+                "yager_p=0.835": np.array([0.00, 0.00, 0.724771, 0.332934, 1.00, 0.00, 0.65, 0.37]),
+                "yager_p=5.0": np.array([0.179366244, 0.179366244, 0.8621561974, 0.4799838489, 1.00, 0.00, 0.65, 0.37])
             }
         }
     ]

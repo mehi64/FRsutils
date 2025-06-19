@@ -229,6 +229,19 @@
             }
         },
         {
+            "name": "Tst tnorms",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": ["tests/core_tests/test_tnorms.py"],
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}",
+            "env": {
+              "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
             "name": "Tst Dbg tnorm core functionality",
             "type": "debugpy",
             "request": "launch",

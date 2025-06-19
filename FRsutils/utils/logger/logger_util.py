@@ -333,7 +333,7 @@ def _detect_env():
     
     return "runtime"
 
-def get_logger(env=None):
+def get_logger(env=None, experiment_name=None):
     env = env or _detect_env()
     # print("logger type: ", env)
     if env == "debug":
@@ -342,7 +342,12 @@ def get_logger(env=None):
                            log_to_file=False, 
                            level=logging.DEBUG)
     elif env == "test":
-        return _TinyLogger(name="test_logger", log_to_console=False, log_to_file=False)
+        return _TinyLogger(name="test_logger", 
+                           log_to_console=False, 
+                           log_to_file=True,
+                           file_path='test_logs.csv',
+                           log_file_extension='csv',
+                           experiment_name=experiment_name)
     elif env == "runtime":
         return _TinyLogger(name="runtime_logger", 
                            log_to_console=True, 

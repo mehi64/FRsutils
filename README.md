@@ -39,7 +39,7 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
   - Weber
   - Frank
   - Sugeno–Weber
-- T-norms
+- T-norms (See [fuzzy tnorms](tnorms_info.md))
   - Min tnorm
   - Product tnorm
   - Lukasiewicz tnorm
@@ -48,8 +48,6 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
   - EinsteinProduct tnorm
   - HamacherProduct tnorm
   - NilpotentMinimum tnorm
-  - Lambda tnorm
-  - Custom tnorm developed by user
 - OWA weights (Ordered Weighted Average)
   - Linear
 - ITFRS (Implicator/T-norm Fuzzy-Rough Sets)

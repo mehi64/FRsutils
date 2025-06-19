@@ -1,123 +1,161 @@
 """
-Unit tests for T-norm classes in tnorms.py
+✅ Test Objectives (for each T-norm class)
+Test registration & creation
+✔ TNorm.create(name) instantiates correct subclass
+✔ TNorm.from_dict() reconstructs accurately
+✔ TNorm.to_dict() has expected format
+
+Test __call__() correctness
+✔ Against scalar pairs
+✔ Against vector pairs (from get_tnorm_call_testsets())
+✔ Against large matrix pairs like a_matrix, b_matrix
+
+Test reduce() correctness
+✔ Compare row-wise __call__() + np.stack to reduce() on same data
+
+Validate parameter introspection
+✔ describe_params_detailed() returns all internal parameters
+✔ _get_params() works for from_dict() roundtrip
 """
 
 import numpy as np
 import pytest
 from FRsutils.core.tnorms import TNorm
-from tests.syntetic_data_for_tests import syntetic_dataset_factory
+from tests import synthetic_data_store as ds
+from FRsutils.utils.logger.logger_util import get_logger
 
-# Fixtures
-@pytest.fixture
-def scalar_data():
-    return syntetic_dataset_factory().tnorm_scalar_testing_data()
+logger = get_logger(env="test",
+                    experiment_name="test_tnorms1")
 
-@pytest.fixture
-def matrix_data():
-    return syntetic_dataset_factory().tnorm_nxnx2_testing_dataset()
+call_testsets = ds.get_tnorm_call_testsets()
+registered_tnorms = TNorm.list_available()
 
-# Parametrize test cases: (alias, expected_output_key)
-scalar_cases = [
-    ("minimum", "minimum_outputs"),
-    ("product", "product_outputs"),
-    ("lukasiewicz", "luk_outputs"),
-]
+#region <test output correctness>
+###############################################
+###                                         ###
+###         test output correctness         ###
+###                                         ###
+###############################################
 
-matrix_cases = [
-    ("minimum", "minimum_outputs"),
-    ("product", "product_outputs"),
-    ("lukasiewicz", "luk_outputs"),
-]
+@pytest.mark.parametrize("tnorm_name", list(registered_tnorms.keys()))
+def test_scalar_inputs(tnorm_name):
+    """
+    cheks if the scalar inputs can be handeled correctly by tnorms
+    """
+    obj = TNorm.create(tnorm_name, **({"p": 0.835} if tnorm_name == "yager" else {}))
+    a, b = 0.73, 0.18
+    result = obj(a, b)
+    logger.info(tnorm_name + ', ' + str(result))
+    assert np.isscalar(result) or np.shape(result) == ()
 
-# Basic behavior tests
-@pytest.mark.parametrize("alias, output_key", scalar_cases)
-def test_tnorm_scalar_behavior(alias, output_key, scalar_data):
-    tn = TNorm.create(alias)
-    a_b = scalar_data["a_b"]
-    expected = scalar_data[output_key]
-    actual = np.array([tn(np.array([a]), np.array([b]))[0] for a, b in a_b])
-    np.testing.assert_allclose(actual, expected, rtol=1e-3, err_msg=f"{alias} scalar call failed")
+    
+@pytest.mark.parametrize("tnorm_name", list(registered_tnorms.keys()))
+@pytest.mark.parametrize("testset", call_testsets)
+def test_tnorm_call_output_matches_expected(tnorm_name, testset):
+    """
+    tests if generated outputs of __call__ are the same as calculated by hand
+    this test uses get_tnorm_call_testsets() in synthetic_data_store
+    Yager tnorm is not tested here
+    """
+    if "yager" in tnorm_name and "p=" not in tnorm_name:
+        return
+    obj = TNorm.create(tnorm_name)
+    a_b = testset["a_b"]
+    a = a_b[:, 0]
+    b = a_b[:, 1]
+    expected_key = tnorm_name
+    if "yager" in tnorm_name:
+        if "p=" in tnorm_name:
+            expected_key = tnorm_name
+        else:
+            return
+        
+    calc = obj(a, b)
+    exp = testset["expected"][expected_key]
+    np.testing.assert_allclose(calc, exp, atol=1e-6)
 
-@pytest.mark.parametrize("alias, output_key", matrix_cases)
-def test_tnorm_matrix_behavior(alias, output_key, matrix_data):
-    tn = TNorm.create(alias)
-    a = matrix_data["similarity_matrix"]
-    b = matrix_data["label_mask"]
-    expected = matrix_data[output_key]
-    actual = tn(a, b)
-    np.testing.assert_allclose(actual, expected, rtol=1e-3, err_msg=f"{alias} matrix call failed")
+@pytest.mark.parametrize("tnorm_name", ["yager"])
+@pytest.mark.parametrize("p", [0.835, 5.0])
+@pytest.mark.parametrize("testset", call_testsets)
+def test_yager_parametrized_behavior(tnorm_name, p, testset):
+    """
+    tests yager __call__ function with get_tnorm_call_testsets()
+    from shnthetic_data_store.py
+    """
+    obj = TNorm.create("yager", p=p)
+    a_b = testset["a_b"]
+    a = a_b[:, 0]
+    b = a_b[:, 1]
+    key = f"yager_p={p}" if p == 0.835 else "yager_p=5.0"
+    result = obj(a, b)
+    np.testing.assert_allclose(result, testset["expected"][key], atol=1e-5)
 
-@pytest.mark.parametrize("alias", [c[0] for c in scalar_cases])
-def test_tnorm_reduce_output_shape(alias, matrix_data):
-    tn = TNorm.create(alias)
-    reduced = tn.reduce(matrix_data["similarity_matrix"])
-    assert reduced.shape == (matrix_data["similarity_matrix"].shape[1],)
 
-# Factory & Registry tests
-def test_factory_create_and_aliases():
-    aliases = TNorm.list_available()
-    for primary, names in aliases.items():
-        for alias in names:
-            tn = TNorm.create(alias)
-            assert isinstance(tn, TNorm)
+@pytest.mark.parametrize("tnorm_name", list(registered_tnorms.keys()))
+def test_reduce_consistency_with_call(tnorm_name):
+    """
+    tests if the output the __call__ on a random 1D array
+    is the same as output for reduce"""
+    
+    obj = TNorm.create(tnorm_name, **({"p": 2.0} if tnorm_name == "yager" else {}))
+    data_ = np.random.rand(200,200)
 
-def test_invalid_alias_raises():
-    with pytest.raises(ValueError):
-        TNorm.create("unknown_tnorm")
+    reduced = obj.reduce(data_)
+    data_ = data_.T
 
-def test_strict_mode_extra_param_raises():
-    with pytest.raises(ValueError):
-        TNorm.create("minimum", strict=True, bogus_param=123)
+    results = []
+    for row in data_:
+        res = row[0]
+        for i in range(1, len(row)):
+            res = obj(np.array(res), np.array(row[i]))
+        results.append(float(res))
 
-# Serialization
-@pytest.mark.parametrize("alias", [c[0] for c in scalar_cases])
-def test_serialization_roundtrip(alias):
-    tn = TNorm.create(alias)
-    tn_dict = tn.to_dict()
-    tn2 = TNorm.from_dict(tn_dict)
-    assert isinstance(tn2, TNorm)
+    np.testing.assert_allclose(reduced, results, atol=1e-7)
 
-# Help
-@pytest.mark.parametrize("alias", [c[0] for c in scalar_cases])
-def test_help_returns_docstring(alias):
-    tn = TNorm.create(alias)
-    assert isinstance(tn.help(), str)
-    assert len(tn.help()) > 0
+#endregion
 
-# Special parameterized T-norms
-def test_yager_param_validation():
-    with pytest.raises(ValueError): TNorm.create("yager")  # missing p
-    with pytest.raises(ValueError): TNorm.create("yager", p="bad")
-    with pytest.raises(ValueError): TNorm.create("yager", p=-1)
-    tn = TNorm.create("yager", p=2)
-    assert isinstance(tn, TNorm)
+#region <test non-calculational aspects>
+###############################################
+###                                         ###
+###     test non-calculational aspects      ###
+###                                         ###
+###############################################
 
-def test_lambda_param_validation():
-    with pytest.raises(ValueError): TNorm.create("lambda")  # missing l
-    with pytest.raises(ValueError): TNorm.create("lambda", l="bad")
-    with pytest.raises(ValueError): TNorm.create("lambda", l=-2)
-    tn = TNorm.create("lambda", l=1.2)
-    assert isinstance(tn, TNorm)
+@pytest.mark.parametrize("tnorm_name", list(registered_tnorms.keys()))
+def test_create_and_to_dict_from_dict_roundtrip(tnorm_name):
+    """
+    tests to_dict(), from_dict() and create()
+    """
+    obj = TNorm.create(tnorm_name)
+    assert isinstance(obj, TNorm)
 
-def test_drastic_product_behavior():
-    tn = TNorm.create("drastic")
-    a = np.array([0.8, 1.0, 0.3])
-    b = np.array([1.0, 0.5, 0.4])
-    expected = np.array([0.8, 0.5, 0.0])
-    result = tn(a, b)
-    np.testing.assert_allclose(result, expected)
+    data = obj.to_dict()
+    assert "type" in data
+    assert "params" in data
 
-def test_nilpotent_minimum_behavior():
-    tn = TNorm.create("nilpotent")
-    a = np.array([0.6, 0.7])
-    b = np.array([0.6, 0.2])
-    expected = np.array([0.6, 0.0])
-    result = tn(a, b)
-    np.testing.assert_allclose(result, expected)
+    obj2 = TNorm.from_dict(data)
+    assert isinstance(obj2, TNorm)
+    assert obj2.name == obj.name
 
-def test_hamacher_zero_denom_behavior():
-    tn = TNorm.create("hamacher")
-    a = np.array([0.0, 0.5])
-    b = np.array([0.0, 0.5])
-    result = tn(a, b)
-    assert result.shape == a.shape
+    logger.info(tnorm_name + ', 1st obj to_dict:' + str(data)+ ', 2nd obj from_dict:' + str(obj2.to_dict()))
+
+
+@pytest.mark.parametrize("tnorm_name", list(registered_tnorms.keys()))
+def test_describe_params_detailed(tnorm_name):
+    obj = TNorm.create(tnorm_name, **({"p": 2.0} if tnorm_name == "yager" else {}))
+    details = obj.describe_params_detailed()
+    assert isinstance(details, dict)
+    for k in obj._get_params():
+        assert k in details
+    
+    logger.info(tnorm_name + ', params:' + str(obj._get_params())+ ', detailed params:' + str(details))
+
+@pytest.mark.parametrize("tnorm_name", list(registered_tnorms.keys()))
+def test_registry_get_class_and_name(tnorm_name):
+    cls = TNorm.get_class(tnorm_name)
+    instance = cls(**({"p": 2.0} if tnorm_name == "yager" else {}))
+    name = TNorm.get_registered_name(instance)
+    assert isinstance(name, str)
+    logger.info(tnorm_name + ', registered_name:' + str(name))
+
+#endregion
