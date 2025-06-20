@@ -94,7 +94,7 @@ def get_implicator_scalar_testsets():
                 "gaines": np.array([0.24657534246, 1.0, 1.0, 0.527472527, 1.0, 1.0]),
                 "goedel": np.array([0.18, 1.0, 1.0, 0.48, 1.0, 1.0]),
                 "lukasiewicz": np.array([0.45, 1.00, 1.00, 0.57, 1.00, 1.00]),
-                "kleene-dienes": np.array([0.27, 0.82, 0.88, 0.48, 1.00, 1.00]),
+                "kleenedienes": np.array([0.27, 0.82, 0.88, 0.48, 1.00, 1.00]),
                 "reichenbach": np.array([0.4014, 0.9514, 0.8944, 0.5268, 1.00, 1.00])
             }
         }

@@ -13,23 +13,22 @@ Supports registration, creation, serialization, and parameter validation.
 # create(name, **kwargs)	    Instantiate implicator from registry
 # list_available()		        Returns registered implicators
 # to_dict() / from_dict()	    Serialization / deserialization
-# help()				        Returns class-level documentation
+# help()			        Returns class-level documentation
 # validate_params()		        Validates constructor parameters
 # describe_params_detailed()	Returns parameter types and values
-# apply_pairwise_matrix()	    Applies implicator to matrix pairs
-# __call__()				    Smart dispatcher for scalar, vector, or matrix
+# __call__()			    Smart dispatcher for scalar, vector, or matrix
 
 # ✅ Summary Table of Design Patterns
-# Category				Name			    Usage & Where Applied
+# Category			Name		    Usage & Where Applied
 # ----------------------------------------------------------------------------------
-# Design Pattern		Factory Method		Implicator.create(name, **kwargs)
-# Design Pattern		Registry Pattern	Implicator._registry and register()
-# Design Pattern		Template Method		Defines abstract methods in base class
-# Design Pattern		Decorator		    @Implicator.register('name', ...)
-# Design Pattern		Strategy Pattern	Each subclass defines its own logic
-# Design Pattern		Adapter			    type-based to_dict/from_dict handling
-# Architecture		    Pluggable			No modification needed for extension
-# Clean Code			SRP, DRY, LSP, Fail-Fast, Docstring Documentation
+# Design Pattern	Factory Method		Implicator.create(name, **kwargs)
+# Design Pattern	Registry Pattern	Implicator._registry and register()
+# Design Pattern	Template Method		Defines abstract methods in base class
+# Design Pattern	Decorator	    @Implicator.register('name', ...)
+# Design Pattern	Strategy Pattern	Each subclass defines its own logic
+# Design Pattern	Adapter		    type-based to_dict/from_dict handling
+# Architecture	    Pluggable		No modification needed for extension
+# Clean Code		SRP, DRY, LSP, Fail-Fast, Docstring Documentation
 ##############################################
 """
 
@@ -79,14 +78,35 @@ class Implicator(RegistryFactoryMixin):
         @param b: Scalar float input.
         @return: Implicator value.
         """
-        pass
+        raise NotImplementedError("all subclasses must implement _compute_scalar")
+    
+
+    @classmethod
+    @abstractmethod
+    def validate_params(cls, **kwargs):
+        """
+        @brief Optional parameter validation hook for subclasses.
+        
+        @param kwargs: Parameters to validate.
+        """
+        raise NotImplementedError("all subclasses must implement validate_params")
+    
+    @abstractmethod
+    def _get_params(self)-> dict:
+        """
+        @brief Returns a dictionary of the implicator's parameters.
+        @return: Parameter dictionary.
+        """
+        raise NotImplementedError("all derived calsses need to implemet _get_params")
 
 
-##################### Non-parameterized implicators ############################
 
-# Non-parameterized implicators
+#region <Non-parameterized implicators>
 @Implicator.register("gaines")
 class GainesImplicator(Implicator):
+    """
+    @brief Gaines implicator: I(a, b) = 1 if a <= b; else b / a
+    """
     def __init__(self):
         self.validate_params()
 
@@ -102,6 +122,7 @@ class GainesImplicator(Implicator):
         else:
             return 0.0
         
+    @classmethod
     def validate_params(cls, **kwargs):
         """
         @brief This class does not need parameter validation
@@ -117,6 +138,9 @@ class GainesImplicator(Implicator):
 
 @Implicator.register("goedel")
 class GoedelImplicator(Implicator):
+    """
+    @brief Gödel implicator: I(a, b) = 1 if a <= b; else b
+    """
     def __init__(self):
         self.validate_params()
 
@@ -125,6 +149,7 @@ class GoedelImplicator(Implicator):
             raise ValueError("Inputs must be in range [0.0, 1.0].")
         return 1.0 if a <= b else b
     
+    @classmethod
     def validate_params(cls, **kwargs):
         """
         @brief This class does not need parameter validation
@@ -137,8 +162,11 @@ class GoedelImplicator(Implicator):
         """
         return {}
 
-@Implicator.register("kleene", "kleene-dienes")
+@Implicator.register("kleenedienes", "kleene")
 class KleeneDienesImplicator(Implicator):
+    """
+    @brief Kleene-Dienes implicator: I(a, b) = max(1 - a, b)
+    """
     def __init__(self):
         self.validate_params()
 
@@ -147,6 +175,7 @@ class KleeneDienesImplicator(Implicator):
             raise ValueError("Inputs must be in range [0.0, 1.0].")
         return max(1.0 - a, b)
     
+    @classmethod
     def validate_params(cls, **kwargs):
         """
         @brief This class does not need parameter validation
@@ -162,6 +191,9 @@ class KleeneDienesImplicator(Implicator):
 
 @Implicator.register("reichenbach")
 class ReichenbachImplicator(Implicator):
+    """
+    @brief Reichenbach implicator: I(a, b) = 1 - a + a * b
+    """
     def __init__(self):
         self.validate_params()
 
@@ -170,6 +202,7 @@ class ReichenbachImplicator(Implicator):
             raise ValueError("Inputs must be in range [0.0, 1.0].")
         return 1.0 - a + a * b
     
+    @classmethod
     def validate_params(cls, **kwargs):
         """
         @brief This class does not need parameter validation
@@ -185,6 +218,9 @@ class ReichenbachImplicator(Implicator):
 
 @Implicator.register("lukasiewicz","luk")
 class LukasiewiczImplicator(Implicator):
+    """
+    @brief Lukasiewicz implicator: I(a, b) = min(1, 1 - a + b)
+    """
     def __init__(self):
         self.validate_params()
         
@@ -193,6 +229,7 @@ class LukasiewiczImplicator(Implicator):
             raise ValueError("Inputs must be in range [0.0, 1.0].")
         return min(1.0, 1.0 - a + b)
     
+    @classmethod
     def validate_params(cls, **kwargs):
         """
         @brief This class does not need parameter validation
@@ -241,7 +278,9 @@ class LukasiewiczImplicator(Implicator):
 #             raise ValueError("Inputs must be in range [0.0, 1.0].")
 #         return 1.0 if a <= b else max(1.0 - a, b)
 
-##################### Parameterized implicators ############################
+#endregion
+
+#region<Parameterized implicators>
 
 
 
@@ -319,3 +358,5 @@ class LukasiewiczImplicator(Implicator):
 #         p = kwargs.get("p")
 #         if p is None or not isinstance(p, (int, float)):
 #             raise ValueError("Parameter 'p' must be a number")
+
+#endregion

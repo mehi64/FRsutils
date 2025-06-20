@@ -96,6 +96,7 @@ class MinTNorm(TNorm):
     def reduce(self, arr: np.ndarray) -> np.ndarray:
         return np.min(arr, axis=0)
 
+    @classmethod
     def validate_params(cls, **kwargs):
         """
         @brief This class does not need parameter validation
@@ -123,6 +124,7 @@ class ProductTNorm(TNorm):
     def reduce(self, arr: np.ndarray) -> np.ndarray:
         return np.prod(arr, axis=0)
 
+    @classmethod
     def validate_params(cls, **kwargs):
         """
         @brief This class does not need parameter validation
@@ -152,6 +154,7 @@ class LukasiewiczTNorm(TNorm):
             result = np.maximum(0.0, result + x - 1.0)
         return result
     
+    @classmethod
     def validate_params(cls, **kwargs):
         """
         @brief This class does not need parameter validation
@@ -184,6 +187,7 @@ class DrasticProductTNorm(TNorm):
             result = np.where(x == 1.0, result, np.where(result == 1.0, x, 0.0))
         return result
 
+    @classmethod
     def validate_params(cls, **kwargs):
         """
         @brief This class does not need parameter validation
@@ -221,6 +225,7 @@ class EinsteinProductTNorm(TNorm):
         """
         return {}
 
+    @classmethod
     def validate_params(cls, **kwargs):
         """
         @brief This class does not need parameter validation
@@ -251,6 +256,7 @@ class HamacherProductTNorm(TNorm):
 
         return result
 
+    @classmethod
     def validate_params(cls, **kwargs):
         """
         @brief This class does not need parameter validation
@@ -281,6 +287,7 @@ class NilpotentMinimumTNorm(TNorm):
             result = np.where((result + x) > 1.0, np.minimum(result, x), 0.0)
         return result
 
+    @classmethod
     def validate_params(cls, **kwargs):
         """
         @brief This class does not need parameter validation

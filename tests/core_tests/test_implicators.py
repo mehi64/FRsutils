@@ -1,122 +1,135 @@
-import pytest
+"""
+✅ Test Objectives (for each Implicator class)
+✔ Implicator.create(name) instantiates correct subclass
+✔ Implicator.from_dict() reconstructs accurately
+✔ Implicator.to_dict() has expected format
+
+✔ __call__() against scalar a, b
+✔ __call__() against test vector a and b from get_implicator_scalar_testsets()
+
+✔ describe_params_detailed() introspection
+✔ _get_params() works for from_dict() roundtrip
+"""
+
 import numpy as np
+import pytest
+from FRsutils.core.implicators import Implicator
+from tests import synthetic_data_store as ds
+from FRsutils.utils.logger.logger_util import get_logger
 
-import FRsutils.core.implicators as imp
+logger = get_logger(env="test", experiment_name="test_implicators")
+call_testsets = ds.get_implicator_scalar_testsets()
+registered_implicators = Implicator.list_available()
 
-import tests.syntetic_data_for_tests as sds
+#region <Output correctness>
+###############################################
+###           Output correctness            ###
+###############################################
 
-
-@pytest.mark.parametrize("func", [
-    imp.imp_goedel,
-    imp.imp_lukasiewicz,
-    imp.imp_gaines,
-    imp.imp_kleene_dienes,
-    imp.imp_reichenbach
-])
-def test_implicators_valid_range(func):
-    a = 0.3
-    b = 0.7
-    result = func(a, b)
-    assert 0.0 <= result <= 1.0, f"{func.__name__} produced value out of range"
-
-@pytest.mark.parametrize("func", [
-    imp.imp_goedel,
-    imp.imp_lukasiewicz,
-    imp.imp_gaines,
-    imp.imp_kleene_dienes,
-    imp.imp_reichenbach
-])
-@pytest.mark.parametrize("a,b", [
-    (-0.1, 0.5),
-    (1.1, 0.5),
-    (0.5, -0.2),
-    (0.5, 1.2)
-])
-def test_implicators_invalid_input(func, a, b):
-    with pytest.raises(ValueError):
-        func(a, b)
-
-def test_imp_goedel_behavior():
-    assert imp.imp_goedel(0.3, 0.5) == 1.0
-    assert imp.imp_goedel(0.8, 0.8) == 1.0
-    assert imp.imp_goedel(0.8, 0.5) == 0.5
-    assert imp.imp_goedel(0.8, 0.1) == 0.1
-
-def test_imp_lukasiewicz_behavior():
-    assert imp.imp_lukasiewicz(0.3, 0.5) == min(1.0, 1.0 - 0.3 + 0.5)
+@pytest.mark.parametrize("implicator_name", list(registered_implicators.keys()))
+def test_scalar_call_valid(implicator_name):
+    """
+    checks if implicator can be called with scalars and return scalar
+    """
+    obj = Implicator.create(implicator_name)
+    a, b = 0.73, 0.18
+    result = obj(a, b)
+    logger.info(f"{implicator_name} result for (0.73, 0.18): {result}")
+    assert isinstance(result, float)
+    assert 0.0 <= result <= 1.0
 
 
+@pytest.mark.parametrize("implicator_name", list(registered_implicators.keys()))
+@pytest.mark.parametrize("testset", call_testsets)
+def test_implicator_call_vector_output(implicator_name, testset):
+    obj = Implicator.create(implicator_name)
+    a_b = testset["a_b"]
+    a = a_b[:, 0]
+    b = a_b[:, 1]
 
-def test_imp_kleene_dienes_behavior():
-    assert imp.imp_kleene_dienes(0.6, 0.3) == max(1.0 - 0.6, 0.3)
+    if implicator_name not in testset["expected"]:
+        pytest.skip(f"Expected output not available for {implicator_name}")
 
-def test_imp_reichenbach_behavior():
-    assert imp.imp_reichenbach(0.4, 0.7) == 1.0 - 0.4 + 0.4 * 0.7
+    expected = testset["expected"][implicator_name]
+    calculated = obj(a, b)
+    np.testing.assert_allclose(calculated, expected, atol=1e-6)
 
+@pytest.mark.parametrize("implicator_name", list(registered_implicators.keys()))
+def test_implicator_exhaustive_grid_no_exception(implicator_name):
+    """
+    @brief Tests whether implicator handles full [0,1] grid without exceptions.
 
-    # imp.imp_lukasiewicz,
-    # imp.imp_gaines,
-    # imp.imp_kleene_dienes,
-    # imp.imp_reichenbach
-
-def test_goedel_implicator_outputs():
-   
-    data_dict = sds.syntetic_dataset_factory().implicator_testing_data()
-    a_b = data_dict["a_b"].T
-    expected = data_dict["goedel_outputs"]
-    temp_implicator = np.vectorize(imp.imp_goedel)
-
+    Uses meshgrid of 0.0 to 1.0 with 101 values for each axis (step=0.01).
+    Applies implicator elementwise on all combinations.
+    """
+    obj = Implicator.create(implicator_name)
     
-    result = temp_implicator(a_b[0], a_b[1])
-    closeness = np.isclose(result, expected)
-    assert np.all(closeness), "outputs are not the expected values"
+    values = np.linspace(0.0, 1.0, 1001)
+    a_grid, b_grid = np.meshgrid(values, values)
+    a_flat = a_grid.flatten()
+    b_flat = b_grid.flatten()
 
-def test_gaines_implicator_outputs():
-   
-    data_dict = sds.syntetic_dataset_factory().implicator_testing_data()
-    a_b = data_dict["a_b"].T
-    expected = data_dict["gaines_outputs"]
-    temp_implicator = np.vectorize(imp.imp_gaines)
+    try:
+        result = obj(a_flat, b_flat)
+        assert result.shape == a_flat.shape
+        assert np.all((0.0 <= result) & (result <= 1.0)), f"Out-of-range result from {implicator_name}"
+    except Exception as e:
+        pytest.fail(f"{implicator_name} raised an exception during grid evaluation: {e}")
 
+#endregion
+
+#region <Non-calculational behaviors>
+###############################################
+###       Non-calculational behaviors       ###
+###############################################
+
+@pytest.mark.parametrize("implicator_name", list(registered_implicators.keys()))
+def test_create_and_to_dict_from_dict_roundtrip(implicator_name):
+    """
+    tests to_dict(), from_dict() and create() 
+    """
+    obj = Implicator.create(implicator_name)
+    serialized = obj.to_dict()
+
+    assert "type" in serialized
+    assert "name" in serialized
+    assert "params" in serialized
+
+    reconstructed = Implicator.from_dict(serialized)
+    assert isinstance(reconstructed, Implicator)
+    assert reconstructed.name == obj.name
+
+
+@pytest.mark.parametrize("implicator_name", list(registered_implicators.keys()))
+def test_describe_params_detailed_keys(implicator_name):
+    """
+    tests values of params and deteriled params. check them in log
+    """
+    obj = Implicator.create(implicator_name)
+    details = obj.describe_params_detailed()
+    assert isinstance(details, dict)
+    for param in obj._get_params().keys():
+        assert param in details
+
+    logger.info(implicator_name + ', params:' + str(obj._get_params())+ ', detailed params:' + str(details))
+
+@pytest.mark.parametrize("implicator_name", list(registered_implicators.keys()))
+def test_registry_get_class_and_name(implicator_name):
+    cls = Implicator.get_class(implicator_name)
+    instance = cls()
+    name = Implicator.get_registered_name(instance)
+    assert isinstance(name, str)
+    logger.info(f"{implicator_name}, registered_name: {name}")
+
+@pytest.mark.parametrize("implicator_name", list(registered_implicators.keys()))
+def test_help(implicator_name):
+    """
+    tests values of params and deteriled params. check them in log
+    """
+    obj = Implicator.create(implicator_name)
+    details = obj.help()
+    assert isinstance(details, str)
     
-    result = temp_implicator(a_b[0], a_b[1])
-    closeness = np.isclose(result, expected)
-    assert np.all(closeness), "outputs are not the expected values"
+    logger.info(implicator_name + ', class docstring:' + details)
 
-def test_luk_implicator_outputs():
-   
-    data_dict = sds.syntetic_dataset_factory().implicator_testing_data()
-    a_b = data_dict["a_b"].T
-    expected = data_dict["luk_outputs"]
-    temp_implicator = np.vectorize(imp.imp_lukasiewicz)
-
-    
-    result = temp_implicator(a_b[0], a_b[1])
-    closeness = np.isclose(result, expected)
-    assert np.all(closeness), "outputs are not the expected values"
-
-def test_kd_implicator_outputs():
-   
-    data_dict = sds.syntetic_dataset_factory().implicator_testing_data()
-    a_b = data_dict["a_b"].T
-    expected = data_dict["kleene_dienes_outputs"]
-    temp_implicator = np.vectorize(imp.imp_kleene_dienes)
-
-    
-    result = temp_implicator(a_b[0], a_b[1])
-    closeness = np.isclose(result, expected)
-    assert np.all(closeness), "outputs are not the expected values"
-
-def test_reichenbach_implicator_outputs():
-   
-    data_dict = sds.syntetic_dataset_factory().implicator_testing_data()
-    a_b = data_dict["a_b"].T
-    expected = data_dict["reichenbach_outputs"]
-    temp_implicator = np.vectorize(imp.imp_reichenbach)
-
-    
-    result = temp_implicator(a_b[0], a_b[1])
-    closeness = np.isclose(result, expected)
-    assert np.all(closeness), "outputs are not the expected values"
-
-
+#endregion
