@@ -1,59 +1,77 @@
-# import numpy as np
-# import tests.syntetic_data_for_tests as sds
-# import pytest
-# from numpy.testing import assert_almost_equal
+import pytest
+import numpy as np
+from FRsutils.core.fuzzy_quantifiers import FuzzyQuantifier
 
-# from FRsutils.core.fuzzy_quantifiers import fuzzy_quantifier1, fuzzy_quantifier_quad  # Replace 'your_module' with the actual module name
+# ----------------------------
+# Functional Behavior Testing
+# ----------------------------
 
-
-# def test_fuzzy_quantifier1_increasing_scalar():
-#     assert fuzzy_quantifier1(0.0, 0.3, 0.7) == 0
-#     assert fuzzy_quantifier1(0.7, 0.3, 0.7) == 1
-#     assert_almost_equal(fuzzy_quantifier1(0.5, 0.3, 0.7), 0.5)
-
-
-# def test_fuzzy_quantifier1_decreasing_scalar():
-#     assert fuzzy_quantifier1(0.0, 0.3, 0.7, increasing=False) == 1
-#     assert fuzzy_quantifier1(0.7, 0.3, 0.7, increasing=False) == 0
-#     assert_almost_equal(fuzzy_quantifier1(0.5, 0.3, 0.7, increasing=False), 0.5)
-
-
-# def test_fuzzy_quantifier1_array():
-#     p = np.array([0.0, 0.3, 0.5, 0.7, 1.0])
-#     expected_incr = np.array([0.0, 0.0, 0.5, 1.0, 1.0])
-#     expected_decr = np.array([1.0, 1.0, 0.5, 0.0, 0.0])
-#     assert_almost_equal(fuzzy_quantifier1(p, 0.3, 0.7), expected_incr)
-#     assert_almost_equal(fuzzy_quantifier1(p, 0.3, 0.7, increasing=False), expected_decr)
+@pytest.mark.parametrize("quant_type, alpha, beta", [
+    ("linear", 0.25, 0.75),
+    ("quadratic", 0.25, 0.75),
+    ("linear", 0.1, 0.9),
+    ("quadratic", 0.1, 0.9)
+])
+def test_quantifier_output_shape_and_type(quant_type, alpha, beta):
+    fq = FuzzyQuantifier.create(quant_type, alpha=alpha, beta=beta)
+    x = np.linspace(0, 1, 500)
+    result = fq(x)
+    assert isinstance(result, np.ndarray)
+    assert result.shape == x.shape
+    assert (0.0 <= result).all() and (result <= 1.0).all()
 
 
-# def test_fuzzy_quantifier1_alpha_equals_beta():
-#     with pytest.raises(ZeroDivisionError):
-#         fuzzy_quantifier1(0.5, 0.5, 0.5)
+@pytest.mark.parametrize("quant_type, alpha, beta, x, expected", [
+    ("linear", 0.2, 0.8, np.array([0.0, 0.2, 0.5, 0.8, 1.0]), np.array([0.0, 0.0, 0.5, 1.0, 1.0])),
+    ("quadratic", 0.2, 0.8, np.array([0.0, 0.2, 0.5, 0.8, 1.0]), np.array([0.0, 0.0, 0.5, 1.0, 1.0]))
+])
+def test_quantifier_known_outputs(quant_type, alpha, beta, x, expected):
+    fq = FuzzyQuantifier.create(quant_type, alpha=alpha, beta=beta)
+    result = fq(x)
+    np.testing.assert_allclose(result, expected, atol=1e-5)
 
 
-# def test_fuzzy_quantifier_quad_scalar():
-#     assert fuzzy_quantifier_quad(0.0, 0.3, 0.7) == 0.0
-#     assert fuzzy_quantifier_quad(1.0, 0.3, 0.7) == 1.0
-#     assert_almost_equal(fuzzy_quantifier_quad(0.5, 0.3, 0.7), 0.5)
+# ----------------------------
+# Factory and Serialization
+# ----------------------------
+
+@pytest.mark.parametrize("quant_type", ["linear", "quadratic"])
+def test_create_to_dict_from_dict(quant_type):
+    fq = FuzzyQuantifier.create(quant_type, alpha=0.2, beta=0.8)
+    d = fq.to_dict()
+    fq2 = FuzzyQuantifier.from_dict(d)
+    assert isinstance(fq2, FuzzyQuantifier)
+    assert fq2.name == fq.name
+    np.testing.assert_allclose(fq2._get_params()["alpha"], fq._get_params()["alpha"])
+    np.testing.assert_allclose(fq2._get_params()["beta"], fq._get_params()["beta"])
 
 
-# def test_fuzzy_quantifier_quad_array():
-#     x = np.array([0.0, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8])
-#     expected = np.array([
-#         0.0,        # x <= alpha
-#         0.0,        # x == alpha
-#         0.125,      # transition zone
-#         0.5,
-#         0.875,
-#         1.0,        # x == beta
-#         1.0         # x > beta
-#     ])
-#     output = fuzzy_quantifier_quad(x, 0.3, 0.7)
-#     assert_almost_equal(output, expected)
+# ----------------------------
+# Validation and Fail-Fast
+# ----------------------------
+
+@pytest.mark.parametrize("params", [
+    {"alpha": None, "beta": 0.6},
+    {"alpha": 0.2, "beta": None},
+    {"alpha": "a", "beta": 0.6},
+    {"alpha": 0.2, "beta": "b"},
+    {"alpha": 0.7, "beta": 0.6},
+    {"alpha": -0.1, "beta": 1.2}
+])
+def test_invalid_alpha_beta(params):
+    with pytest.raises(ValueError):
+        FuzzyQuantifier.create("linear", **params)
 
 
-# def test_fuzzy_quantifier_quad_invalid_alpha_beta():
-#     result = fuzzy_quantifier_quad(np.array([0.5]), 0.7, 0.3)
-#     assert np.all(np.isfinite(result))
+# ----------------------------
+# Metadata & Reflection
+# ----------------------------
 
-
+@pytest.mark.parametrize("quant_type", ["linear", "quadratic"])
+def test_describe_and_params_match(quant_type):
+    fq = FuzzyQuantifier.create(quant_type, alpha=0.2, beta=0.8)
+    described = fq.describe_params_detailed()
+    params = fq._get_params()
+    for k in params:
+        assert k in described
+        assert described[k]["value"] == params[k]

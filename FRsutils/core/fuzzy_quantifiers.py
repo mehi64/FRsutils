@@ -46,7 +46,8 @@ class FuzzyQuantifier(RegistryFactoryMixin):
         @param x: Scalar or array of values in [0, 1]
         @return: Scalar or array of membership degrees
         """
-        pass
+        raise NotImplementedError("all subclasses must implement __call__")
+
 
     @classmethod
     def validate_params(self, **kwargs):
