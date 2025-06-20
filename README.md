@@ -48,10 +48,18 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
   - EinsteinProduct tnorm
   - HamacherProduct tnorm
   - NilpotentMinimum tnorm
-- OWA weights (Ordered Weighted Average)
+- OWA weights (Ordered Weighted Average)(See [OWA](owa_weights_info.md))
   - Linear
-- ITFRS (Implicator/T-norm Fuzzy-Rough Sets)
-- OWAFRS (Ordered Weighted Average Fuzzy-Rough Sets) 
+  - Exponential
+  - Harmonic
+  - Logarithmic
+- Fyzzy Quantifiers
+  - Linear
+  - Quadratic
+- FR Models
+  - ITFRS (Implicator/T-norm Fuzzy-Rough Sets)
+  - OWAFRS (Ordered Weighted Average Fuzzy-Rough Sets) 
+  - VQRS
 
 ## Fuzzy-rough oversampling
 ### FRSMOTE
