@@ -16,6 +16,17 @@
             "cwd": "${workspaceFolder}"
         },
         {
+            "name": "SNDBX use owa",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "FRsutils.sandbox.use_owa",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}"
+        },
+        {
             "name": "SNDBX use tnorms",
             "type": "debugpy",
             "request": "launch",
@@ -234,6 +245,19 @@
             "request": "launch",
             "module": "pytest",
             "args": ["tests/core_tests/test_tnorms.py"],
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}",
+            "env": {
+              "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "Tst owa weights",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": ["tests/core_tests/test_owa_weights.py"],
             "console": "integratedTerminal",
             "justMyCode": false,
             "cwd": "${workspaceFolder}",

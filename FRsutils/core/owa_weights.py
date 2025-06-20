@@ -108,6 +108,14 @@ class LinearOWAWeightStrategy(OWAWeightStrategy):
     def validate_params(cls, **kwargs):
         pass
 
+    def to_dict(self) -> dict:
+        """
+        @brief Serializes the instance to a dictionary.
+
+        @return: Dictionary with "type" and "params" fields.
+        """
+        return {"type": self.__class__.__name__, "name": "linear", "params": self._get_params()}
+
 
 @OWAWeightStrategy.register("exponential", "exp")
 class ExponentialOWAWeightStrategy(OWAWeightStrategy):
@@ -144,6 +152,14 @@ class ExponentialOWAWeightStrategy(OWAWeightStrategy):
 
     def _get_params(self) -> dict:
         return {"base": self.base}
+
+    def to_dict(self) -> dict:
+        """
+        @brief Serializes the instance to a dictionary.
+
+        @return: Dictionary with "type" and "params" fields.
+        """
+        return {"type": self.__class__.__name__, "name": "exponential", "params": self._get_params()}
 
     @classmethod
     def validate_params(cls, **kwargs):
@@ -187,6 +203,14 @@ class HarmonicOWAWeightStrategy(OWAWeightStrategy):
     def validate_params(cls, **kwargs):
         pass
 
+    def to_dict(self) -> dict:
+        """
+        @brief Serializes the instance to a dictionary.
+
+        @return: Dictionary with "type" and "params" fields.
+        """
+        return {"type": self.__class__.__name__, "name": "harmonic", "params": self._get_params()}
+
 
 @OWAWeightStrategy.register("logarithmic", "log")
 class LogarithmicOWAWeightStrategy(OWAWeightStrategy):
@@ -222,3 +246,11 @@ class LogarithmicOWAWeightStrategy(OWAWeightStrategy):
     @classmethod
     def validate_params(cls, **kwargs):
         pass
+
+    def to_dict(self) -> dict:
+        """
+        @brief Serializes the instance to a dictionary.
+
+        @return: Dictionary with "type" and "params" fields.
+        """
+        return {"type": self.__class__.__name__, "name": "logarithmic", "params": self._get_params()}

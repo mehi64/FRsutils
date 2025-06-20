@@ -25,7 +25,7 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
 
 ## Algorithgms and containings
 
-- Similarities (See [fuzzy implicators](similarities_info.md))
+- Similarities (See [fuzzy similarities](similarities_info.md))
   - Linear
   - Gaussian
 - Implicators (See [fuzzy implicators](implicators_info.md))
