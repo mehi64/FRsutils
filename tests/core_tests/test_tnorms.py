@@ -37,6 +37,19 @@ registered_tnorms = TNorm.list_available()
 ###                                         ###
 ###############################################
 
+@pytest.mark.parametrize("tnorm_name", list(TNorm.list_available().keys()))
+def test_tnorm_all_pairs_from_0_to_1(tnorm_name):
+    obj = TNorm.create(tnorm_name, **({"p": 2.0} if tnorm_name == "yager" else {}))
+    values = np.linspace(0, 1, 101)  # 0.0 to 1.0 step 0.01
+
+    for a in values:
+        for b in values:
+            try:
+                result = obj(np.array(a), np.array(b))
+                assert 0.0 <= result <= 1.0
+            except Exception as e:
+                raise AssertionError(f"{tnorm_name} failed for a={a}, b={b}: {e}")
+
 @pytest.mark.parametrize("tnorm_name", list(registered_tnorms.keys()))
 def test_scalar_inputs(tnorm_name):
     """
@@ -157,5 +170,51 @@ def test_registry_get_class_and_name(tnorm_name):
     name = TNorm.get_registered_name(instance)
     assert isinstance(name, str)
     logger.info(tnorm_name + ', registered_name:' + str(name))
+
+#endregion
+
+#region <axiom testing>
+
+@pytest.mark.parametrize("tnorm_name", list(TNorm.list_available().keys()))
+def test_tnorm_exhaustive_validity_and_properties(tnorm_name):
+    obj = TNorm.create(tnorm_name, **({"p": 2.0} if tnorm_name == "yager" else {}))
+    values = np.linspace(0, 1, 11)
+
+    for a in values:
+        for b in values:
+            a_np = np.array(a)
+            b_np = np.array(b)
+
+            result = obj(a_np, b_np)
+            assert 0.0 <= result <= 1.0, f"{tnorm_name} gave result {result} for a={a}, b={b}"
+
+            # Commutativity
+            result_rev = obj(b_np, a_np)
+            assert np.isclose(result, result_rev, atol=1e-8), f"{tnorm_name} is not commutative: T({a},{b})={result} vs T({b},{a})={result_rev}"
+
+            # Boundary condition
+            result_boundary = obj(a_np, np.array(1.0))
+            assert np.isclose(result_boundary, a, atol=1e-8), f"{tnorm_name} failed boundary T({a},1.0)={result_boundary}, expected {a}"
+
+@pytest.mark.parametrize("tnorm_name", list(TNorm.list_available().keys()))
+def test_tnorm_associativity(tnorm_name):
+    obj = TNorm.create(tnorm_name, **({"p": 2.0} if tnorm_name == "yager" else {}))
+    values = np.linspace(0, 1, 11)
+
+    for a in values:
+        for b in values:
+            for c in values:
+                a_np = np.array(a)
+                b_np = np.array(b)
+                c_np = np.array(c)
+
+                try:
+                    left = obj(a_np, obj(b_np, c_np))
+                    right = obj(obj(a_np, b_np), c_np)
+
+                    assert np.isclose(left, right, atol=1e-6), \
+                        f"{tnorm_name} failed associativity: T({a},T({b},{c}))={left} vs T(T({a},{b}),{c})={right}"
+                except Exception as e:
+                    raise AssertionError(f"{tnorm_name} error on associativity for a={a}, b={b}, c={c}: {e}")
 
 #endregion

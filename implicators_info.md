@@ -14,20 +14,20 @@ Fuzzy implicators are functions used to generalize the implication operation ("i
 
 ## 2. Fuzzy Implicators Table
 
-| Name            | Formula                                                                 | Alias Names             | Reference Page |
-|-----------------|-------------------------------------------------------------------------|--------------------------|----------------|
-| **Lukasiewicz** | `I(a, b) = min(1, 1 - a + b)`                                           | Bounded Implicator      | [1], Eq. (1)    |
-| **Gödel**       | `I(a, b) = 1 if a <= b; b otherwise`                                    | Gödel Implicator        | [1], Eq. (2)    |
-| **Reichenbach** | `I(a, b) = 1 - a + ab`                                                  | Reichenbach             | [1], Eq. (3)    |
-| **Kleene-Dienes**| `I(a, b) = max(1 - a, b)`                                              | KD Implicator           | [1], Eq. (4)    |
-| **Goguen**      | `I(a, b) = 1 if a <= b; b / a otherwise`                                | Goguen Implicator       | [1], Eq. (5)    |
-| **Gaines**       | `I(a, b) = 1 if a <= b; b / (a + b - ab) otherwise`                    | Gaines Implicator       | [2]|
-| **Rescher**     | `I(a, b) = 1 if a = 0 and b = 0; 0 otherwise`                           | Rescher Implicator      | [1], Eq. (6)    |
-| **Yager**       | `I(a, b) = b^a if a > 0 or b > 0; 1 otherwise`                          | Yager Implicator        | [1], Eq. (7)    |
-| **Weber**       | `I(a, b) = 1 if a = 1; min(1, b / (1 - a)) otherwise`                   | Weber Implicator        | [1], Eq. (8)    |
-| **Fodor**       | `I(a, b) = max(1 - a, b) if a > b; 1 if a = 0 or b = 1`                  | Fodor Implicator        | [1], Eq. (9)    |
-| **Least**       | `I(a, b) = 0 if a > 0 and b < 1; 1 otherwise`                           | Least Implicator        | [1], Eq. (10)   |
-| **Greatest**    | `I(a, b) = 1 if a < 1 or b > 0; 0 if a = 1 and b = 0`                   | Greatest Implicator     | [1], Eq. (11)   |
+**NOTE: FRstuils implementations of implicators are based on the formulae in the references present in this table.**
+
+| Name            | Formula                                                                 | Alias Names             | Reference Page |tested and working in FRsutils| 
+|-----------------|-------------------------------------------------------------------------|--------------------------|----------------|----------------|
+| **Lukasiewicz** | `I(a, b) = min(1, 1 - a + b)`                                           | Bounded Implicator      | [1], Eq. (1)    | yes |
+| **Gödel**       | `I(a, b) = 1 if a <= b; b otherwise`                                    | Gödel Implicator        | [1], Eq. (2)    | yes |
+| **Reichenbach** | `I(a, b) = 1 - a + ab`                                                  | Reichenbach             | [1], Eq. (3)    | yes |
+| **Kleene-Dienes**| `I(a, b) = max(1 - a, b)`                                              | KD Implicator           | [1], Eq. (4)    | yes |
+| **Goguen**      | `I(a, b) = 1 if a <= b; b / a otherwise`                                | Goguen Implicator       | [1], Eq. (5)    | yes |
+| **Yager**       | `I(a, b) = b^a if a > 0 or b > 0; 1 otherwise`                          | Yager Implicator        | [1], Eq. (7)    | yes |
+| **Rescher**     | `I(a, b) = 1 if a = 0 and b = 0; 0 otherwise`                           | Rescher Implicator      | [1], Eq. (6)    | yes |
+| **Weber**       | `I(a, b) = b if a == 1 ; 1 if a < 1`                                    | Weber Implicator        | [1], Eq. (8)    | yes |
+| **Fodor**       | `I(a, b) = max(1 - a, b) if a > b; 1 otherwise`                        | Fodor Implicator        | [1], Eq. (9)    | yes |
+
 
 ---
 

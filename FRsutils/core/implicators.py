@@ -102,26 +102,20 @@ class Implicator(RegistryFactoryMixin):
 
 
 #region <Non-parameterized implicators>
-@Implicator.register("gaines")
-class GainesImplicator(Implicator):
+
+@Implicator.register("lukasiewicz","luk")
+class LukasiewiczImplicator(Implicator):
     """
-    @brief Gaines implicator: I(a, b) = 1 if a <= b; else b / a
+    @brief Lukasiewicz implicator: I(a, b) = min(1, 1 - a + b)
     """
     def __init__(self):
         self.validate_params()
-
+        
     def _compute_scalar(self, a: float, b: float) -> float:
         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
-            raise ValueError("Inputs must be in range [0.0, 1.0].")
-        if a <= b:
-            return 1.0
-        # a>b and a!=0
-        elif a > 0:
-            return b / a
-        # a>b and a=0
-        else:
-            return 0.0
-        
+            raise ValueError("Implicator inputs must be in range [0.0, 1.0].")
+        return min(1.0, 1.0 - a + b)
+
     @classmethod
     def validate_params(cls, **kwargs):
         """
@@ -135,7 +129,6 @@ class GainesImplicator(Implicator):
         """
         return {}
 
-
 @Implicator.register("goedel")
 class GoedelImplicator(Implicator):
     """
@@ -146,7 +139,7 @@ class GoedelImplicator(Implicator):
 
     def _compute_scalar(self, a: float, b: float) -> float:
         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
-            raise ValueError("Inputs must be in range [0.0, 1.0].")
+            raise ValueError("Implicator inputs must be in range [0.0, 1.0].")
         return 1.0 if a <= b else b
     
     @classmethod
@@ -162,7 +155,7 @@ class GoedelImplicator(Implicator):
         """
         return {}
 
-@Implicator.register("kleenedienes", "kleene")
+@Implicator.register("kleenedienes", "kleene", "kd")
 class KleeneDienesImplicator(Implicator):
     """
     @brief Kleene-Dienes implicator: I(a, b) = max(1 - a, b)
@@ -192,7 +185,7 @@ class KleeneDienesImplicator(Implicator):
 @Implicator.register("reichenbach")
 class ReichenbachImplicator(Implicator):
     """
-    @brief Reichenbach implicator: I(a, b) = 1 - a + a * b
+    @brief Reichenbach implicator: I(a, b) = 1 - a + (a * b)
     """
     def __init__(self):
         self.validate_params()
@@ -216,18 +209,18 @@ class ReichenbachImplicator(Implicator):
         return {}
 
 
-@Implicator.register("lukasiewicz","luk")
-class LukasiewiczImplicator(Implicator):
+@Implicator.register("goguen", "product")
+class GoguenImplicator(Implicator):
     """
-    @brief Lukasiewicz implicator: I(a, b) = min(1, 1 - a + b)
+    @brief Goguen implicator: I(a, b) = 1 if a <= b; b / a otherwise
     """
     def __init__(self):
         self.validate_params()
-        
+
     def _compute_scalar(self, a: float, b: float) -> float:
         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
             raise ValueError("Inputs must be in range [0.0, 1.0].")
-        return min(1.0, 1.0 - a + b)
+        return 1.0 if a <= b else b / a if a > 0 else 1.0
     
     @classmethod
     def validate_params(cls, **kwargs):
@@ -242,41 +235,153 @@ class LukasiewiczImplicator(Implicator):
         """
         return {}
 
+@Implicator.register("rescher")
+class RescherImplicator(Implicator):
+    """
+    @brief Rescher implicator: I(a, b) = 1 if a <= b; 0.0 otherwise
+    """
+    def __init__(self):
+        self.validate_params()
 
-# @Implicator.register("goguen", "product")
-# class GoguenImplicator(Implicator):
+    def _compute_scalar(self, a: float, b: float) -> float:
+        if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
+            raise ValueError("Inputs must be in range [0.0, 1.0].")
+        return 1.0 if a <= b else 0.0
+    
+    @classmethod
+    def validate_params(cls, **kwargs):
+        """
+        @brief This class does not need parameter validation
+        """
+        pass
+
+    def _get_params(self)-> dict:
+        """
+        @brief no parameters
+        """
+        return {}
+
+@Implicator.register("yager")
+class YagerImplicator(Implicator):
+    """
+    @brief Yager implicator: ??????????
+    """
+    def __init__(self):
+        self.validate_params()
+
+    def _compute_scalar(self, a: float, b: float) -> float:
+        if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
+            raise ValueError("Inputs must be in range [0.0, 1.0].")
+        
+        if (a==b==0):
+            return 1.0
+        return b**a
+    
+    @classmethod
+    def validate_params(cls, **kwargs):
+        """
+        @brief This class does not need parameter validation
+        """
+        pass
+
+    def _get_params(self)-> dict:
+        """
+        @brief no parameters
+        """
+        return {}
+
+@Implicator.register("weber")
+class WeberImplicator(Implicator):
+    """
+    @brief Weber implicator: I(a, b) = b if a == 1 ; 1 otherwise
+    """
+    def __init__(self):
+        self.validate_params()
+
+    def _compute_scalar(self, a: float, b: float) -> float:
+        if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
+            raise ValueError("Inputs must be in range [0.0, 1.0].")
+        
+        if a == 1.0:
+            return b
+        if a < 1.0:
+            return 1.0
+        else:
+            raise ValueError("must not happen")
+
+    @classmethod
+    def validate_params(cls, **kwargs):
+        """
+        @brief This class does not need parameter validation
+        """
+        pass
+
+    def _get_params(self)-> dict:
+        """
+        @brief no parameters
+        """
+        return {}
+
+@Implicator.register("fodor")
+class FodorImplicator(Implicator):
+    """
+    @brief Fodor implicator: I(a, b) = max(1 - a, b) if a > b; 1 otherwise
+    """
+    def __init__(self):
+        self.validate_params()
+
+    def _compute_scalar(self, a: float, b: float) -> float:
+        if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
+            raise ValueError("Inputs must be in range [0.0, 1.0].")
+        
+        return 1.0 if a <= b else max(1.0 - a, b)
+    
+    @classmethod
+    def validate_params(cls, **kwargs):
+        """
+        @brief This class does not need parameter validation
+        """
+        pass
+
+    def _get_params(self)-> dict:
+        """
+        @brief no parameters
+        """
+        return {}
+
+# @Implicator.register("gaines")
+# class GainesImplicator(Implicator):
+#     """
+#     @brief Gaines implicator: I(a, b) = 1 if a <= b; else b / a
+#     """
+#     def __init__(self):
+#         self.validate_params()
+
 #     def _compute_scalar(self, a: float, b: float) -> float:
 #         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
 #             raise ValueError("Inputs must be in range [0.0, 1.0].")
-#         return 1.0 if a <= b else b / a if a > 0 else 1.0
+#         if a <= b:
+#             return 1.0
+#         # a>b and a!=0
+#         elif a > 0:
+#             return b / a
+#         # a>b and a=0
+#         else:
+#             return 0.0
+        
+    # @classmethod
+    # def validate_params(cls, **kwargs):
+    #     """
+    #     @brief This class does not need parameter validation
+    #     """
+    #     pass
 
-# @Implicator.register("rescher")
-# class RescherImplicator(Implicator):
-#     def _compute_scalar(self, a: float, b: float) -> float:
-#         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
-#             raise ValueError("Inputs must be in range [0.0, 1.0].")
-#         return 1.0 if a <= b else max(1.0 - a, b)
+    # def _get_params(self)-> dict:
+    #     """
+    #     @brief no parameters
+    #     """
+    #     return {}
 
-# @Implicator.register("yager")
-# class YagerImplicator(Implicator):
-#     def _compute_scalar(self, a: float, b: float) -> float:
-#         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
-#             raise ValueError("Inputs must be in range [0.0, 1.0].")
-#         return min(1.0, (1.0 - a) ** 2 + b)
-
-# @Implicator.register("weber")
-# class WeberImplicator(Implicator):
-#     def _compute_scalar(self, a: float, b: float) -> float:
-#         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
-#             raise ValueError("Inputs must be in range [0.0, 1.0].")
-#         return 1.0 if a <= b else (1.0 - a + b) / (1.0 + b) if b < 1.0 else 1.0
-
-# @Implicator.register("fodor")
-# class FodorImplicator(Implicator):
-#     def _compute_scalar(self, a: float, b: float) -> float:
-#         if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
-#             raise ValueError("Inputs must be in range [0.0, 1.0].")
-#         return 1.0 if a <= b else max(1.0 - a, b)
 
 #endregion
 

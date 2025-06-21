@@ -5,4 +5,4 @@
 from .itfrs import ITFRS
 
 
-__all__ = ['ITFRS']
+__all__ = ['ITFRS', 'VQRS', 'OWAFRS']
