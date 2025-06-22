@@ -169,6 +169,7 @@ where x, y are two data instances; A(y) means if the instance y has the same cla
 These are two ways:
 - use pytest and it finds and runs all tests
 - If you want to run tests in debug mode, find and run the file experimental_tests.py (Make sure all functions in test files are called in this file. Maybe some are forgotten)
+- For more information on test procedures, please refer to [test procedures](tests/test_procedures.md)
 
 ## Technical decisions justification
 - Since data checking slows down the running of experiments, we don't check if data is in the correct range in each function.
