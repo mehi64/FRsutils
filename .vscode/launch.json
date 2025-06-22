@@ -140,8 +140,8 @@
             "name": "Python: All plots",
             "type": "debugpy",
             "request": "launch",
-            // "module": "FRsutils.sandbox.plots.plot_tnorms",
-            "module": "FRsutils.sandbox.plots.plot_implicators",
+            "module": "FRsutils.sandbox.plots.plot_tnorms",
+            // "module": "FRsutils.sandbox.plots.plot_implicators",
             "justMyCode": false,
             "env": {
                 "PYTHONPATH": "${workspaceFolder}"
@@ -210,7 +210,7 @@
             }
         },
         {
-            "name": "Dbg core methods",
+            "name": "Tst core methods",
             "type": "debugpy",
             "request": "launch",
             "module": "pytest",

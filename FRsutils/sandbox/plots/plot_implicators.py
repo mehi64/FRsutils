@@ -6,7 +6,7 @@ import FRsutils.core.implicators as impl
 # --- Configuration ---
 n = 200  # Grid resolution
 # implicator_type = "goguen"
-# implicator_type = "luk"
+implicator_type = "luk"
 # implicator_type = "goedel"
 # implicator_type = "kd"
 # implicator_type = "reichenbach"

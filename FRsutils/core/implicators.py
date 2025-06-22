@@ -34,7 +34,7 @@ Supports registration, creation, serialization, and parameter validation.
 
 import numpy as np
 from abc import abstractmethod
-from typing import Type, Dict, List, Union
+from typing import Union
 from FRsutils.utils.constructor_utils.registry_factory_mixin import RegistryFactoryMixin
 
 class Implicator(RegistryFactoryMixin):
@@ -264,7 +264,7 @@ class RescherImplicator(Implicator):
 @Implicator.register("yager")
 class YagerImplicator(Implicator):
     """
-    @brief Yager implicator: ??????????
+    @brief Yager implicator: I(a, b) = b^a if a > 0 or b > 0; 1 otherwise
     """
     def __init__(self):
         self.validate_params()
@@ -293,7 +293,7 @@ class YagerImplicator(Implicator):
 @Implicator.register("weber")
 class WeberImplicator(Implicator):
     """
-    @brief Weber implicator: I(a, b) = b if a == 1 ; 1 otherwise
+    @brief Weber implicator: I(a, b) = b if a == 1 ; 1 if a<1
     """
     def __init__(self):
         self.validate_params()

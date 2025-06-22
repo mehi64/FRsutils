@@ -1,16 +1,11 @@
-"""
-✅ Test Objectives for OWAWeightStrategy
-✔ test registration and alias mapping
-✔ test create() and to_dict()/from_dict() roundtrip
-✔ test lower_weights, upper_weights, and weights(descending)
-✔ test param validation (e.g., base > 1 for exponential)
-✔ test describe_params_detailed
-"""
-
 import pytest
 import numpy as np
 from FRsutils.core.owa_weights import OWAWeightStrategy
+from FRsutils.utils.logger.logger_util import get_logger
 
+
+logger = get_logger(env="test",
+                    experiment_name="test_tnorms1")
 registered = OWAWeightStrategy.list_available()
 
 
