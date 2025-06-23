@@ -43,3 +43,4 @@ we must check correctness of values where something is created, not initialized.
 
 ---------------------------------------
 Since checking inputs of each function can be timetaking, we add a switch to enable or disable that henever needed.
+when signatures of functions when called is different, python silently pypasses the function (*args and **kwars)

@@ -19,7 +19,7 @@ X = np.clip(X, 0.0, 0.99)
 pipe = Pipeline([
     ("frsmote", FRSMOTE(
         type="itfrs",  # fuzzy rough model type
-        # k_neighbors=5,
+        k_neighbors=5,
         bias_interpolation=False,
         random_state=42
     )),

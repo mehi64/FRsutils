@@ -48,17 +48,17 @@ model = ITFRS(similarity_matrix=sim_matrix,
 upper = model.upper_approximation()
 lower = model.lower_approximation()
 
-args_ = {
+config_without_sim_label = {
     # 'similarity_matrix': sim_matrix, 
     #              'labels': y, 
-                 'ub_tnorm': tnorm, 
-                 'lb_implicator': implicator,
+                 'ub_tnorm_name': 'minimum', 
+                 'lb_implicator_name': 'luk',
                  'logger':logger,
                  'kneighbors':5}
 
-mdl2 = FRMODEL.get_class("itfrs").from_config(sim_matrix,y,config=args_)
+mdl2 = FRMODEL.get_class("itfrs").from_config(sim_matrix,y,config=config_without_sim_label)
 
-frmodel = FRMODEL.create(name='itfrs', strict=False, **args_)
+frmodel = FRMODEL.create(name='itfrs', strict=False, **config_without_sim_label)
 
 upper1 = frmodel.upper_approximation()
 lower1 = frmodel.lower_approximation()

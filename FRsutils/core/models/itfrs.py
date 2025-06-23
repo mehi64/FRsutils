@@ -165,7 +165,7 @@ class ITFRS(FuzzyRoughModel):
 
 
     @classmethod
-    def from_config(cls, similarity_matrix=None, labels=None, *, config: dict) -> "ITFRS":
+    def from_config(cls, similarity_matrix=None, labels=None, **config: dict) -> "ITFRS":
         """
         @brief Create an ITFRS instance from a configuration dictionary.
 
