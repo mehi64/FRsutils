@@ -15,7 +15,7 @@ If you are a developer trying to extend FRsutils, please start here [Development
   - pandas
   - colorlog
   - pytest (if you want to run unit tests)
-  - zzz
+  - cupy
 
 # Fuzzy-Rough set utilities (Under development)
 

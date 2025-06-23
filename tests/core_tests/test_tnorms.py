@@ -231,6 +231,37 @@ def test_scalar_call_matches_vectorized_outputs(tnorm_name, testset):
         assert np.isclose(result, expected_val, atol=1e-6), \
             f"Mismatch at index {idx} for {tnorm_name}: got {result}, expected {expected_val}"
 
+@pytest.mark.parametrize("tnorm_name", list(registered_tnorms.keys()))
+def test_tnorm_matrix_consistency_with_scalar_application(tnorm_name):
+    """
+    @brief Ensures that applying T-norm to A and B matrices is the same as
+           applying scalar T-norm to A[i,j], B[i,j] for each element.
+
+    This verifies consistency between vectorized and scalar logic.
+    """
+    rng = np.random.default_rng(seed=42)
+    n = 400
+    A = rng.uniform(0, 1, size=(n, n))
+    B = rng.uniform(0, 1, size=(n, n))
+
+    tnorm = TNorm.create(tnorm_name)
+
+    # Direct matrix-wise application
+    matrix_result = tnorm(A, B)
+
+    # Scalar-wise application
+    scalar_result = np.empty_like(A)
+    for i in range(n):
+        for j in range(n):
+            scalar_result[i, j] = tnorm(A[i, j], B[i, j])
+
+    np.testing.assert_allclose(
+        matrix_result, scalar_result, atol=1e-7,
+        err_msg=f"{tnorm_name}: matrix vs scalar mismatch"
+    )
+
+    logger.info(f"{tnorm_name}: scalar vs matrix application match confirmed.")
+
 #endregion
 
 #region <test non-calculational aspects>

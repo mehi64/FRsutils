@@ -171,6 +171,38 @@ def test_equivalence_of_constructor_create_fromdict_with_random_data(implicator_
 
     logger.info(f"{implicator_name}: random input equivalence test passed.")
 
+
+@pytest.mark.parametrize("implicator_name", list(registered_implicators.keys()))
+def test_implicator_matrix_consistency_with_scalar_application(implicator_name):
+    """
+    @brief Ensures that applying implicator to A and B matrices is the same as
+           applying scalar implicator to A[i,j], B[i,j] for each element.
+
+    This verifies consistency between vectorized and scalar logic.
+    """
+    rng = np.random.default_rng(seed=42)
+    n = 400  # small enough for fast testing, large enough for generality
+    A = rng.uniform(0, 1, size=(n, n))
+    B = rng.uniform(0, 1, size=(n, n))
+
+    implicator = Implicator.create(implicator_name)
+
+    # Apply implicator directly on matrices
+    direct_result = implicator(A, B)
+
+    # Scalar application for each (i, j)
+    scalar_result = np.empty_like(A)
+    for i in range(n):
+        for j in range(n):
+            scalar_result[i, j] = implicator(A[i, j], B[i, j])
+
+    np.testing.assert_allclose(
+        scalar_result, direct_result, atol=1e-7,
+        err_msg=f"{implicator_name}: matrix and scalar application mismatch"
+    )
+
+    logger.info(f"{implicator_name}: scalar vs matrix application match confirmed.")
+
 #endregion
 
 #region <Non-calculational behaviors>

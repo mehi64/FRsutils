@@ -4,7 +4,6 @@
 """
 
 import numpy as np
-import warnings
 from sklearn.utils import check_random_state
 from sklearn.neighbors import NearestNeighbors
 from FRsutils.core.preprocess.base_solo_fuzzy_rough_oversampler import BaseSoloFuzzyRoughOversampler
