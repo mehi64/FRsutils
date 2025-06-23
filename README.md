@@ -1,5 +1,8 @@
 <img src="images/logo/logo4.png" alt="FRsutils Logo" width="250"/>
 
+# For Developers
+If you are a developer trying to extend FRsutils, please start here [Development Guidelines](lessons_learned_and_trainings/For_Developers.md)
+
 # Installation
 
 ``` $pip install frsutils```

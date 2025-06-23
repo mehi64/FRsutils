@@ -25,17 +25,11 @@ array([0. , 0.25, 1. ])
 import numpy as np
 from abc import abstractmethod
 from FRsutils.utils.constructor_utils.registry_factory_mixin import RegistryFactoryMixin
-
+from FRsutils.utils.validation_utils import validate_range_0_1
 
 class FuzzyQuantifier(RegistryFactoryMixin):
     """
     @brief Abstract base class for fuzzy quantifiers.
-
-    Provides:
-    - Common validation
-    - Registry and aliasing
-    - Serialization support
-    - Enforced callable interface
     """
 
     @abstractmethod
@@ -50,7 +44,7 @@ class FuzzyQuantifier(RegistryFactoryMixin):
 
 
     @classmethod
-    def validate_params(self, **kwargs):
+    def validate_params(cls, **kwargs):
         """
         @brief Validates the alpha and beta parameters.
 
@@ -76,7 +70,10 @@ class FuzzyQuantifier(RegistryFactoryMixin):
 
         @return: Dict with 'alpha' and 'beta'
         """
-        return {"alpha": self.alpha, "beta": self.beta}
+        return {"alpha": self.alpha,
+                "beta": self.beta,
+                "validate_inputs" : self.validate_inputs}
+
 
     @classmethod
     def from_dict(cls, data: dict) -> "FuzzyQuantifier":
@@ -101,13 +98,35 @@ class LinearFuzzyQuantifier(FuzzyQuantifier):
            (x - alpha)/(beta - alpha) otherwise
     """
 
-    def __init__(self, alpha: float, beta: float):
+    def __init__(self, 
+                 alpha: float, 
+                 beta: float,
+                 validate_inputs: bool = True):
+        """
+        @brief constructs a linear fuzzy quantifier
+
+        @param alpha: Threshold for the left edge of the membership function
+        @param beta: Threshold for the right edge of the membership function
+        @param validate_inputs: Whether to validate inputs per call 
+        of the fuzzy quantifier(default: True)
+
+        NOTE: validate_inputs checks the correctness of input data (np.ndarray) and
+        it is different than validate_params() which checks the correctness of the
+        parameters (alpha and beta).
+        
+        @return: nothing
+        """
         self.validate_params(alpha=alpha, beta=beta)
         self.alpha = alpha
         self.beta = beta
+        self.validate_inputs = validate_inputs
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
         x = np.asarray(x)
+
+        if self.validate_inputs:
+            validate_range_0_1(x)
+
         return np.where(x <= self.alpha, 0.0,
                         np.where(x >= self.beta, 1.0,
                                  (x - self.alpha) / (self.beta - self.alpha)))
@@ -135,13 +154,35 @@ class QuadraticFuzzyQuantifier(FuzzyQuantifier):
             1                                     if x > beta
     """
 
-    def __init__(self, alpha: float, beta: float):
+    def __init__(self, 
+                 alpha: float, 
+                 beta: float,
+                 validate_inputs: bool = True):
+        """
+        @brief constructs a linear fuzzy quantifier
+
+        @param alpha: Threshold for the left edge of the membership function
+        @param beta: Threshold for the right edge of the membership function
+        @param validate_inputs: Whether to validate inputs per call 
+        of the fuzzy quantifier(default: True)
+        
+        NOTE: validate_inputs checks the correctness of input data (np.ndarray) and
+        it is different than validate_params() which checks the correctness of the
+        parameters (alpha and beta).
+        
+        @return: nothing
+        """
         self.validate_params(alpha=alpha, beta=beta)
         self.alpha = alpha
         self.beta = beta
+        self.validate_inputs = validate_inputs
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
         x = np.asarray(x)
+
+        if self.validate_inputs:
+             validate_range_0_1(x)
+
         mid = (self.alpha + self.beta) / 2
         denom = (self.beta - self.alpha) ** 2
 

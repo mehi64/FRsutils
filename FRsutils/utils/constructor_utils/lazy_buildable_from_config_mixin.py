@@ -51,7 +51,7 @@ class LazyBuildableFromConfigMixin(ABC):
         @param kwargs: Any additional keyword arguments passed to from_config
         """
         model_cls = self._lazy_model_registry.get_class(self._lazy_model_type)
-        self._lazy_model = model_cls.from_config(*args, **kwargs, **self._lazy_model_config)
+        self._lazy_model = model_cls.from_config(*args, **self._lazy_model_config)
         self._is_built = True
 
     def ensure_built(self, *args, **kwargs):

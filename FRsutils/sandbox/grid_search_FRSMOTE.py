@@ -19,7 +19,7 @@ X = np.clip(X, 0.0, 0.99)
 pipe = Pipeline([
     ("frsmote", FRSMOTE(
         type="itfrs",  # fuzzy rough model type
-        k_neighbors=5,
+        # k_neighbors=5,
         bias_interpolation=False,
         random_state=42
     )),
@@ -30,8 +30,8 @@ pipe = Pipeline([
 param_grid = {
     # FRSMOTE + ITFRS parameters
     "frsmote__similarity": ["gaussian", "linear"],
-    "frsmote__similarity_tnorm": ["minimum", "product"],
-    "frsmote__gaussian_similarity_sigma": [0.1, .4],
+    "frsmote__similarity_tnorm": ["minimum"],
+    "frsmote__gaussian_similarity_sigma": [0.1],
     "frsmote__tnorm_name": ["minimum"],
     "frsmote__implicator_name": ["lukasiewicz"],
 

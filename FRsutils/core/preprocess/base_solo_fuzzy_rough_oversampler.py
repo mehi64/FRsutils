@@ -49,7 +49,8 @@ class BaseSoloFuzzyRoughOversampler(BaseAllPurposeFuzzyRoughOversampler):
         # logger=None
                     
         # ✅ Ensure the fuzzy rough model is built
-        self.ensure_built(similarity_matrix, y)
+        self.ensure_built(similarity_matrix, 
+                          y)
 
         return self
 
