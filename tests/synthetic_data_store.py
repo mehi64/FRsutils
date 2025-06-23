@@ -111,6 +111,40 @@ def get_implicator_scalar_testsets():
         }
     ]
 
+def owa_weights_testing_testsets():
+    """
+    owa weights
+    """
+    # owa_infimum_weights => increasing
+    # owa_suprimum_weights => dereasing
+
+    linear_inf_len_5  = np.array([0.06666667, 0.13333333, 0.2, 0.26666667, 0.33333333])
+    linear_inf_len_8  = np.array([0.02777778, 0.05555556, 0.08333333, 0.11111111, 0.13888889, 0.16666667, 0.19444444, 0.22222222])
+    linear_inf_len_10 = np.array([0.01818182, 0.03636364, 0.05454545, 0.07272727, 0.09090909, 0.10909091, 0.12727273, 0.14545455, 0.16363636, 0.18181818])
+    linear_inf_len_13 = np.array([0.01098901, 0.02197802, 0.03296703, 0.04395604, 0.05494505, 0.06593407, 0.07692308, 0.08791209, 0.0989011, 0.10989011, 0.12087912, 0.13186813, 0.14285714])
+        
+    exp_inf_len_5  = np.array([0.03225806, 0.06451613, 0.12903226, 0.25806452, 0.51612903])    
+    exp_inf_len_8  = np.array([0.00392157, 0.00784314, 0.01568627, 0.03137255, 0.0627451, 0.1254902, 0.25098039, 0.50196078])    
+    exp_inf_len_10  = np.array()    
+    exp_inf_len_13  = np.array()    
+    
+    return [
+    {
+        "name": "linear",
+        "infimum_OWA":{
+            "len_5": linear_inf_len_5,
+            "len_8": linear_inf_len_8,
+            "len_10": linear_inf_len_10,
+            "len_13": linear_inf_len_13
+        },
+        "suprimum_OWA":{
+            "len_5": linear_inf_len_5[::-1],
+            "len_8": linear_inf_len_8[::-1],
+            "len_10": linear_inf_len_10[::-1],
+            "len_13": linear_inf_len_13[::-1]
+        }
+    }
+    ]
 
 def get_similarity_testing_testsets():
     return [
@@ -278,3 +312,4 @@ def get_OWAFRS_testing_testsets():
     #         }
     #     }
     # ]
+

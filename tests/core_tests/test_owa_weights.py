@@ -2,11 +2,42 @@ import pytest
 import numpy as np
 from FRsutils.core.owa_weights import OWAWeightStrategy
 from FRsutils.utils.logger.logger_util import get_logger
+from tests.synthetic_data_store import owa_weights_testing_testsets
 
 
 logger = get_logger(env="test",
                     experiment_name="test_tnorms1")
 registered = OWAWeightStrategy.list_available()
+
+
+@pytest.mark.parametrize("testset", owa_weights_testing_testsets())
+def test_linear_owa_weight_strategy_correctness(testset):
+    """
+    @brief Tests whether LinearOWAWeightStrategy generates correct lower (infimum) and upper (suprimum) weights
+           for different lengths, and verifies that `weights(descending=True/False)` is consistent with them.
+    """
+    
+    obj = OWAWeightStrategy.create("linear")
+
+    for length_key, expected_inf in testset["infimum_OWA"].items():
+        n = int(length_key.split("_")[1])
+
+        # Validate lower_weights()
+        calc_inf = obj.lower_weights(n)
+        np.testing.assert_allclose(calc_inf, expected_inf, atol=1e-6, err_msg=f"lower_weights mismatch for n={n}")
+
+        # Validate upper_weights()
+        expected_sup = testset["suprimum_OWA"][length_key]
+        calc_sup = obj.upper_weights(n)
+        np.testing.assert_allclose(calc_sup, expected_sup, atol=1e-6, err_msg=f"upper_weights mismatch for n={n}")
+
+        # Validate weights(descending=False)
+        calc_inf_2 = obj.weights(n, descending=False)
+        np.testing.assert_allclose(calc_inf_2, expected_inf, atol=1e-6, err_msg=f"weights(desc=False) mismatch for n={n}")
+
+        # Validate weights(descending=True)
+        calc_sup_2 = obj.weights(n, descending=True)
+        np.testing.assert_allclose(calc_sup_2, expected_sup, atol=1e-6, err_msg=f"weights(desc=True) mismatch for n={n}")
 
 
 @pytest.mark.parametrize("strategy_name", list(registered.keys()))

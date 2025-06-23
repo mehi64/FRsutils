@@ -41,7 +41,8 @@ class OWAWeightStrategy(RegistryFactoryMixin):
         @param n: Number of weights to generate.
         @return: Normalized weight vector (ascending).
         """
-        pass
+        raise NotImplementedError("all subclasses must implement lower_weights")
+
 
     @abstractmethod
     def upper_weights(self, n: int) -> np.ndarray:
@@ -51,7 +52,8 @@ class OWAWeightStrategy(RegistryFactoryMixin):
         @param n: Number of weights to generate.
         @return: Normalized weight vector (descending).
         """
-        pass
+        raise NotImplementedError("all subclasses must implement upper_weights")
+
 
     def weights(self, n: int, descending: bool = False) -> np.ndarray:
         """
