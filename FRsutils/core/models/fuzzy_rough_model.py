@@ -118,7 +118,7 @@ class FuzzyRoughModel(RegistryFactoryMixin, BaseComponentWithLogger):
 
     @classmethod
     @abstractmethod
-    def from_config(cls, config: dict, similarity_matrix=None, labels=None, logger=None):
+    def from_config(cls, similarity_matrix=None, labels=None, **config: dict):
         """
         @brief Alternate constructor from flat config dict.
 
