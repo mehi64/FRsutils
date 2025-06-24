@@ -11,7 +11,7 @@ Supports dynamic registration, factory-based instantiation, and separate impleme
 # - Factory Method: Strategy.create(name, **kwargs)
 # - Adapter Pattern: Serialization via to_dict / from_dict
 # - Strategy Pattern: Linear, Harmonic, Exponential, etc. each define a behavior
-# - Template Method: Abstract interface for lower_weights / upper_weights
+# - Template Method: Abstract interface for raw weight generation
 # - Fail-Fast Validation: Param checks in validate_params
 ##############################################
 
@@ -30,78 +30,96 @@ class OWAWeightStrategy(RegistryFactoryMixin):
     """
     @brief Abstract base class for OWA weight strategies.
 
-    Subclasses must implement `lower_weights(n)` and `upper_weights(n)`.
+    Subclasses must implement `_raw_weights(n)` that generates unnormalized weights.
+    This class handles normalization and sorting.
     """
 
-    @abstractmethod
     def lower_weights(self, n: int) -> np.ndarray:
         """
-        @brief Computes weights in ascending order for infimum OWA.
+        @brief Returns ascending (infimum) OWA weights.
 
-        @param n: Number of weights to generate.
-        @return: Normalized weight vector (ascending).
+        @param n: Number of weights
+        @return: Normalized weight vector in ascending order
         """
-        raise NotImplementedError("all subclasses must implement lower_weights")
+        self._validate_n(n)
+        return self._normalize(self._raw_weights(n), order='asc')
 
-
-    @abstractmethod
     def upper_weights(self, n: int) -> np.ndarray:
         """
-        @brief Computes weights in descending order for supremum OWA.
+        @brief Returns descending (supremum) OWA weights.
 
-        @param n: Number of weights to generate.
-        @return: Normalized weight vector (descending).
+        @param n: Number of weights
+        @return: Normalized weight vector in descending order
         """
-        raise NotImplementedError("all subclasses must implement upper_weights")
+        self._validate_n(n)
+        return self._normalize(self._raw_weights(n), order='desc')
 
-
-    def weights(self, n: int, descending: bool = False) -> np.ndarray:
+    def weights(self, n: int, order: str = 'asc') -> np.ndarray:
         """
-        @brief Unified method to retrieve OWA weights.
-
-        Calls `lower_weights` when `descending=False` (default),
-        and `upper_weights` when `descending=True`.
+        @brief Unified method to retrieve OWA weights in specified order.
 
         @param n: Number of weights to compute.
-        @param descending: If True, returns upper_weights; otherwise lower_weights.
+        @param order: 'asc' for increasing weights, 'desc' for decreasing weights.
         @return: Normalized OWA weight vector.
-        
-        @example
-        >>> w = OWAWeightStrategy.create("linear")
-        >>> w.weights(4)  # equivalent to w.lower_weights(4)
-        >>> w.weights(4, descending=True)  # equivalent to w.upper_weights(4)
         """
-        return self.upper_weights(n) if descending else self.lower_weights(n)
+        if order == 'asc':
+            return self.lower_weights(n)
+        elif order == 'desc':
+            return self.upper_weights(n)
+        else:
+            raise ValueError("order must be 'asc' or 'desc'")
 
+    @abstractmethod
+    def _raw_weights(self, n: int) -> np.ndarray:
+        """
+        @brief Generate unnormalized, unsorted weight values.
+
+        @param n: Number of weights
+        @return: Raw weights (to be normalized and sorted)
+        """
+        pass
+
+    def _validate_n(self, n: int):
+        """
+        @brief Validates the number of weights.
+
+        @param n: Number of weights
+        @raise ValueError: If n is not a positive integer
+        """
+        if not isinstance(n, int) or n <= 0:
+            raise ValueError("n must be a positive integer")
+
+    def _normalize(self, weights: np.ndarray, order='asc') -> np.ndarray:
+        """
+        @brief Normalizes weights and sorts them in the requested order.
+
+        @param weights: Unnormalized weights
+        @param order: 'asc' or 'desc'
+        @return: Normalized and ordered weights
+        @raise ValueError: If weights are not valid or order is invalid
+        """
+        total = weights.sum()
+        if total == 0 or not np.isfinite(total):
+            raise ValueError("Invalid weight normalization")
+        norm = weights / total
+        if order == 'asc':
+            norm = np.sort(norm)
+        elif order == 'desc':
+            norm = np.sort(norm)[::-1]
+        else:
+            raise ValueError("The key `order` must be `asc` or `desc`")
+        assert np.isclose(norm.sum(), 1.0)
+        return norm
 
 
 @OWAWeightStrategy.register("linear")
 class LinearOWAWeightStrategy(OWAWeightStrategy):
     """
-    @brief Linear OWA weighting:
-    - Lower: wᵢ = 2i / (n(n+1))
-    - Upper: wᵢ = 2(n−i+1) / (n(n+1))
+    @brief Linear OWA weighting strategy.
+    Generates linearly increasing weights.
     """
-
-    def lower_weights(self, n: int) -> np.ndarray:
-        self._validate_n(n)
-        return self._normalize(np.arange(1, n + 1))
-
-    def upper_weights(self, n: int) -> np.ndarray:
-        self._validate_n(n)
-        return self._normalize(np.arange(n, 0, -1))
-
-    def _normalize(self, weights: np.ndarray) -> np.ndarray:
-        total = weights.sum()
-        if total == 0 or not np.isfinite(total):
-            raise ValueError("Invalid weight normalization")
-        norm = weights / total
-        assert np.isclose(norm.sum(), 1.0)
-        return norm
-
-    def _validate_n(self, n: int):
-        if not isinstance(n, int) or n <= 0:
-            raise ValueError("n must be a positive integer")
+    def _raw_weights(self, n: int) -> np.ndarray:
+        return np.arange(1, n + 1)
 
     def _get_params(self) -> dict:
         return {}
@@ -111,56 +129,26 @@ class LinearOWAWeightStrategy(OWAWeightStrategy):
         pass
 
     def to_dict(self) -> dict:
-        """
-        @brief Serializes the instance to a dictionary.
-
-        @return: Dictionary with "type" and "params" fields.
-        """
         return {"type": self.__class__.__name__, "name": "linear", "params": self._get_params()}
 
 
 @OWAWeightStrategy.register("exponential", "exp")
 class ExponentialOWAWeightStrategy(OWAWeightStrategy):
     """
-    @brief Exponential OWA weighting:
-    - Param: base > 1
-    - Lower: wᵢ ∝ base^i
-    - Upper: wᵢ ∝ base^(n−i+1)
+    @brief Exponential OWA weighting strategy.
+    Generates exponentially increasing weights controlled by a base.
     """
-
     def __init__(self, base: float = 2.0):
         self.validate_params(base=base)
         self.base = base
 
-    def lower_weights(self, n: int) -> np.ndarray:
-        self._validate_n(n)
-        return self._normalize(self.base ** np.arange(1, n + 1))
-
-    def upper_weights(self, n: int) -> np.ndarray:
-        self._validate_n(n)
-        return self._normalize(self.base ** np.arange(n, 0, -1))
-
-    def _normalize(self, weights: np.ndarray) -> np.ndarray:
-        total = weights.sum()
-        if total == 0 or not np.isfinite(total):
-            raise ValueError("Invalid weight normalization")
-        norm = weights / total
-        assert np.isclose(norm.sum(), 1.0)
-        return norm
-
-    def _validate_n(self, n: int):
-        if not isinstance(n, int) or n <= 0:
-            raise ValueError("n must be a positive integer")
+    def _raw_weights(self, n: int) -> np.ndarray:
+        return self.base ** np.arange(1, n + 1)
 
     def _get_params(self) -> dict:
         return {"base": self.base}
 
     def to_dict(self) -> dict:
-        """
-        @brief Serializes the instance to a dictionary.
-
-        @return: Dictionary with "type" and "params" fields.
-        """
         return {"type": self.__class__.__name__, "name": "exponential", "params": self._get_params()}
 
     @classmethod
@@ -173,30 +161,11 @@ class ExponentialOWAWeightStrategy(OWAWeightStrategy):
 @OWAWeightStrategy.register("harmonic", "harm")
 class HarmonicOWAWeightStrategy(OWAWeightStrategy):
     """
-    @brief Harmonic OWA weighting:
-    - Lower: wᵢ ∝ 1 / i
-    - Upper: wᵢ ∝ 1 / (n − i + 1)
+    @brief Harmonic OWA weighting strategy.
+    Generates weights inversely proportional to index (1/i).
     """
-
-    def lower_weights(self, n: int) -> np.ndarray:
-        self._validate_n(n)
-        return self._normalize(1.0 / np.arange(1, n + 1))
-
-    def upper_weights(self, n: int) -> np.ndarray:
-        self._validate_n(n)
-        return self._normalize(1.0 / np.arange(n, 0, -1))
-
-    def _normalize(self, weights: np.ndarray) -> np.ndarray:
-        total = weights.sum()
-        if total == 0 or not np.isfinite(total):
-            raise ValueError("Invalid weight normalization")
-        norm = weights / total
-        assert np.isclose(norm.sum(), 1.0)
-        return norm
-
-    def _validate_n(self, n: int):
-        if not isinstance(n, int) or n <= 0:
-            raise ValueError("n must be a positive integer")
+    def _raw_weights(self, n: int) -> np.ndarray:
+        return 1.0 / np.arange(1, n + 1)
 
     def _get_params(self) -> dict:
         return {}
@@ -206,41 +175,17 @@ class HarmonicOWAWeightStrategy(OWAWeightStrategy):
         pass
 
     def to_dict(self) -> dict:
-        """
-        @brief Serializes the instance to a dictionary.
-
-        @return: Dictionary with "type" and "params" fields.
-        """
         return {"type": self.__class__.__name__, "name": "harmonic", "params": self._get_params()}
 
 
 @OWAWeightStrategy.register("logarithmic", "log")
 class LogarithmicOWAWeightStrategy(OWAWeightStrategy):
     """
-    @brief Logarithmic OWA weighting:
-    - Lower: wᵢ ∝ log(i + 1)
-    - Upper: wᵢ ∝ log(n − i + 2)
+    @brief Logarithmic OWA weighting strategy.
+    Uses log(i + 1) as raw weights.
     """
-
-    def lower_weights(self, n: int) -> np.ndarray:
-        self._validate_n(n)
-        return self._normalize(np.log(np.arange(1, n + 1) + 1.0))
-
-    def upper_weights(self, n: int) -> np.ndarray:
-        self._validate_n(n)
-        return self._normalize(np.log(np.arange(n, 0, -1) + 1.0))
-
-    def _normalize(self, weights: np.ndarray) -> np.ndarray:
-        total = weights.sum()
-        if total == 0 or not np.isfinite(total):
-            raise ValueError("Invalid weight normalization")
-        norm = weights / total
-        assert np.isclose(norm.sum(), 1.0)
-        return norm
-
-    def _validate_n(self, n: int):
-        if not isinstance(n, int) or n <= 0:
-            raise ValueError("n must be a positive integer")
+    def _raw_weights(self, n: int) -> np.ndarray:
+        return np.log(np.arange(1, n + 1) + 1.0)
 
     def _get_params(self) -> dict:
         return {}
@@ -250,9 +195,4 @@ class LogarithmicOWAWeightStrategy(OWAWeightStrategy):
         pass
 
     def to_dict(self) -> dict:
-        """
-        @brief Serializes the instance to a dictionary.
-
-        @return: Dictionary with "type" and "params" fields.
-        """
         return {"type": self.__class__.__name__, "name": "logarithmic", "params": self._get_params()}

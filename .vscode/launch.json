@@ -240,9 +240,10 @@
             "args": [
                     // "tests/core_tests/test_tnorms.py",
                     //  "tests/core_tests/test_similarities.py",
-                    //  "tests/core_tests/test_owa_weights.py",
+                     "tests/core_tests/test_owa_weights.py",
                     //  "tests/core_tests/test_implicators.py",
-                     "tests/core_tests/test_fuzzy_quantifiers.py"],
+                    //  "tests/core_tests/test_fuzzy_quantifiers.py"
+                    ],
             "console": "integratedTerminal",
             "justMyCode": true,
             "cwd": "${workspaceFolder}",
