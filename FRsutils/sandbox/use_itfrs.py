@@ -34,8 +34,8 @@ y = TSTITFRS['y']
 
 
 # Create ITFRS model with product tnorm and gaines implicator
-tnorm = TNorm.create("product")
-implicator = Implicator.create("luk")
+tnorm = TNorm.create("yager", p=0.83)
+implicator = Implicator.create("fodor")
 
 logger = get_logger()
 

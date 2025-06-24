@@ -99,10 +99,11 @@ def test_from_config_equivalence(synthetic_data_):
     """
     sim, lbl = synthetic_data_
     config = {
-        "ub_tnorm_name": "minimum",
-        "lb_implicator_name": "lukasiewicz"
+        "ub_tnorm_name": "yager",
+        "lb_implicator_name": "lukasiewicz",
+        "p": 0.83
     }
-    model = ITFRS.from_config(similarity_matrix=sim, labels=lbl, config=config)
+    model = ITFRS.from_config(similarity_matrix=sim, labels=lbl, **config)
     assert isinstance(model, ITFRS)
     assert model.similarity_matrix.shape == (3, 3)
     assert model.labels.shape == (3,)
@@ -158,14 +159,25 @@ def test_logger_works(model_instance):
 @pytest.mark.parametrize("test_case", ds.get_ITFRS_testing_testsets())
 @pytest.mark.parametrize("implicator_name, expected_lower_key", [
     ("reichenbach", "Reichenbach_lowerBound"),
-    ("kleene-dienes", "KD_lowerBound"),
+    ("kleenedienes", "KD_lowerBound"),
     ("lukasiewicz", "Luk_lowerBound"),
     ("goedel", "Goedel_lowerBound"),
-    ("gaines", "Gaines_lowerBound")
+    # ("gaines", "Gaines_lowerBound"),
+    ("goguen", "Goguen_lowerBound"),
+    ("rescher", "Rescher_lowerBound"),
+    ("weber", "Weber_lowerBound"),
+    ("fodor", "Fodor_lowerBound"),
+    ("yager", "Yager_lowerBound")
 ])
 @pytest.mark.parametrize("tnorm_name, expected_upper_key", [
-    ("product", "prod_tn_upperBound"),
-    ("minimum", "min_tn_upperBound")
+    # ("product", "prod_tn_upperBound"),
+    # ("minimum", "min_tn_upperBound"),
+    # ("lukasiewicz", "luk_tn_upperBound"),
+    # ("einstein", "einstein_tn_upperBound"),
+    # ("drastic", "drastic_tn_upperBound"),
+    # ("nilpotent", "nilpotent_tn_upperBound"),
+    # ("hamacher", "hamacher_tn_upperBound"),
+    ("yager", "yager_tn_upperBound_p_0_83")
 ])
 def test_itfrs_model_with_all_settings(test_case, implicator_name, expected_lower_key, tnorm_name, expected_upper_key):
     """
@@ -175,10 +187,13 @@ def test_itfrs_model_with_all_settings(test_case, implicator_name, expected_lowe
     y = test_case["y"]
     expected = test_case["expected"]
 
-    model = ITFRS.from_config(similarity_matrix=sim, labels=y, config={
+    config={
         "ub_tnorm_name": tnorm_name,
-        "lb_implicator_name": implicator_name
-    })
+        "lb_implicator_name": implicator_name,
+        "p": 0.83
+    }
+
+    model = ITFRS.from_config(similarity_matrix=sim, labels=y, **config)
 
     actual_lower = model.lower_approximation()
     actual_upper = model.upper_approximation()

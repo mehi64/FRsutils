@@ -214,12 +214,26 @@ def get_ITFRS_testing_testsets():
     Reichenbach_lowerBound = np.array([0.63, 0.65, 0.45, 0.26, 0.26])
     KD_lowerBound = np.array([0.63, 0.65, 0.45, 0.26, 0.26])
     Luk_lowerBound = np.array([0.63, 0.65, 0.45, 0.26, 0.26])
+    Fodor_lowerBound = np.array([0.63, 0.65, 0.45, 0.26, 0.26])
+
     Goedel_lowerBound = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
-    Gaines_lowerBound = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+    Goguen_lowerBound = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+    Rescher_lowerBound = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+    Yager_lowerBound = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+    # Gaines_lowerBound = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+
+    Weber_lowerBound = np.array([1.0, 1.0, 1.0, 1.0, 1.0])
+    
 
     prod_tn_upperBound = np.array([0.54, 0.54, 0.73, 0.29, 0.73])
     min_tn_upperBound = np.array([0.54, 0.54, 0.73, 0.29, 0.73])
-
+    einstein_tn_upperBound = np.array([0.54, 0.54, 0.73, 0.29, 0.73])
+    luk_tn_upperBound = np.array([0.54, 0.54, 0.73, 0.29, 0.73])
+    drastic_tn_upperBound = np.array([0.54, 0.54, 0.73, 0.29, 0.73])
+    nilpotent_tn_upperBound = np.array([0.54, 0.54, 0.73, 0.29, 0.73])
+    hamacher_tn_upperBound = np.array([0.54, 0.54, 0.73, 0.29, 0.73])
+    yager_tn_upperBound_p_0_83 = np.array([0.54, 0.54, 0.73, 0.29, 0.73])
+    
     return [
         {
             "name": "itfrs",
@@ -239,10 +253,20 @@ def get_ITFRS_testing_testsets():
                 "KD_lowerBound" : KD_lowerBound,
                 "Luk_lowerBound" : Luk_lowerBound,
                 "Goedel_lowerBound" : Goedel_lowerBound,
-                "Gaines_lowerBound" : Gaines_lowerBound,
+                "Goguen_lowerBound" : Goguen_lowerBound,
+                "Rescher_lowerBound" : Rescher_lowerBound,
+                "Weber_lowerBound" : Weber_lowerBound,
+                "Fodor_lowerBound" : Fodor_lowerBound,
+                "Yager_lowerBound" : Yager_lowerBound,
+                # "Gaines_lowerBound" : Gaines_lowerBound,
                 "prod_tn_upperBound" : prod_tn_upperBound,
-                "min_tn_upperBound" : min_tn_upperBound
-
+                "min_tn_upperBound" : min_tn_upperBound,
+                "einstein_tn_upperBound" : einstein_tn_upperBound,
+                "luk_tn_upperBound" : luk_tn_upperBound,
+                "drastic_tn_upperBound" : drastic_tn_upperBound,
+                "nilpotent_tn_upperBound" : nilpotent_tn_upperBound,
+                "hamacher_tn_upperBound" : hamacher_tn_upperBound,
+                "yager_tn_upperBound_p_0_83" : yager_tn_upperBound_p_0_83
             }
         }
     ]

@@ -180,13 +180,16 @@ class ITFRS(FuzzyRoughModel):
         if isinstance(ub_tnorm, dict):
             ub_tnorm = tn.TNorm.from_dict(ub_tnorm)
         elif ub_tnorm is None:
-            ub_tnorm = tn.TNorm.create(config.get("ub_tnorm_name", "minimum"), **config)
+            tn_name =config.get("ub_tnorm_name")
+            # tn_name =config["ub_tnorm_name"]
+            ub_tnorm = tn.TNorm.create(tn_name, **config)
 
         lb_implicator = config.get("lb_implicator")
         if isinstance(lb_implicator, dict):
             lb_implicator = imp.Implicator.from_dict(lb_implicator)
         elif lb_implicator is None:
-            lb_implicator = imp.Implicator.create(config.get("lb_implicator_name", "lukasiewicz"), **config)
+            imp_name = config.get("lb_implicator_name")
+            lb_implicator = imp.Implicator.create(imp_name, **config)
 
         # Handle matrix and labels
         sim = similarity_matrix if similarity_matrix is not None else (np.array(config["similarity_matrix"]) if "similarity_matrix" in config else None)
