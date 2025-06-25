@@ -46,13 +46,15 @@ class ITFRS(FuzzyRoughModel):
         super().__init__(similarity_matrix,
                           labels,
                           logger=logger)
-        self.logger.debug(f"{self.__class__.__name__} initialized.")
-
+        
         self.validate_params(ub_tnorm=ub_tnorm, 
                              lb_implicator=lb_implicator)
 
         self.ub_tnorm = ub_tnorm
         self.lb_implicator = lb_implicator
+        
+        self.logger.debug(f"{self.__class__.__name__} initialized.")
+
 
     def lower_approximation(self) -> np.ndarray:
         """

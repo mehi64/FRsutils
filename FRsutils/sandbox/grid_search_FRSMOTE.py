@@ -34,6 +34,8 @@ param_grid = {
     "frsmote__gaussian_similarity_sigma": [0.1],
     "frsmote__tnorm_name": ["minimum"],
     "frsmote__implicator_name": ["lukasiewicz"],
+    # "frsmote__ub_owa_method": ["linear"],
+    # "frsmote__lb_owa_method": ["linear"],
 
     # Optional: SVC parameters
     "svc__C": [0.1],

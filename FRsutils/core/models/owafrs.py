@@ -40,11 +40,10 @@ class OWAFRS(FuzzyRoughModel):
                  ub_owa_method: owa_weights.OWAWeights,
                  lb_owa_method: owa_weights.OWAWeights,
                  logger=None):
+        
         super().__init__(similarity_matrix,
                           labels,
                           logger=logger)
-        self.logger.debug(f"{self.__class__.__name__} initialized.")
-
         self.validate_params(ub_tnorm=ub_tnorm, 
                              lb_implicator=lb_implicator,
                              ub_owa_method=ub_owa_method,
@@ -58,8 +57,11 @@ class OWAFRS(FuzzyRoughModel):
 
         n = len(labels)
 
+        # n-1 because the same instance is not included in calculations
         self.lb_owa_weights = lb_owa_method.weights(n-1, order='asc')
         self.ub_owa_weights = ub_owa_method.weights(n-1, order='desc')
+
+        self.logger.debug(f"{self.__class__.__name__} initialized.")
 
 
     def lower_approximation(self) -> np.ndarray:
@@ -70,6 +72,11 @@ class OWAFRS(FuzzyRoughModel):
         """
         label_mask = (self.labels[:, None] == self.labels[None, :]).astype(float)
         implication_vals = self.lb_implicator(self.similarity_matrix, label_mask)
+        
+        # to omitt the same instance from calculations, the
+        # main diagonal is set to 0.0. then each row is sorted in descending order
+        # then the last row is sliced because the last row always contains 0.0.
+        # finally, the matrix is multiplied by the owa weights.
         np.fill_diagonal(implication_vals, 0.0)
         sorted_matrix = np.sort(implication_vals, axis=1)[:, ::-1][:, :-1]
         return np.matmul(sorted_matrix, self.lb_owa_weights)
@@ -83,6 +90,11 @@ class OWAFRS(FuzzyRoughModel):
         """
         label_mask = (self.labels[:, None] == self.labels[None, :]).astype(float)
         tnorm_vals = self.ub_tnorm(self.similarity_matrix, label_mask)
+        
+        # to omitt the same instance from calculations, the
+        # main diagonal is set to 0.0. then each row is sorted in descending order
+        # then the last row is sliced because the last row always contains 0.0.
+        # finally, the matrix is multiplied by the owa weights.
         np.fill_diagonal(tnorm_vals, 0.0)
         sorted_matrix = np.sort(tnorm_vals, axis=1)[:, ::-1][:, :-1]
         return np.matmul(sorted_matrix, self.ub_owa_weights)
@@ -141,8 +153,8 @@ class OWAFRS(FuzzyRoughModel):
    
     def describe_params_detailed(self) -> dict:
         return {
-            "tnorm": self.ub_tnorm.describe_params_detailed(),
-            "implicator": self.lb_implicator.describe_params_detailed(),
+            "ub_tnorm": self.ub_tnorm.describe_params_detailed(),
+            "lb_implicator": self.lb_implicator.describe_params_detailed(),
             "ub_owa_method": self.ub_owa_method.describe_params_detailed(),
             "lb_owa_method": self.lb_owa_method.describe_params_detailed()
         }
