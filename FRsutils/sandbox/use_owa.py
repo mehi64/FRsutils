@@ -1,23 +1,25 @@
-from FRsutils.core.owa_weights import OWAWeightStrategy
+from FRsutils.core.owa_weights import OWAWeights
 import numpy as np
 
 np.set_printoptions(precision=8, suppress=True)
 
 # Linear weights (default)
-# owa = OWAWeightStrategy.create("linear")
-owa = OWAWeightStrategy.create("exp", base=3.0)
+owa = OWAWeights.create("linear")
+# owa = OWAWeights.create("exp", base=3.0)
 # owa = OWAWeightStrategy.create("harmonic")
 # owa = OWAWeightStrategy.create("log")
 
-print(owa.lower_weights(5))
-print(owa.lower_weights(8))
-print(owa.lower_weights(10))
-print(owa.lower_weights(13))
+print(owa.weights(3, 'desc'))
 
-print(np.sum(owa.lower_weights(5)))
-print(np.sum(owa.lower_weights(8)))
-print(np.sum(owa.lower_weights(10)))
-print(np.sum(owa.lower_weights(13)))
+# print(owa.lower_weights(5))
+# print(owa.lower_weights(8))
+# print(owa.lower_weights(10))
+# print(owa.lower_weights(13))
+
+# print(np.sum(owa.lower_weights(5)))
+# print(np.sum(owa.lower_weights(8)))
+# print(np.sum(owa.lower_weights(10)))
+# print(np.sum(owa.lower_weights(13)))
 
 
 
