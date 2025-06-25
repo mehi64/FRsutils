@@ -45,6 +45,8 @@ model = ITFRS(similarity_matrix=sim_matrix,
               lb_implicator=implicator,
               logger=logger)
 
+aa = model.describe_params_detailed()
+
 upper = model.upper_approximation()
 lower = model.lower_approximation()
 
