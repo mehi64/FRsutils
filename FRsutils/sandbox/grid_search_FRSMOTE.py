@@ -16,10 +16,17 @@ scaler = MinMaxScaler()
 X = scaler.fit_transform(X)
 X = np.clip(X, 0.0, 0.99)
 
+np.savez("normalized_data.npy", X=X, y=y)
+
+# # Load them back
+# data = np.load("data.npz")
+# a = data["array1"]
+# b = data["array2"]
+
 # Step 2: Define pipeline with custom FRSMOTE and SVC
 pipe = Pipeline([
     ("frsmote", FRSMOTE(
-        type="owafrs",  # fuzzy rough model type
+        type="itfrs",  # fuzzy rough model type, must be here otherwise cannot run
         k_neighbors=5,
         bias_interpolation=False,
         random_state=42
@@ -30,6 +37,7 @@ pipe = Pipeline([
 # Step 3: Define hyperparameter grid
 param_grid = {
     # FRSMOTE + ITFRS parameters
+    "frsmote__type": ["itfrs", "owafrs"],
     "frsmote__similarity": ["gaussian", "linear"],
     "frsmote__similarity_tnorm": ["minimum"],
     "frsmote__gaussian_similarity_sigma": [0.1],

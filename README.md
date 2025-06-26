@@ -15,11 +15,11 @@ If you are a developer trying to extend FRsutils, please start here [Development
   - pandas
   - colorlog
   - pytest (if you want to run unit tests)
-  - cupy
+  - cupy (if you have an Nvidia GPU) [under development]
 
-# Fuzzy-Rough set utilities (Under development)
+# Fuzzy-Rough set utilities [Under development]
 
-A basic Python library needed for fuzzy rough set calculations e.g.:
+A basic Python library needed for fuzzy rough set calculations that are used in research, e.g.:
 
 - lower approximation
 - upper approximation
@@ -32,16 +32,15 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
   - Linear
   - Gaussian
 - Implicators (See [fuzzy implicators](implicators_info.md))
-  - Gaines
-  - Goedel
-  - Kleene–Dienes
-  - Reichenbach
   - Lukasiewicz
-  - Gaines
+  - Goedel
+  - Reichenbach
+  - Kleene-Dienes
+  - Goguen
   - Yager
+  - Rescher
   - Weber
-  - Frank
-  - Sugeno–Weber
+  - Fodor
 - T-norms (See [fuzzy tnorms](tnorms_info.md))
   - Min tnorm
   - Product tnorm
@@ -60,9 +59,9 @@ A basic Python library needed for fuzzy rough set calculations e.g.:
   - Linear
   - Quadratic
 - FR Models
-  - ITFRS (Implicator/T-norm Fuzzy-Rough Sets)
-  - OWAFRS (Ordered Weighted Average Fuzzy-Rough Sets) 
-  - VQRS
+  - ITFRS (See [Implicator/T-norm Fuzzy-Rough Sets]((itfrs_info.md)))
+  - OWAFRS (See [Ordered Weighted Average Fuzzy-Rough Sets](owafrs_info.md)) 
+  - VQRS (Vaguely Quantified fuzzy-Rough Sets) 
 
 ## Fuzzy-rough oversampling
 ### FRSMOTE
