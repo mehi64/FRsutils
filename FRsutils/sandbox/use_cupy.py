@@ -25,7 +25,7 @@ import numpy as np
 
 try:
     import cupy as cp
-    # cp.show_config()
+    cp.show_config()
     cupy_available = True
 except ImportError:
     cupy_available = False
@@ -33,12 +33,15 @@ except ImportError:
     print("   pip install cupy-cuda12x  # Replace 12x with your CUDA version\n")
 
 # Matrix size
-N = 10000
+N = 15000
 print(f"Creating two {N}x{N} matrices...")
 
 # CPU arrays
-A_cpu = np.random.rand(N, N)
-B_cpu = np.random.rand(N, N)
+# A_cpu = np.random.rand(N, N)
+# B_cpu = np.random.rand(N, N)
+
+A_cpu = np.random.rand(N, N).astype(np.float32)
+B_cpu = np.random.rand(N, N).astype(np.float32)
 
 # CPU benchmark
 print("Running matrix multiplication on CPU (NumPy)...")
@@ -50,8 +53,12 @@ print(f"✅ CPU Time: {cpu_time:.4f} seconds")
 
 # GPU benchmark (if CuPy is available)
 if cupy_available:
-    A_gpu = cp.asarray(A_cpu)
-    B_gpu = cp.asarray(B_cpu)
+    # A_gpu = cp.asarray(A_cpu)
+    # B_gpu = cp.asarray(B_cpu)
+
+    # Use separate GPU-generated matrices
+    A_gpu = cp.random.rand(N, N, dtype=cp.float32)
+    B_gpu = cp.random.rand(N, N, dtype=cp.float32)
 
     print("Running matrix multiplication on GPU (CuPy)...")
     cp.cuda.Device().synchronize()
