@@ -57,3 +57,16 @@ OWA enables weighting the sorted values (e.g., top similarity scores or implicat
   - **Unification**: OWAFRS generalizes other fuzzy rough set models (e.g., VQRS, ITFRS) as special cases depending on the OWA configuration.
 ---
 
+### In OWAFRS
+#### lower approximation for each instance: 
+<img src="images/OWAFRS/lower.JPG" alt="lower aaproximation" width="250"/>
+
+#### upper approximation for each instance:
+<img src="images/OWAFRS/upper.JPG" alt="upper aproximation" width="250"/>
+
+  - Since for the calculations of lower approximation, we calculate soft Inf which is basically a product, to exclude the same instance from calculations we set the main diagonal to 0.0
+
+  - Since for the calculations of upper approximation, we calculate soft sup which is basically a product, to exclude the same instance from calculations we need to set the main diagonal to 0.0 which is ignored by max operator. Otherwise all upper approxamations will be 1.0.
+
+#### In OWAFRS, POS(x) = ????????????????????????
+

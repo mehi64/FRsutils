@@ -43,3 +43,37 @@ Fuzzy implicators are functions used to generalize the implication operation ("i
 
 1. **Raquel Fernandez-Peralta (2025)** - *A Comprehensive Survey of Fuzzy Implication Functions*.
 2. **Gaines, B. R. (1978)** - *Fuzzy and probability uncertainty logics. Information and Control, 38(2)*
+
+
+----
+
+
+
+------
+### Implicators
+- Since in this library, A(y) in implicators--if instance x has the same class of instance y, is used, therefore different implicators boil down to the same thing:
+  - Goedel and Gaines produce the same results
+  - KD, Reichenbach and Luk also produce the same results
+- implicators work on scalar but can be vectorized with np.vectorize()
+- implicators do not generate the same values for these (0,0) , (1,0) , (0,1) , (1,1). Their behavior is different. Do not draw a general conclusion on them.
+
+
+<img src="images/implicators/Luk.png" alt="Luk" width="500"/>
+
+------
+
+<img src="images/implicators/Goedel.png" alt="Goedel" width="500"/>
+
+------
+
+<img src="images/implicators/KD.png" alt="KD" width="500"/>
+
+------
+
+<img src="images/implicators/Reichenbach.png" alt="Reichenbach" width="500"/>
+
+------
+
+<img src="images/implicators/Gaines.png" alt="Gaines" width="500"/>
+
+------

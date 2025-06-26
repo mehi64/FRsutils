@@ -65,3 +65,14 @@ This separation is useful in:
   - Uncertainty reasoning
 
 ---
+### In ITFRS (THIS SECTION NEEDS TO BE CHECKED)
+#### lower approximation for each instance: 
+<img src="images/ITFRS/lower.JPG" alt="lower aaproximation" width="250"/>
+
+#### upper approximation for each instance:
+<img src="images/ITFRS/upper.JPG" alt="upper aproximation" width="250"/>
+
+
+  - Since for the calculations of lower approximation, we calculate Inf which is basically a minimum, to exclude the same instance from calculations we don’t need anything because the main diagonal is set to 1.0 which is ignored by min operator. To be sure all is correct, inside code, we set main diagonal to 1.0
+  - Since for the calculations of upper approximation, we calculate sup which is basically a maximum, to exclude the same instance from calculations we need to set the main diagonal to 0.0 which is ignored by max operator. Otherwise all upper approxamations will be 1.0.
+  - In ITFRS, POS(x) = lower_approximation(x) where x  is a data instance, and datasets having crisp classes.????????
