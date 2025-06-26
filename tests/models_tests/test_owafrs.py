@@ -494,134 +494,158 @@ def test_logger_works_all_combinations(tnorm_name,
 ###                           ###
 #################################
 
-# @pytest.mark.parametrize("test_case", ds.get_ITFRS_testing_testsets())
-# @pytest.mark.parametrize("implicator_name, expected_lower_key", [
-#     ("reichenbach", "Reichenbach_lowerBound"),
-#     ("kleenedienes", "KD_lowerBound"),
-#     ("lukasiewicz", "Luk_lowerBound"),
-#     ("goedel", "Goedel_lowerBound"),
-#     # ("gaines", "Gaines_lowerBound"),
-#     ("goguen", "Goguen_lowerBound"),
-#     ("rescher", "Rescher_lowerBound"),
-#     ("weber", "Weber_lowerBound"),
-#     ("fodor", "Fodor_lowerBound"),
-#     ("yager", "Yager_lowerBound")
-# ])
-# @pytest.mark.parametrize("tnorm_name, expected_upper_key", [
-#     ("product", "prod_tn_upperBound"),
-#     ("minimum", "min_tn_upperBound"),
-#     ("lukasiewicz", "luk_tn_upperBound"),
-#     ("einstein", "einstein_tn_upperBound"),
-#     ("drastic", "drastic_tn_upperBound"),
-#     ("nilpotent", "nilpotent_tn_upperBound"),
-#     ("hamacher", "hamacher_tn_upperBound"),
-#     ("yager", "yager_tn_upperBound_p_0_83")
-# ])
-# def test_itfrs_model_with_all_settings(test_case, implicator_name, expected_lower_key, tnorm_name, expected_upper_key):
-#     """
-#     @brief Test for `itfrs_model_with_all_settings` method of ITFRS model.
-#     """
-#     sim = test_case["sim_matrix"]
-#     y = test_case["y"]
-#     expected = test_case["expected"]
+@pytest.mark.parametrize("test_case", ds.get_OWAFRS_testing_testsets())
+@pytest.mark.parametrize("implicator_name, expected_lower_key", [
+    ("reichenbach", "reichenbach_lowerBound"),
+    ("kleenedienes", "kd_lowerBound"),
+    ("lukasiewicz", "luk_lowerBound"),
+    ("goedel", "goedel_lowerBound"),
+    # ("gaines", "Gaines_lowerBound"),
+    ("goguen", "goguen_lowerBound"),
+    ("rescher", "rescher_lowerBound"),
+    ("weber", "weber_lowerBound"),
+    ("fodor", "fodor_lowerBound"),
+    ("yager", "yager_lowerBound")
+])
+@pytest.mark.parametrize("tnorm_name, expected_upper_key", [
+    ("product", "prod_tn_upperBound"),
+    ("minimum", "min_tn_upperBound"),
+    ("lukasiewicz", "luk_tn_upperBound"),
+    ("einstein", "einstein_tn_upperBound"),
+    ("drastic", "drastic_tn_upperBound"),
+    ("nilpotent", "nilpotent_tn_upperBound"),
+    ("hamacher", "hamacher_tn_upperBound"),
+    ("yager", "yager_tn_upperBound_p_0_83")
+])
+def test_owafrs_model_with_all_settings(test_case, implicator_name, expected_lower_key, tnorm_name, expected_upper_key):
+    """
+    @brief Test for `owafrs_model_with_all_settings` method of OWAFRS model.
+    """
+    sim = test_case["sim_matrix"]
+    y = test_case["y"]
+    expected = test_case["expected"]["owa_linear"]
 
-#     config={
-#         "ub_tnorm_name": tnorm_name,
-#         "lb_implicator_name": implicator_name,
-#         "p": 0.83
-#     }
+    config={
+        "ub_tnorm_name": tnorm_name,
+        "lb_implicator_name": implicator_name,
+        "ub_owa_method_name": "linear",
+        "lb_owa_method_name": "linear",
+        "p": 0.83
+    }
 
-#     model = ITFRS.from_config(similarity_matrix=sim, labels=y, **config)
 
-#     actual_lower = model.lower_approximation()
-#     actual_upper = model.upper_approximation()
+    model = OWAFRS.from_config(similarity_matrix=sim, labels=y, **config)
 
-#     np.testing.assert_allclose(actual_lower, expected[expected_lower_key], atol=1e-5, err_msg=f"Failed for {implicator_name}")
-#     np.testing.assert_allclose(actual_upper, expected[expected_upper_key], atol=1e-5, err_msg=f"Failed for {tnorm_name}")
+    actual_lower = model.lower_approximation()
+    actual_upper = model.upper_approximation()
 
-# @pytest.fixture
-# def synthetic_data():
-#     return ds.get_ITFRS_testing_testsets()[0]
+    np.testing.assert_allclose(actual_lower, expected[expected_lower_key], atol=1e-5, err_msg=f"Failed for {implicator_name}")
+    np.testing.assert_allclose(actual_upper, expected[expected_upper_key], atol=1e-5, err_msg=f"Failed for {tnorm_name}")
 
-# @pytest.mark.parametrize("implicator_name", ['reichenbach', 'kleenedienes', 'lukasiewicz', 'goedel', 'goguen', 'yager', 'rescher', 'weber', 'fodor'])
-# @pytest.mark.parametrize("tnorm_name", ['product', 'minimum', 'yager', 'luk', 'drastic', 'hamacher', 'einstein', 'nilpotent'])
-# @pytest.mark.parametrize("similarity_name", ['gaussian', 'linear'])
-# def test_itfrs_all_combinations(implicator_name, tnorm_name, similarity_name, synthetic_data):
-#     sim_matrix_raw = synthetic_data["sim_matrix"]
-#     labels = synthetic_data["y"]
-#     expected = synthetic_data["expected"]
 
+
+@pytest.fixture
+def synthetic_data():
+    return ds.get_OWAFRS_testing_testsets()[0]
+
+@pytest.mark.parametrize("implicator_name", ['reichenbach', 'kleenedienes', 'lukasiewicz', 'goedel', 'goguen', 'yager', 'rescher', 'weber', 'fodor'])
+@pytest.mark.parametrize("tnorm_name", ['product', 'minimum', 'yager', 'luk', 'drastic', 'hamacher', 'einstein', 'nilpotent'])
+@pytest.mark.parametrize("similarity_name", ['gaussian', 'linear'])
+def test_owafrs_all_combinations(implicator_name, tnorm_name, similarity_name, synthetic_data):
+    sim_matrix_raw = synthetic_data["sim_matrix"]
+    labels = synthetic_data["y"]
+    expected = synthetic_data["expected"]["owa_linear"]
+
+    # lb_owa_method = oww.LinearOWAWeights()
+    # ub_owa_method = oww.LinearOWAWeights()
     
-#     sim_matrix = sim_matrix_raw
+    sim_matrix = sim_matrix_raw
 
-#     model = ITFRS.from_config(
-#         similarity_matrix=sim_matrix,
-#         labels=labels,
-#         lb_implicator_name=implicator_name,
-#         ub_tnorm_name=tnorm_name
-#         ,p=0.83
-#     )
+    model = OWAFRS.from_config(
+        similarity_matrix=sim_matrix,
+        labels=labels,
+        lb_implicator_name=implicator_name,
+        ub_tnorm_name=tnorm_name,
+        lb_owa_method_name="linear",
+        ub_owa_method_name="linear",
+        p=0.83
+    )
 
-#     lower = model.lower_approximation()
-#     upper = model.upper_approximation()
+    lower = model.lower_approximation()
+    upper = model.upper_approximation()
 
-#     assert lower.shape == labels.shape
-#     assert upper.shape == labels.shape
-#     assert np.all((0.0 <= lower) & (lower <= 1.0))
-#     assert np.all((0.0 <= upper) & (upper <= 1.0))
+    assert lower.shape == labels.shape
+    assert upper.shape == labels.shape
+    assert np.all((0.0 <= lower) & (lower <= 1.0))
+    assert np.all((0.0 <= upper) & (upper <= 1.0))
 
-#     expected_lower_keys = {
-#         'reichenbach': "Reichenbach_lowerBound",
-#         'kleene-dienes': "KD_lowerBound",
-#         'lukasiewicz': "Luk_lowerBound",
-#         'goedel': "Goedel_lowerBound",
-#         # 'gaines': "Gaines_lowerBound",
-#         "goguen": "Goguen_lowerBound",
-#         "rescher": "Rescher_lowerBound",
-#         "weber": "Weber_lowerBound",
-#         "fodor": "Fodor_lowerBound",
-#         "yager": "Yager_lowerBound"
-#     }
-#     expected_upper_keys = {
-#         'product': "prod_tn_upperBound",
-#         'minimum': "min_tn_upperBound",
-#         "lukasiewicz": "luk_tn_upperBound",
-#         "einstein": "einstein_tn_upperBound",
-#         "drastic": "drastic_tn_upperBound",
-#         "nilpotent": "nilpotent_tn_upperBound",
-#         "hamacher": "hamacher_tn_upperBound",
-#         "yager": "yager_tn_upperBound_p_0_83"
-#     }
+    expected_lower_keys = {
+        'reichenbach': "Reichenbach_lowerBound",
+        'kleene-dienes': "KD_lowerBound",
+        'lukasiewicz': "Luk_lowerBound",
+        'goedel': "Goedel_lowerBound",
+        # 'gaines': "Gaines_lowerBound",
+        "goguen": "Goguen_lowerBound",
+        "rescher": "Rescher_lowerBound",
+        "weber": "Weber_lowerBound",
+        "fodor": "Fodor_lowerBound",
+        "yager": "Yager_lowerBound"
+    }
+    expected_upper_keys = {
+        'product': "prod_tn_upperBound",
+        'minimum': "min_tn_upperBound",
+        "lukasiewicz": "luk_tn_upperBound",
+        "einstein": "einstein_tn_upperBound",
+        "drastic": "drastic_tn_upperBound",
+        "nilpotent": "nilpotent_tn_upperBound",
+        "hamacher": "hamacher_tn_upperBound",
+        "yager": "yager_tn_upperBound_p_0_83"
+    }
 
-#     if implicator_name in expected_lower_keys:
-#         expected_key = expected_lower_keys[implicator_name]
-#         if expected_key in expected:
-#             np.testing.assert_allclose(lower, expected[expected_key], atol=1e-5)
+    if implicator_name in expected_lower_keys:
+        expected_key = expected_lower_keys[implicator_name]
+        if expected_key in expected:
+            np.testing.assert_allclose(lower, expected[expected_key], atol=1e-5)
 
-#     if tnorm_name in expected_upper_keys:
-#         expected_key = expected_upper_keys[tnorm_name]
-#         if expected_key in expected:
-#             np.testing.assert_allclose(upper, expected[expected_key], atol=1e-5)
+    if tnorm_name in expected_upper_keys:
+        expected_key = expected_upper_keys[tnorm_name]
+        if expected_key in expected:
+            np.testing.assert_allclose(upper, expected[expected_key], atol=1e-5)
 
-# def test_logger_and_params_describe(synthetic_data):
-#     sim_matrix = synthetic_data["sim_matrix"]
-#     labels = synthetic_data["y"]
-#     model = ITFRS.from_config(similarity_matrix=sim_matrix, labels=labels,
-#                               lb_implicator_name="lukasiewicz", ub_tnorm_name="minimum")
-#     params = model.describe_params_detailed()
-#     assert "ub_tnorm" in params
-#     assert "lb_implicator" in params
-#     model.logger.info("Logger test message")
 
-# def test_to_dict_and_from_dict_roundtrip(synthetic_data):
-#     sim_matrix = synthetic_data["sim_matrix"]
-#     labels = synthetic_data["y"]
-#     model = ITFRS.from_config(similarity_matrix=sim_matrix, labels=labels,
-#                               lb_implicator_name="lukasiewicz", ub_tnorm_name="minimum")
-#     model_dict = model.to_dict(include_data=True)
-#     reconstructed = ITFRS.from_dict(model_dict)
-#     np.testing.assert_allclose(reconstructed.lower_approximation(), model.lower_approximation())
-#     np.testing.assert_allclose(reconstructed.upper_approximation(), model.upper_approximation())    
+def test_logger_and_params_describe(synthetic_data):
+    sim_matrix = synthetic_data["sim_matrix"]
+    labels = synthetic_data["y"]
+    model = OWAFRS.from_config(similarity_matrix=sim_matrix,
+                                labels=labels,
+                              lb_implicator_name="lukasiewicz", 
+                              ub_tnorm_name="minimum",
+                              ub_owa_method_name="linear",
+                              lb_owa_method_name="linear",
+                              logger_name="test")
     
-# def normalize(name: str) -> str:
-#     return name.lower().replace("-", "").replace("_", "")
+    params = model.describe_params_detailed()
+    assert "ub_tnorm" in params
+    assert "lb_implicator" in params
+    assert "lb_owa_method" in params
+    assert "ub_owa_method" in params
+    model.logger.info("Logger test message")
+
+def test_to_dict_and_from_dict_roundtrip(synthetic_data):
+    sim_matrix = synthetic_data["sim_matrix"]
+    labels = synthetic_data["y"]
+    model = OWAFRS.from_config(similarity_matrix=sim_matrix,
+                                labels=labels,
+                              lb_implicator_name="lukasiewicz", 
+                              ub_tnorm_name="minimum",
+                              ub_owa_method_name="linear",
+                              lb_owa_method_name="linear",
+                              logger_name="test")
+    
+    model_dict = model.to_dict(include_data=True)
+    reconstructed = OWAFRS.from_dict(model_dict)
+    np.testing.assert_allclose(reconstructed.lower_approximation(), model.lower_approximation())
+    np.testing.assert_allclose(reconstructed.upper_approximation(), model.upper_approximation())    
+    
+def normalize(name: str) -> str:
+    return name.lower().replace("-", "").replace("_", "")

@@ -379,39 +379,68 @@ def get_VQRS_testing_testsets():
     ]
 
 def get_OWAFRS_testing_testsets():
-    pass
-    # owa_linear_Reichenbach_lowerBound = np.array([0.822 , 0.8, 0.599, 0.539, 0.624])
-    # owa_linear_KD_lowerBound = np.array([0.822 , 0.8, 0.599, 0.539, 0.624])
-    # Luk_lowerBound = np.array([0.63, 0.65, 0.45, 0.26, 0.26])
-    # Goedel_lowerBound = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
-    # Gaines_lowerBound = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+    
+    reichenbach_lowerBound = np.array([0.822 , 0.8, 0.599, 0.539, 0.624])
+    kd_lowerBound = np.array([0.822 , 0.8, 0.599, 0.539, 0.624])
+    fodor_lowerBound = np.array([0.822 , 0.8, 0.599, 0.539, 0.624])
+    luk_lowerBound = np.array([0.822 , 0.8, 0.599, 0.539, 0.624])
+    
+    goedel_lowerBound = np.array([0.3, 0.3, 0.1, 0.3, 0.1])
+    # Gaines_lowerBound = np.array()
+    goguen_lowerBound = np.array([0.3, 0.3, 0.1, 0.3, 0.1])
+    rescher_lowerBound = np.array([0.3, 0.3, 0.1, 0.3, 0.1])
+    yager_lowerBound = np.array([0.3, 0.3, 0.1, 0.3, 0.1])
 
-    # prod_tn_upperBound = np.array([0.54, 0.54, 0.73, 0.29, 0.73])
-    # min_tn_upperBound = np.array([0.54, 0.54, 0.73, 0.29, 0.73])
+    weber_lowerBound = np.array([1.0, 1.0, 1.0, 1.0, 1.0])
+    
 
-    # return [
-    #     {
-    #         "name": "owafrs",
-    #         "y" : np.array([1, 1, 0, 1, 0]),
+    prod_tn_upperBound = np.array([0.273, 0.303, 0.292, 0.173, 0.292])
+    min_tn_upperBound = np.array([0.273, 0.303, 0.292, 0.173, 0.292])
+    einstein_tn_upperBound = np.array([0.273, 0.303, 0.292, 0.173, 0.292])
+    luk_tn_upperBound = np.array([0.273, 0.303, 0.292, 0.173, 0.292])
+    drastic_tn_upperBound = np.array([0.273, 0.303, 0.292, 0.173, 0.292])
+    nilpotent_tn_upperBound = np.array([0.273, 0.303, 0.292, 0.173, 0.292])
+    hamacher_tn_upperBound = np.array([0.273, 0.303, 0.292, 0.173, 0.292])
+    yager_tn_upperBound_p_0_83 = np.array([0.273, 0.303, 0.292, 0.173, 0.292])
+    return [
+        {
+            "name": "owafrs",
+            "y" : np.array([1, 1, 0, 1, 0]),
 
-    #         "sim_matrix": np.array([
-    #         [1.00, 0.54, 0.37, 0.19, 0.10],
-    #         [0.54, 1.00, 0.35, 0.29, 0.20],
-    #         [0.37, 0.35, 1.00, 0.55, 0.73],
-    #         [0.19, 0.29, 0.55, 1.00, 0.74],
-    #         [0.10, 0.20, 0.73, 0.74, 1.00]
-    #     ]),
+            "sim_matrix": np.array([
+            [1.00, 0.54, 0.37, 0.19, 0.10],
+            [0.54, 1.00, 0.35, 0.29, 0.20],
+            [0.37, 0.35, 1.00, 0.55, 0.73],
+            [0.19, 0.29, 0.55, 1.00, 0.74],
+            [0.10, 0.20, 0.73, 0.74, 1.00]
+        ]),
 
-    #         "expected": 
-    #         {
-    #             "Reichenbach_lowerBound" : Reichenbach_lowerBound,
-    #             "KD_lowerBound" : KD_lowerBound,
-    #             "Luk_lowerBound" : Luk_lowerBound,
-    #             "Goedel_lowerBound" : Goedel_lowerBound,
-    #             "Gaines_lowerBound" : Gaines_lowerBound,
-    #             "prod_tn_upperBound" : prod_tn_upperBound,
-    #             "min_tn_upperBound" : min_tn_upperBound
-    #         }
-    #     }
-    # ]
+            "expected": 
+            {
+                "owa_linear":
+                {
+                    "reichenbach_lowerBound" : reichenbach_lowerBound,
+                    "kd_lowerBound" : kd_lowerBound,
+                    "luk_lowerBound" : luk_lowerBound,
+                    "goedel_lowerBound" : goedel_lowerBound,
+                    "goguen_lowerBound" : goguen_lowerBound,
+                    "fodor_lowerBound" : fodor_lowerBound,
+                    "rescher_lowerBound" : rescher_lowerBound,
+                    "yager_lowerBound" : yager_lowerBound,
+                    "weber_lowerBound" : weber_lowerBound,
+
+                    "prod_tn_upperBound" : prod_tn_upperBound,
+                    "min_tn_upperBound" : min_tn_upperBound,
+                    "prod_tn_upperBound" : prod_tn_upperBound,
+                    "min_tn_upperBound" : min_tn_upperBound,
+                    "einstein_tn_upperBound" : einstein_tn_upperBound,
+                    "luk_tn_upperBound" : luk_tn_upperBound,
+                    "drastic_tn_upperBound" : drastic_tn_upperBound,
+                    "nilpotent_tn_upperBound" : nilpotent_tn_upperBound,
+                    "hamacher_tn_upperBound" : hamacher_tn_upperBound,
+                    "yager_tn_upperBound_p_0_83" : yager_tn_upperBound_p_0_83
+                }
+            }
+        }
+    ]
 

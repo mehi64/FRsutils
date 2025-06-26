@@ -122,7 +122,7 @@ class OWAFRS(FuzzyRoughModel):
         return data
     
     @classmethod
-    def from_dict(cls, data: dict, similarity_matrix=None, labels=None, logger=None) -> "ITFRS":
+    def from_dict(cls, data: dict, similarity_matrix=None, labels=None, logger=None) -> "OWAFRS":
         """
         @brief Reconstruct an OWAFRS model from a serialized dictionary.
 

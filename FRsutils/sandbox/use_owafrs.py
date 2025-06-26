@@ -10,14 +10,24 @@ from FRsutils.core.models.fuzzy_rough_model import FuzzyRoughModel as FRMODEL
 
 logger = get_logger()
 
-sim_matrix= np.array([
-    [1.00, 0.54, 0.37, 0.19, 0.10],
-    [0.54, 1.00, 0.35, 0.29, 0.20],
-    [0.37, 0.35, 1.00, 0.55, 0.73],
-    [0.19, 0.29, 0.55, 1.00, 0.74],
-    [0.10, 0.20, 0.73, 0.74, 1.00]
-])
-labels = np.array([1, 1, 0, 1, 0])
+data_synthteic = sdf.get_OWAFRS_testing_testsets()[0]
+
+TSTowaFRS = data_synthteic
+sim_matrix = TSTowaFRS['sim_matrix']
+labels = TSTowaFRS['y']
+
+expected = TSTowaFRS["expected"]["owa_linear"]
+
+
+
+# sim_matrix= np.array([
+#     [1.00, 0.54, 0.37, 0.19, 0.10],
+#     [0.54, 1.00, 0.35, 0.29, 0.20],
+#     [0.37, 0.35, 1.00, 0.55, 0.73],
+#     [0.19, 0.29, 0.55, 1.00, 0.74],
+#     [0.10, 0.20, 0.73, 0.74, 1.00]
+# ])
+# labels = np.array([1, 1, 0, 1, 0])
 
 # tnrm=TNorm.create("prod")
 # similarity_func = Similarity.create("gaussian", tnrm, sigma=0.3)
@@ -25,10 +35,10 @@ labels = np.array([1, 1, 0, 1, 0])
 # sim_matrix2 = calculate_similarity_matrix(X, similarity_func, tnrm)
 
 # Create OWAFRS model
-tnorm = TNorm.create("yager", p=0.83)
-implicator = Implicator.create("kd")
+tnorm = TNorm.create("hamacher", p=0.83)
+implicator = Implicator.create("weber")
 
-lb_owa = OWAWeights.create("exp", base=2.0)
+lb_owa = OWAWeights.create("linear")
 ub_owa = OWAWeights.create("linear")
 
 model = OWAFRS(similarity_matrix=sim_matrix,
@@ -39,31 +49,33 @@ model = OWAFRS(similarity_matrix=sim_matrix,
               ub_owa_method=ub_owa,
               logger=logger)
 
-# a = model.get_class('owafrs')
+# # a = model.get_class('owafrs')
 
 upper = model.upper_approximation()
-lower = model.lower_approximation()
+# lower = model.lower_approximation()
 
-d = model.to_dict(include_data= True)
-obj = OWAFRS.from_dict(d)
+print(upper)
 
-aa = model.describe_params_detailed()
+# d = model.to_dict(include_data= True)
+# obj = OWAFRS.from_dict(d)
 
-
-#########################################################
-
-config_without_sim_label = {
-    # 'similarity_matrix': sim_matrix, 
-    #              'labels': y, 
-                'ub_owa_method_name':'linear',
-                'lb_owa_method_name':'linear',
-                'base':2.0,
-                 'ub_tnorm_name': 'minimum', 
-                 'lb_implicator_name': 'luk',
-                 'logger':logger,
-                 'kneighbors':5}
-
-mdl2 = FRMODEL.get_class("owafrs").from_config(sim_matrix,labels,**config_without_sim_label)
+# aa = model.describe_params_detailed()
 
 
-print(1)
+# #########################################################
+
+# config_without_sim_label = {
+#     # 'similarity_matrix': sim_matrix, 
+#     #              'labels': y, 
+#                 'ub_owa_method_name':'linear',
+#                 'lb_owa_method_name':'linear',
+#                 'base':2.0,
+#                  'ub_tnorm_name': 'minimum', 
+#                  'lb_implicator_name': 'luk',
+#                  'logger':logger,
+#                  'kneighbors':5}
+
+# mdl2 = FRMODEL.get_class("owafrs").from_config(sim_matrix,labels,**config_without_sim_label)
+
+
+# print(1)
