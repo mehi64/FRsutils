@@ -4,6 +4,7 @@ from imblearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV
 from sklearn.datasets import make_classification
 from FRsutils.core.preprocess.oversampling.FRSMOTE import FRSMOTE
+from FRsutils.core.models import * #needed for filling _class_registery. Because if not there cannot instantiate OWAFRS, VQRS, etc.
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 import pandas as pd
@@ -18,7 +19,7 @@ X = np.clip(X, 0.0, 0.99)
 # Step 2: Define pipeline with custom FRSMOTE and SVC
 pipe = Pipeline([
     ("frsmote", FRSMOTE(
-        type="itfrs",  # fuzzy rough model type
+        type="owafrs",  # fuzzy rough model type
         k_neighbors=5,
         bias_interpolation=False,
         random_state=42
@@ -32,10 +33,10 @@ param_grid = {
     "frsmote__similarity": ["gaussian", "linear"],
     "frsmote__similarity_tnorm": ["minimum"],
     "frsmote__gaussian_similarity_sigma": [0.1],
-    "frsmote__tnorm_name": ["minimum"],
-    "frsmote__implicator_name": ["lukasiewicz"],
-    # "frsmote__ub_owa_method": ["linear"],
-    # "frsmote__lb_owa_method": ["linear"],
+    "frsmote__ub_tnorm_name": ["minimum"],
+    "frsmote__lb_implicator_name": ["lukasiewicz"],
+    "frsmote__ub_owa_method_name": ["linear"],
+    "frsmote__lb_owa_method_name": ["linear"],
 
     # Optional: SVC parameters
     "svc__C": [0.1],

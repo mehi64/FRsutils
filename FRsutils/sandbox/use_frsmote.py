@@ -1,6 +1,8 @@
 import numpy as np
 from FRsutils.core.preprocess.oversampling.FRSMOTE import FRSMOTE
-
+# from FRsutils.core.models.itfrs import ITFRS
+# from FRsutils.core.models.owafrs import OWAFRS
+from FRsutils.core.models import *
 
 # Example imbalanced dataset
 X = np.array([
@@ -16,12 +18,14 @@ y = np.array([1, 1, 1, 0, 0, 0, 0])  # Class 1 is minority
 
 # Initialize FRSMOTE with default or overridden parameters
 smote = FRSMOTE(
-    type='itfrs',
+    type='owafrs',
     similarity_name='gaussian',
     gaussian_similarity_sigma=0.2,
     similarity_tnorm_name='minimum',
     lb_implicator_name='lukasiewicz',
     ub_tnorm_name='product',
+    ub_owa_method_name= "linear",
+    lb_owa_method_name= "linear",
     k_neighbors=3,
     random_state=42
 )
