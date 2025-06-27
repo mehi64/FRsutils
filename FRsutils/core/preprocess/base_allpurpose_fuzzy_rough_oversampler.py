@@ -6,7 +6,7 @@
 from abc import ABC, abstractmethod
 from imblearn.over_sampling.base import BaseOverSampler
 import warnings
-import FRsutils.utils.validation_utils as valutil
+import FRsutils.utils.validation_utils.validation_utils as valutil
 from FRsutils.utils.constructor_utils.lazy_buildable_from_config_mixin import LazyBuildableFromConfigMixin
 
 class BaseAllPurposeFuzzyRoughOversampler(LazyBuildableFromConfigMixin, ABC, BaseOverSampler):

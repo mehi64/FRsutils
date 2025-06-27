@@ -25,7 +25,7 @@ array([0. , 0.25, 1. ])
 import numpy as np
 from abc import abstractmethod
 from FRsutils.utils.constructor_utils.registry_factory_mixin import RegistryFactoryMixin
-from FRsutils.utils.validation_utils import validate_range_0_1
+from FRsutils.utils.validation_utils.validation_utils import validate_range_0_1
 
 class FuzzyQuantifier(RegistryFactoryMixin):
     """
@@ -183,16 +183,16 @@ class QuadraticFuzzyQuantifier(FuzzyQuantifier):
         if self.validate_inputs:
              validate_range_0_1(x)
 
-        mid = (self.alpha + self.beta) / 2
-        denom = (self.beta - self.alpha) ** 2
+        mid = (self.alpha + self.beta) / 2.0
+        denom = (self.beta - self.alpha) ** 2.0
 
         result = np.zeros_like(x)
-        mask2 = (x > self.alpha) & (x <= mid)
-        mask3 = (x > mid) & (x <= self.beta)
-        mask4 = x > self.beta
+        mask2 = (self.alpha < x) & (x <= mid)
+        mask3 = (mid < x) & (x <= self.beta)
+        mask4 = self.beta < x
 
-        result[mask2] = 2 * ((x[mask2] - self.alpha) ** 2) / denom
-        result[mask3] = 1 - 2 * ((x[mask3] - self.beta) ** 2) / denom
+        result[mask2] = 2.0 * ((x[mask2] - self.alpha) ** 2.0) / denom
+        result[mask3] = 1.0 - (2.0 * ((x[mask3] - self.beta) ** 2.0) / denom)
         result[mask4] = 1.0
         return result
 

@@ -83,35 +83,51 @@ class RegistryFactoryMixin(ABC):
         return decorator
 
     @classmethod
-    def create(cls, name: str, strict: bool = False, **kwargs) -> Any:
+    def create(cls, name: str, strict: bool = False, namespace: str = None, **kwargs) -> Any:
         """
-        @brief Instantiates a subclass by alias name.
+        @brief Instantiates a subclass by alias name with optional flat namespaced parameters.
 
-        Matches the alias with the registered class, filters the input parameters,
-        validates them, and returns an instance.
+        This supports scikit-learn compatible flat parameter dictionaries:
+            - FuzzyQuantifier.create("linear", namespace="lb", **config)
+            will extract lb_alpha and lb_beta and pass them as alpha, beta.
 
-        @param name: Alias of the subclass.
-        @param strict: If True, raises error if unused kwargs are passed.
-        @param kwargs: Keyword arguments to pass to the constructor.
-        @return: Instantiated subclass object.
+        @param name: Alias of the registered subclass.
+        @param strict: If True, raises an error if extra unused kwargs exist.
+        @param namespace: Optional prefix for parameter isolation (e.g. 'lb').
+        @param kwargs: Full flat config dict.
+        @return: Instantiated subclass.
         """
         name = name.lower()
         if name not in cls._registry:
             raise ValueError(f"Unknown alias: {name}")
-        target_cls = cls._registry[name]
         
+        target_cls = cls._registry[name]
+
+        # Namespace filtering if needed
+        if namespace:
+            prefix = f"{namespace}_"
+            filtered = {
+                k[len(prefix):]: v for k, v in kwargs.items()
+                if k.startswith(prefix)
+            }
+        else:
+            filtered = kwargs
+
         # parameter validation is done inside __init__ 
         # all classes inherited from RegistryFactoryMixin must have __init__
         # and call validate_params in there.
         
         # ctor_args means constructor arguments
         # filter out unused parameters
-        ctor_args = cls._filter_args(target_cls, kwargs)
+        ctor_args = cls._filter_args(target_cls, filtered)
+
         if strict:
-            unused = set(kwargs) - set(ctor_args)
+            unused = set(filtered) - set(ctor_args)
             if unused:
-                raise ValueError(f"Unused parameters: {unused}")
+                raise ValueError(f"[{cls.__name__}] Unused parameters: {unused}")
+
         return target_cls(**ctor_args)
+
 
     @classmethod
     def list_available(cls) -> Dict[str, List[str]]:

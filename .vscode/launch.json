@@ -16,6 +16,39 @@
             "cwd": "${workspaceFolder}"
         },
         {
+            "name": "SNDBX gridsearch FRSMOTE",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "FRsutils.sandbox.grid_search_snippets.grid_search_FRSMOTE",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "SNDBX dreate data splits for gridsearch FRSMOTE",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "FRsutils.sandbox.grid_search_snippets.create_data_folds_for_gridsearch",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "SNDBX validate FRSMOTE gridsearch results",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "FRsutils.sandbox.grid_search_snippets.experiment_1_frsmote_gridsearch_validation",
+            "justMyCode": false,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}"
+        },
+        {
             "name": "SNDBX use Implicators",
             "type": "debugpy",
             "request": "launch",
@@ -131,17 +164,6 @@
             "request": "launch",
             "module": "FRsutils.sandbox.test_implicators",
             "justMyCode": true,
-            "env": {
-                "PYTHONPATH": "${workspaceFolder}"
-            },
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "name": "Python: gridsearch FRSMOTE",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "FRsutils.sandbox.grid_search_FRSMOTE",
-            "justMyCode": false,
             "env": {
                 "PYTHONPATH": "${workspaceFolder}"
             },

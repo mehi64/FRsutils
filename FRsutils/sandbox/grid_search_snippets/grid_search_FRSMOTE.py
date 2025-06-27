@@ -2,26 +2,18 @@ from sklearn.svm import SVC
 # from sklearn.pipeline import Pipeline
 from imblearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV
-from sklearn.datasets import make_classification
 from FRsutils.core.preprocess.oversampling.FRSMOTE import FRSMOTE
 from FRsutils.core.models import * #needed for filling _class_registery. Because if not there cannot instantiate OWAFRS, VQRS, etc.
-from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 import pandas as pd
+import joblib
+from sklearn.metrics import make_scorer, f1_score, accuracy_score, precision_score, recall_score
 
-# Step 1: Create imbalanced data
-X, y = make_classification(n_samples=300, n_features=10, n_informative=6,
-                           n_redundant=2, weights=[0.85, 0.15], random_state=42)
-scaler = MinMaxScaler()
-X = scaler.fit_transform(X)
-X = np.clip(X, 0.0, 0.99)
+# Load saved data and splits
+data = np.load("datasets/temp_datasets/frsmote_ds/normalized_data_with_splits.npz")
+X, y = data["X"], data["y"]
+splits = joblib.load("datasets/temp_datasets/frsmote_ds/cv_splits.pkl")
 
-np.savez("normalized_data.npy", X=X, y=y)
-
-# # Load them back
-# data = np.load("data.npz")
-# a = data["array1"]
-# b = data["array2"]
 
 # Step 2: Define pipeline with custom FRSMOTE and SVC
 pipe = Pipeline([
@@ -51,14 +43,30 @@ param_grid = {
     "svc__kernel": ["rbf"]
 }
 
+scoring = {
+    "f1": make_scorer(f1_score),
+    "accuracy": make_scorer(accuracy_score),
+    "precision": make_scorer(precision_score),
+    "recall": make_scorer(recall_score)
+}
+
+
 # Step 4: Run grid search
-grid = GridSearchCV(pipe, param_grid, cv=3, scoring="f1", n_jobs=-1, verbose=2)
+grid = GridSearchCV(estimator=pipe, 
+                    param_grid=param_grid, 
+                    cv=splits, 
+                    scoring=scoring,
+                    refit="f1", 
+                    n_jobs=-1, 
+                    verbose=2)
 grid.fit(X, y)
 
 # Extract all results as a DataFrame
 results_df = pd.DataFrame(grid.cv_results_)
-results_df.to_excel("gridsearch_results.xlsx", index=False)
+results_df.to_excel("temp/gridsearch_results.xlsx", index=False)
 
 # Step 5: Results
 print("Best Params:\n", grid.best_params_)
 print("Best F1 Score:", grid.best_score_)
+
+# joblib.dump(grid, "gridsearch_model.pkl")

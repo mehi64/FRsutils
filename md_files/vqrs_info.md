@@ -40,8 +40,8 @@ Let:
 
 ### In VQRS
 #### lower and upper approximations for each instance: 
-<img src="images/VQRS/lb_ub.PNG" alt="lower & upper approximation" width="350"/>
+<img src="../images/VQRS/lb_ub.PNG" alt="lower & upper approximation" width="350"/>
 
 #### we use quadratic fyzzy quantifier:
-<img src="images/VQRS/quadratic_fuzzy_quantifier.PNG" alt="quadratic_fuzzy_quantifier" width="350"/>
+<img src="../images/VQRS/quadratic_fuzzy_quantifier.PNG" alt="quadratic_fuzzy_quantifier" width="350"/>
 

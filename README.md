@@ -28,10 +28,10 @@ A basic Python library needed for fuzzy rough set calculations that are used in 
 
 ## Algorithgms and containings
 
-- Similarities (See [fuzzy similarities](similarities_info.md))
+- Similarities (See [fuzzy similarities](md_files/similarities_info.md))
   - Linear
   - Gaussian
-- Implicators (See [fuzzy implicators](implicators_info.md))
+- Implicators (See [fuzzy implicators](md_files/implicators_info.md))
   - Lukasiewicz
   - Goedel
   - Reichenbach
@@ -41,7 +41,7 @@ A basic Python library needed for fuzzy rough set calculations that are used in 
   - Rescher
   - Weber
   - Fodor
-- T-norms (See [fuzzy tnorms](tnorms_info.md))
+- T-norms (See [fuzzy tnorms](md_files/tnorms_info.md))
   - Min tnorm
   - Product tnorm
   - Lukasiewicz tnorm
@@ -50,7 +50,7 @@ A basic Python library needed for fuzzy rough set calculations that are used in 
   - EinsteinProduct tnorm
   - HamacherProduct tnorm
   - NilpotentMinimum tnorm
-- OWA weights (Ordered Weighted Average)(See [OWA](owa_weights_info.md))
+- OWA weights (Ordered Weighted Average)(See [OWA](md_files/owa_weights_info.md))
   - Linear
   - Exponential
   - Harmonic
@@ -59,9 +59,9 @@ A basic Python library needed for fuzzy rough set calculations that are used in 
   - Linear
   - Quadratic
 - FR Models
-  - ITFRS (See [Implicator/T-norm Fuzzy-Rough Sets]((itfrs_info.md)))
-  - OWAFRS (See [Ordered Weighted Average Fuzzy-Rough Sets](owafrs_info.md)) 
-  - VQRS (Vaguely Quantified fuzzy-Rough Sets) 
+  - ITFRS (See [Implicator/T-norm Fuzzy-Rough Sets](md_files/itfrs_info.md))
+  - OWAFRS (See [Ordered Weighted Average Fuzzy-Rough Sets](md_files/owafrs_info.md)) 
+  - VQRS (See [Vaguely Quantified fuzzy-Rough Sets](md_files/vqrs_info.md))
 
 ## Fuzzy-rough oversampling
 ### FRSMOTE

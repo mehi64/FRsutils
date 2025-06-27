@@ -59,6 +59,7 @@ class FRSMOTE(BaseSoloFuzzyRoughOversampler):
     def _generate_new_samples(self, X, n, p1s, selectable_idx, nn_idx, rng):
         out = []
         for _ in range(n):
+            print("FRSMOTE_processing " + str(_) + "/" + str(n))
             p1_idx, _ = math_utils._weighted_random_choice(p1s, rng)
             loc = np.where(selectable_idx == p1_idx)[0]
             if len(loc) == 0: continue

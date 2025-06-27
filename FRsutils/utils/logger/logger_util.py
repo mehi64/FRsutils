@@ -65,7 +65,7 @@ class _TinyLogger:
         name=__name__,
         log_to_console=True,
         log_to_file=False,
-        file_path="ml_logs.log",
+        file_path="logs/ml_logs.log",
         log_file_extension=None,  # 'csv' or 'json'
         level=logging.DEBUG, 
         run_id=None,
@@ -337,7 +337,7 @@ def get_logger(env=None, experiment_name=None):
     env = env or _detect_env()
     # print("logger type: ", env)
     if env == "debug":
-        return _TinyLogger(name="debug_logger", 
+        return _TinyLogger(name="logs/debug_logger", 
                            log_to_console=True, 
                            log_to_file=False, 
                            level=logging.DEBUG)
@@ -345,14 +345,14 @@ def get_logger(env=None, experiment_name=None):
         return _TinyLogger(name="test_logger", 
                            log_to_console=False, 
                            log_to_file=True,
-                           file_path='test_logs.csv',
+                           file_path='logs/test_logs.csv',
                            log_file_extension='csv',
                            experiment_name=experiment_name)
     elif env == "runtime":
         return _TinyLogger(name="runtime_logger", 
                            log_to_console=True, 
                            log_to_file=True, 
-                           file_path="run_log.json", 
+                           file_path="logs/run_log.json", 
                            log_file_extension="json")
         
     

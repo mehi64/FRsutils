@@ -369,11 +369,16 @@ def get_VQRS_testing_testsets():
 
             "expected": 
             {
-                "upper_bound_quadratic" : np.array([0.521049496528125,	0.50362976378912,	0.085078125,	0.015835966374605,	0.141019503319767628125]),
-                "lower_bound_quadratic" : np.array([1.0,	1.0,	0.5582,	0.2344383779189888,	0.718538097101394872]),
-                "upper_bound_linear" : np.array([0.521049496528125,	0.50362976378912,	0.085078125,	0.015835966374605,	0.141019503319767628125]),
-                "lower_bound_linear" : np.array([1.0,	1.0,	0.5582,	0.2344383779189888,	0.718538097101394872])
-
+                "quadratic_fuzzy_quantifier":
+                {
+                    "upper_bound" : np.array([0.5206163194,	0.5036166362,	0.085078125,	0.015835966374605,	0.141019503319767628125]),
+                    "lower_bound" : np.array([1.0,	1.0,	0.5582,	0.2344383779189888,	0.718538097101394872]),
+                },
+                "linear_fuzzy_quantifier":
+                {
+                    "upper_bound" : np.array([0.51041625, 0.5018116, 0.20625, 0.08898305, 0.2655367238]),
+                    "lower_bound" : np.array([1.0, 1.0, 0.53, 0.34237288, 0.624858758])
+                }
             }
         }
     ]
@@ -402,6 +407,7 @@ def get_OWAFRS_testing_testsets():
     nilpotent_tn_upperBound = np.array([0.273, 0.303, 0.292, 0.173, 0.292])
     hamacher_tn_upperBound = np.array([0.273, 0.303, 0.292, 0.173, 0.292])
     yager_tn_upperBound_p_0_83 = np.array([0.273, 0.303, 0.292, 0.173, 0.292])
+    
     return [
         {
             "name": "owafrs",

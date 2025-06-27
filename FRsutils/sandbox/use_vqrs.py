@@ -2,14 +2,14 @@ import numpy as np
 from FRsutils.core.similarities import Similarity, calculate_similarity_matrix
 from FRsutils.core.fuzzy_quantifiers import FuzzyQuantifier
 from FRsutils.core.models.vqrs import VQRS
-import tests.syntetic_data_for_tests as sdf
+import tests.synthetic_data_store as sdf
 from FRsutils.core.models.fuzzy_rough_model import FuzzyRoughModel as FRMODEL
 from FRsutils.utils.logger.logger_util import get_logger
+from FRsutils.utils.backend import xp, USE_GPU
 
 
-data_synthteic = sdf.syntetic_dataset_factory()
+TSTVQRS = sdf.get_OWAFRS_testing_testsets()[0]
 
-TSTVQRS = data_synthteic.VQRS_testing_dataset()
 sim_matrix = TSTVQRS['sim_matrix']
 y = TSTVQRS['y']
 
@@ -30,8 +30,8 @@ y = TSTVQRS['y']
 # sim_matrix2 = calculate_similarity_matrix(X, similarity_func, tnrm)
 
 
-Q_l = FuzzyQuantifier.create("quadratic", alpha=.1, beta=.6)
-Q_u = FuzzyQuantifier.create("quadratic", alpha=.2, beta=1.0)
+Q_l = FuzzyQuantifier.create("linear", alpha=.1, beta=.6)
+Q_u = FuzzyQuantifier.create("linear", alpha=.2, beta=1.0)
 
 
 
@@ -39,17 +39,19 @@ logger = get_logger()
 
 model = VQRS(similarity_matrix=sim_matrix,
             labels=y,
-            fuzzy_quantifier_lower=Q_l,
-            fuzzy_quantifier_upper=Q_u,
+            lb_fuzzy_quantifier=Q_l,
+            ub_fuzzy_quantifier=Q_u,
             logger=logger)
 
 upper = model.upper_approximation()
 lower = model.lower_approximation()
 
+print(lower)
+print(upper)
 args_ = {'similarity_matrix': sim_matrix, 
         'labels': y, 
-        'fuzzy_quantifier_lower':Q_l,
-        'fuzzy_quantifier_upper':Q_u}
+        'lb_fuzzy_quantifier':Q_l,
+        'ub_fuzzy_quantifier':Q_u}
 
 frmodel = FRMODEL.create(name='vqrs', strict=False, **args_)
 
@@ -67,7 +69,6 @@ conf2 = frmodel.to_dict(include_data=False)
 vqrs_model2 = FRMODEL.get_class("vqrs").from_config(conf2,sim_matrix,y)
 
 vqrs_model3 = FRMODEL.get_class("vqrs").from_dict(conf2,sim_matrix,y)
-
 
 upper1 = frmodel.upper_approximation()
 lower1 = frmodel.lower_approximation()
