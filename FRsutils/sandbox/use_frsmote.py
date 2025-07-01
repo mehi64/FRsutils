@@ -16,6 +16,42 @@ X = np.array([
 ])
 y = np.array([1, 1, 1, 0, 0, 0, 0])  # Class 1 is minority
 
+smote1 = FRSMOTE.empty()
+
+config = {
+    'type': 'owafrs',
+    'similarity_name': 'gaussian',
+    'gaussian_similarity_sigma': 0.2,
+    'similarity_tnorm_name': 'minimum',
+    'lb_implicator_name': 'lukasiewicz',
+    'ub_tnorm_name': 'product',
+    'ub_owa_method_name': "linear",
+    'lb_owa_method_name': "linear",
+    'k_neighbors': 3,
+    'random_state': 42
+}
+
+smote1.store_init_config(
+    type= 'owafrs',
+    similarity_name= 'gaussian',
+    gaussian_similarity_sigma= 0.2,
+    similarity_tnorm_name= 'minimum',
+    lb_implicator_name= 'lukasiewicz',
+    ub_tnorm_name= 'product',
+    ub_owa_method_name= "linear",
+    lb_owa_method_name= "linear",
+    k_neighbors= 3,
+    random_state= 42
+)
+
+smote1.store_init_config(**config)
+X_resampled, y_resampled = smote1.fit(X, y)
+print(X_resampled)
+print(y_resampled)
+
+
+
+
 # Initialize FRSMOTE with default or overridden parameters
 smote = FRSMOTE(
     type='owafrs',

@@ -7,30 +7,36 @@ from abc import ABC, abstractmethod
 from imblearn.over_sampling.base import BaseOverSampler
 import warnings
 import FRsutils.utils.validation_utils.validation_utils as valutil
-from FRsutils.utils.constructor_utils.lazy_buildable_from_config_mixin import LazyBuildableFromConfigMixin
+from FRsutils.utils.constructor_utils.lazy_constructible_mixin import LazyConstructibleMixin
+from FRsutils.core.models.fuzzy_rough_model import FuzzyRoughModel
 
-class BaseAllPurposeFuzzyRoughOversampler(LazyBuildableFromConfigMixin, ABC, BaseOverSampler):
+
+class BaseAllPurposeFuzzyRoughOversampler(LazyConstructibleMixin, ABC, BaseOverSampler):
     """
     @brief Abstract base class for oversampling using Fuzzy Rough Sets.
     """
 
-    def __init__(self, sampling_strategy='auto', **kwargs):
+    def __init__(self, **kwargs):
         """
         @brief Initializes the fuzzy rough oversampler config via kwargs.
 
         @param sampling_strategy Oversampling strategy for imbalanced-learn.
         @param kwargs Dictionary of fuzzy-rough model configuration parameters.
         """
+        sampling_strategy = kwargs.get('sampling_strategy', 'auto')
         super().__init__(sampling_strategy=sampling_strategy)
-        self.sampling_strategy = sampling_strategy
+        
         self.instance_ranking_strategy = valutil.validate_ranking_strategy_choice(
             kwargs.get('instance_ranking_strategy', 'pos')
         )
-        self._initialize_lazy_config(
-            model_class_registry=None,  # must be set by subclass (e.g., BaseFuzzyRoughModel)
-            **kwargs
-        )
 
+        self._lazy_model_registry = FuzzyRoughModel
+        
+        if kwargs:
+            # ✅ Apply all config values and prepare for lazy build
+            self.configure(model_registry=self._lazy_model_registry, **kwargs)
+        
+   
     def _get_target_classes(self):
         if self.instance_ranking_strategy == 'pos':
             majority_class = max(self.target_stats_, key=self.target_stats_.get)
